@@ -1,0 +1,236 @@
+.body
+{   
+    font-family: 'Montserrat' !important;
+    box-sizing: border-box;
+}
+.bold
+{
+    font-weight: 700;
+}
+.regular{
+    font-weight: 400;
+}
+.medium{
+    font-weight: 500;
+}
+
+.error{
+    font-weight: 300;
+    color: #ff633b;
+}
+
+.wrapper{
+    margin:50px ;
+    margin:auto;
+    font-family: 'Montserrat';
+}
+input:focus {
+    outline: none;
+}
+
+/* spacing adjustment */
+.etsello-form {
+    margin-top: 40px;
+}
+form b
+{
+   font-size:14px;
+}
+form{
+    text-align:center;
+}
+
+nav .navbar-nav li a{
+    color: white !important;
+}
+nav .navbar-brand{
+    color: white !important;
+}
+
+.list-group {
+    display: inline-block;
+    vertical-align: top;
+    width: 40%;
+}
+
+/* Set a style for all buttons */
+.etsello-button {
+    background-color:#A4A9D0;
+    color: white;
+    padding: 15px 35px;
+    margin: 20px 0;
+    border: none;
+    cursor: pointer;
+    border-radius: 6px;
+    
+}
+
+.etsello-button:focus {
+    outline: none;
+}
+
+/* scan to connect */
+.scan{
+    font-size:12px;
+   }
+.or{
+    margin-top:16px;
+    margin-bottom:16px;
+}
+
+.panel > .panel-heading {
+    background-image: none;
+    background-color: #5B4048;
+    color: white;
+    border: 1px solid #5B4048;
+}   
+
+.panel {
+    background-color: #FCD1A6;
+    border: 1px solid #5B4048;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  }
+
+.user-content {
+    border-right: 1px solid #333;
+}
+
+/* Add a hover effect for buttons */
+button:hover {
+    opacity: 0.8;
+}
+
+/* Extra style for the cancel button (red) */
+.cancelbtn {
+    width: auto;
+    padding: 10px 18px;
+    background-color: #f44336;
+}
+
+/* Center the avatar image inside this container */
+.imgcontainer {
+    text-align: center;
+    margin: 24px 0 12px 0;
+}
+
+/* Avatar image */
+img.avatar {
+    width: 40%;
+    border-radius: 50%;
+}
+
+/* Add padding to containers */
+.container {
+    padding: 0px;
+}
+
+/* The "Forgot password" text */
+span.psw {
+    float: right;
+    padding-top: 16px;
+}
+/* -------------------------------------------------------------------------- */
+/* castaway css */
+
+.icon{
+    background-image: url("../images/drawable-hdpi/Image\ 2.png");
+    background-repeat: no-repeat;
+    background-position: center; 
+    height: 86px;
+    margin-top:60px;
+}
+
+.download-text{
+margin-top: 15px;
+font-size: 12px;
+ vertical-align: middle;
+}
+
+.footer{
+margin-top: 70px;
+margin-left: auto;
+margin-right: auto;
+
+}
+.footer-text{
+    color: #B9B8B9;
+    vertical-align: middle;
+    display: inline-block;
+    font-size:12px;
+ 
+}
+
+/* Change styles for span and cancel button on extra small screens */
+@media screen and (max-width: 300px) {
+    span.psw {
+        display: block;
+        float: none;
+    }
+    .cancelbtn {
+        width: 100%;
+    }
+}
+
+.multi-steps > li.is-active:before, .multi-steps > li.is-active ~ li:before {
+    content: counter(stepNum);
+    font-family: inherit;
+    font-weight: 700;
+  }
+  .multi-steps > li.is-active:after, .multi-steps > li.is-active ~ li:after {
+    background-color: #ededed;
+  }
+  
+  .multi-steps {
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+  }
+  .multi-steps > li {
+    counter-increment: stepNum;
+    text-align: center;
+    display: table-cell;
+    position: relative;
+    color: #DA4316;
+  }
+  .multi-steps > li:before {
+    content: "\f00c";
+    display: block;
+    margin: 0 auto 4px;
+    background-color: #fff;
+    width: 36px;
+    height: 36px;
+    line-height: 32px;
+    text-align: center;
+    font-weight: bold;
+    border-width: 2px;
+    border-style: solid;
+    border-color: #DA4316;
+    border-radius: 50%;
+  }
+  .multi-steps > li:after {
+    content: "";
+    height: 2px;
+    width: 100%;
+    background-color: #DA4316;
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    z-index: -1;
+  }
+  .multi-steps > li:last-child:after {
+    display: none;
+  }
+  .multi-steps > li.is-active:before {
+    background-color: #fff;
+    border-color: #DA4316;
+  }
+  .multi-steps > li.is-active ~ li {
+    color: #808080;
+  }
+  .multi-steps > li.is-active ~ li:before {
+    background-color: #ededed;
+    border-color: #ededed;
+  }
+  

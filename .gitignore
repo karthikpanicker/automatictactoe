@@ -10,3 +10,7 @@
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+
+#ignore vscode and goland directories directory
+.vscode/*
+.idea/*
