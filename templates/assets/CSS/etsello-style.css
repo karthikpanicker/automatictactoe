@@ -48,7 +48,6 @@ nav .navbar-brand{
 }
 
 .list-group {
-    display: inline-block;
     vertical-align: top;
     width: 40%;
 }
@@ -196,6 +195,10 @@ margin-right: auto;
   }
   .multi-steps > li:before {
     content: "\f00c";
+    content: '\2713;';
+    content: '\10003';
+    content: '\10004';
+    content: '\2713';
     display: block;
     margin: 0 auto 4px;
     background-color: #fff;
@@ -232,5 +235,61 @@ margin-right: auto;
   .multi-steps > li.is-active ~ li:before {
     background-color: #ededed;
     border-color: #ededed;
+  }
+
+.link-arrow-container {
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.profile-sidebar {
+    padding: 20px 0 10px 0;
+}
+  
+.profile-pic img {
+    float: none;
+    margin: 0 auto;
+    width: 20%;
+    height: 20%;
+    -webkit-border-radius: 50% !important;
+    -moz-border-radius: 50% !important;
+    border-radius: 50% !important;
+  }
+  
+  .profile-title {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .profile-usertitle-email {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 7px;
+  }
+  
+  .profile-usertitle-name{
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 15px;
+  }
+
+  .profile-shoptitle-name {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 7px;
+  }
+
+  .profile-shoptitle-title {
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 7px;
+  }
+
+  .profile-shoptitle-favorites {
+    font-size: 10px;
+    font-weight: 600;
+    margin-bottom: 7px;
   }
   

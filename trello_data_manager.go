@@ -62,6 +62,7 @@ func (tm *trelloDataManager) getAndPopulateTrelloDetails(r *http.Request, userIn
 		boardDetails, _ := tm.getBoardInfo(userInfo, boardID)
 		userInfo.TrelloDetails.TrelloBoards = append(userInfo.TrelloDetails.TrelloBoards, *boardDetails)
 	}
+	userInfo.CurrentStep = 2
 	return nil
 }
 

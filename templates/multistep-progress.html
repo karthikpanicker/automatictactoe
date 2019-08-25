@@ -2,9 +2,19 @@
 <div class="container-fluid">
   <br /><br />
   <ul class="list-unstyled multi-steps">
-    <li class="is-active">Login to Etsy</li>
-    <li>Login to Trello</li>
-    <li>Choose Board and List</li>
+    {{if not .}}
+      <li  class="is-active">Login to Etsy</li>
+      <li>Login to Trello</li>
+      <li>Choose Board and List</li>
+    {{else if eq .CurrentStep 1}}
+      <li>Login to Etsy</li>
+      <li  class="is-active">Login to Trello</li>
+      <li>Choose Board and List</li>
+    {{else }}
+      <li>Login to Etsy</li>
+      <li>Login to Trello</li>
+      <li  class="is-active">Choose Board and List</li>
+    {{end}}
   </ul>
 </div>
 {{end}}

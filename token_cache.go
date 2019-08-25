@@ -5,6 +5,7 @@ type userInfo struct {
 	UserID        int
 	EtsyDetails   etsyDetails
 	TrelloDetails trelloDetails
+	CurrentStep   int
 }
 
 type trelloDetails struct {
@@ -26,8 +27,10 @@ type etsyDetails struct {
 type shopDetails struct {
 	ShopID         int    `json:"shop_id"`
 	ShopName       string `json:"shop_name"`
+	Title          string `json:"title"`
 	BannerImageURL string `json:"image_url_760x100"`
 	ShopIconURL    string `json:"icon_url_fullxfull"`
+	ShopFavorites  int    `json:"num_favorers"`
 }
 
 type userCache struct {

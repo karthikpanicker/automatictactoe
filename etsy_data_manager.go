@@ -104,6 +104,7 @@ func (edm *etsyDataManager) getUserProfileInfo(accessToken string, accessSecret 
 			etsyAccessToken:  accessToken,
 			etsyAccessSecret: accessSecret,
 		},
+		CurrentStep: 1,
 	}
 	edm.getProfileDetails(userInfo)
 	return userInfo, nil

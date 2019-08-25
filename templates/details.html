@@ -4,7 +4,7 @@
     {{ template "header" }}
     <body>
         {{ template "navbar" }}
-        {{template "multistep-progress"}}
+        {{template "multistep-progress" .}}
         <div class="container">
             <div class="row align-items-center justify-content-center">
                 <div class="col-md-8 col-sm-8 col-xs-8">
@@ -20,16 +20,36 @@
                             {{else}}
                                 <div class="row">
                                     <div class="col-md-6 col-sm-6 col-xs-6">
-                                        <div class="user-content">
-                                            <img src="{{.EtsyDetails.UserProfileURL}}" height= "75px" class="rounded-circle" alt="shop icon"/>
-                                            <span>{{.EmailID}}</span>
-                                            <span>{{.EtsyDetails.UserName}}</span>
+                                        <div class="profile-sidebar">
+                                            <div class="profile-pic">
+                                                <img src="{{.EtsyDetails.UserProfileURL}}" class="img-responsive" alt="{{.EtsyDetails.UserName}}">
+                                            </div>
+                                            <div class="profile-title">
+                                                <div class="profile-usertitle-email">
+                                                    {{.EmailID}}
+                                                </div>
+                                                <div class="profile-usertitle-name">
+                                                    {{.EtsyDetails.UserName}}
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-sm-6 col-xs-6">
-                                        <div class="shop-content">
-                                            {{.EtsyDetails.UserShopDetails.ShopName}}
-                                            <img src="{{.EtsyDetails.UserShopDetails.ShopIconURL}}" height= "75px" class="rounded-circle" alt="shop icon"/>
+                                        <div class="profile-sidebar">
+                                            <div class="profile-pic">
+                                                <img src="{{.EtsyDetails.UserShopDetails.ShopIconURL}}" class="img-responsive" alt="{{.EtsyDetails.UserShopDetails.ShopName}}">
+                                            </div>
+                                            <div class="profile-title">
+                                                <div class="profile-shoptitle-email">
+                                                    {{.EtsyDetails.UserShopDetails.ShopName}}
+                                                </div>
+                                                <div class="profile-shoptitle-title">
+                                                    {{.EtsyDetails.UserShopDetails.Title}}
+                                                </div>
+                                                <div class="profile-shoptitle-favorites">
+                                                   <i class="fas fa-heart"></i> Favourite shop ({{.EtsyDetails.UserShopDetails.ShopFavorites}})
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -38,8 +58,8 @@
                     </div>
                     {{if not .}}
                     {{else}}
-                        <div class="container" style="text-align:center">
-                            <i class="fas fa-arrows-alt-v"></i>
+                        <div class="container link-arrow-container">
+                            <i class="fas fa-arrows-alt-v fa-2x"></i>
                         </div>
                         <div class="text-center panel panel-primary">
                             <div class="panel-heading">Trello Details</div>
@@ -65,7 +85,7 @@
                                     {{else}}
                                         <form action="/authorize-trello" method="POST" >
                                             <div class="text-center">
-                                                <button class="etsello-button bold" type="submit">Link to Trello</button>
+                                                <button class="etsello-button bold" type="submit">Login to Trello</button>
                                             </div>
                                         </form>
                                     {{end}}
