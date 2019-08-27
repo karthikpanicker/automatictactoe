@@ -1,8 +1,6 @@
 package main
 
 import (
-	"encoding/json"
-	"io/ioutil"
 	"net/http"
 	"os"
 
@@ -42,7 +40,7 @@ func (tm *trelloDataManager) getAuthorizationURL() string {
 	}
 	tm.requestSecret = requestSecret
 	authorizationURL, err := tm.config.AuthorizationURL(requestToken)
-	return authorizationURL.String() + "&name=" + "Etsello - an etsy order capture app for trello" + "&expiration=never"
+	return authorizationURL.String() + "&name=" + "Etsello - an etsy order capture for trello" + "&expiration=never&scope=read,write"
 }
 
 func (tm *trelloDataManager) getAndPopulateTrelloDetails(r *http.Request, userInfo *userInfo) error {
@@ -51,7 +49,6 @@ func (tm *trelloDataManager) getAndPopulateTrelloDetails(r *http.Request, userIn
 	if err != nil {
 		return err
 	}
-	Info(accessToken, accessSecret)
 	userInfo.TrelloDetails = trelloDetails{
 		trelloAccessToken:  accessToken,
 		trelloAccessSecret: accessSecret,
@@ -66,18 +63,22 @@ func (tm *trelloDataManager) getAndPopulateTrelloDetails(r *http.Request, userIn
 	return nil
 }
 
+func (tm *trelloDataManager) addCard(info *userInfo, card trelloCardDetails) error {
+	path := trelloBaseURL + "cards"
+	httpOAuthClient := newHTTPOAuthClient(info.TrelloDetails.trelloAccessToken,
+		info.TrelloDetails.trelloAccessSecret, tm.config)
+	var result string
+	err := httpOAuthClient.postResource(path, card, &result)
+	Info(result)
+	return err
+}
+
 func (tm *trelloDataManager) getUserBoards(info *userInfo) ([]string, error) {
-	token := oauth1.NewToken(info.TrelloDetails.trelloAccessToken, info.TrelloDetails.trelloAccessSecret)
-	httpClient := tm.config.Client(oauth1.NoContext, token)
 	path := trelloBaseURL + "members/me"
-	resp, err := httpClient.Get(path)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	body, _ := ioutil.ReadAll(resp.Body)
 	var result map[string]interface{}
-	json.Unmarshal(body, &result)
+	httpOAuthClient := newHTTPOAuthClient(info.TrelloDetails.trelloAccessToken,
+		info.TrelloDetails.trelloAccessSecret, tm.config)
+	httpOAuthClient.getMarshalledAPIResponse(path, &result)
 	boardIds := make([]string, 0)
 	for _, idBoard := range result["idBoards"].([]interface{}) {
 		boardIds = append(boardIds, idBoard.(string))
@@ -86,31 +87,19 @@ func (tm *trelloDataManager) getUserBoards(info *userInfo) ([]string, error) {
 }
 
 func (tm *trelloDataManager) getBoardInfo(info *userInfo, boardID string) (*boardDetails, error) {
-	token := oauth1.NewToken(info.TrelloDetails.trelloAccessToken, info.TrelloDetails.trelloAccessSecret)
-	httpClient := tm.config.Client(oauth1.NoContext, token)
 	path := trelloBaseURL + "boards/" + boardID
-	resp, err := httpClient.Get(path)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	body, _ := ioutil.ReadAll(resp.Body)
 	var result boardDetails
-	json.Unmarshal(body, &result)
+	httpOAuthClient := newHTTPOAuthClient(info.TrelloDetails.trelloAccessToken,
+		info.TrelloDetails.trelloAccessSecret, tm.config)
+	httpOAuthClient.getMarshalledAPIResponse(path, &result)
 	return &result, nil
 }
 
 func (tm *trelloDataManager) getBoardLists(info *userInfo, boardID string) ([]boardList, error) {
-	token := oauth1.NewToken(info.TrelloDetails.trelloAccessToken, info.TrelloDetails.trelloAccessSecret)
-	httpClient := tm.config.Client(oauth1.NoContext, token)
 	path := trelloBaseURL + "boards/" + boardID + "/lists"
-	resp, err := httpClient.Get(path)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	body, _ := ioutil.ReadAll(resp.Body)
 	var result []boardList
-	json.Unmarshal(body, &result)
+	httpOAuthClient := newHTTPOAuthClient(info.TrelloDetails.trelloAccessToken,
+		info.TrelloDetails.trelloAccessSecret, tm.config)
+	httpOAuthClient.getMarshalledAPIResponse(path, &result)
 	return result, nil
 }

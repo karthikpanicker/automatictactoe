@@ -50,6 +50,14 @@ type boardList struct {
 	Name string `json:"name"`
 }
 
+type trelloCardDetails struct {
+	Name       string `json:"name"`
+	Descripton string `json:"desc"`
+	ListID     string `json:"idList"`
+	Labels     string `json:"idLabels"`
+	URL        string `json:"urlSource"`
+}
+
 func newUserCache() *userCache {
 	uc := new(userCache)
 	uc.userMap = make(map[int]userInfo)

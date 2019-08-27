@@ -13,9 +13,8 @@ const (
 )
 
 type etsyDataManager struct {
-	config          oauth1.Config
-	requestSecret   string
-	httpOAuthClient *httpOAuthClient
+	config        oauth1.Config
+	requestSecret string
 }
 
 type etsyProfileResponse struct {
@@ -37,12 +36,12 @@ type transactionDetails struct {
 	ID             int    `json:"transaction_id"`
 	Title          string `json:"title"`
 	Description    string `json:"description"`
-	BuyerUserID    string `json:"seller_user_id"`
+	BuyerUserID    int    `json:"buyer_user_id"`
 	CreationTime   int64  `json:"creation_tsz"`
 	Price          string `json:"price"`
 	Currency       string `json:"currency_code"`
 	ShippingPrice  string `json:"shipping_cost"`
-	ImageListingID string `json:"image_listing_id"`
+	ImageListingID int    `json:"image_listing_id"`
 	EtsyURL        string `json:"url"`
 }
 
@@ -81,7 +80,6 @@ func (edm *etsyDataManager) getAuthorizationURL() string {
 func (edm *etsyDataManager) getAndPopulateEtsyDetails(r *http.Request) (*userInfo, error) {
 	requestToken, verifier, err := oauth1.ParseAuthorizationCallback(r)
 	accessToken, accessSecret, err := edm.config.AccessToken(requestToken, edm.requestSecret, verifier)
-	edm.httpOAuthClient = newHTTPOAuthClient(accessToken, accessSecret, edm.config)
 	if err != nil {
 		return nil, err
 	}
@@ -96,7 +94,8 @@ func (edm *etsyDataManager) getAndPopulateEtsyDetails(r *http.Request) (*userInf
 func (edm *etsyDataManager) getUserProfileInfo(accessToken string, accessSecret string) (*userInfo, error) {
 	path := etsyBaseURL + "users/__SELF__"
 	result := etsyProfileResponse{}
-	edm.httpOAuthClient.getMarshalledAPIResponse(path, &result)
+	httpOAuthClient := newHTTPOAuthClient(accessToken, accessSecret, edm.config)
+	httpOAuthClient.getMarshalledAPIResponse(path, &result)
 	userInfo := &userInfo{
 		EmailID: result.Results[0].EmailID,
 		UserID:  result.Results[0].EtsyUserID,
@@ -113,7 +112,9 @@ func (edm *etsyDataManager) getUserProfileInfo(accessToken string, accessSecret 
 func (edm *etsyDataManager) getShops(info *userInfo) error {
 	path := etsyBaseURL + "/users/" + strconv.Itoa(info.UserID) + "/shops"
 	var result etsyShopResponse
-	edm.httpOAuthClient.getMarshalledAPIResponse(path, &result)
+	httpOAuthClient := newHTTPOAuthClient(info.EtsyDetails.etsyAccessToken,
+		info.EtsyDetails.etsyAccessSecret, edm.config)
+	httpOAuthClient.getMarshalledAPIResponse(path, &result)
 	info.EtsyDetails.UserShopDetails = result.Results[0]
 	return nil
 }
@@ -121,7 +122,9 @@ func (edm *etsyDataManager) getShops(info *userInfo) error {
 func (edm *etsyDataManager) getTransactionList(info userInfo) (*etsyTransactionResponse, error) {
 	path := etsyBaseURL + "shops/" + strconv.Itoa(info.EtsyDetails.UserShopDetails.ShopID) + "/transactions"
 	var result etsyTransactionResponse
-	err := edm.httpOAuthClient.getMarshalledAPIResponse(path, &result)
+	httpOAuthClient := newHTTPOAuthClient(info.EtsyDetails.etsyAccessToken,
+		info.EtsyDetails.etsyAccessSecret, edm.config)
+	err := httpOAuthClient.getMarshalledAPIResponse(path, &result)
 	if err != nil {
 		return nil, err
 	}
@@ -131,7 +134,9 @@ func (edm *etsyDataManager) getTransactionList(info userInfo) (*etsyTransactionR
 func (edm *etsyDataManager) getProfileDetails(info *userInfo) error {
 	path := etsyBaseURL + "users/" + strconv.Itoa(info.UserID) + "/profile"
 	var result etsyProfileResponse
-	edm.httpOAuthClient.getMarshalledAPIResponse(path, &result)
+	httpOAuthClient := newHTTPOAuthClient(info.EtsyDetails.etsyAccessToken,
+		info.EtsyDetails.etsyAccessSecret, edm.config)
+	httpOAuthClient.getMarshalledAPIResponse(path, &result)
 	info.EtsyDetails.UserProfileURL = result.Results[0].UserProfileURL
 	info.EtsyDetails.UserName = result.Results[0].UserName
 	return nil

@@ -9,12 +9,12 @@
             <div class="row align-items-center justify-content-center">
                 <div class="col-md-8 col-sm-8 col-xs-8">
                     <div class="text-center panel panel-primary">
-                        <div class="panel-heading">Etsy Details</div>
+                        <div class="panel-heading medium">Etsy Details</div>
                         <div class="panel-body">
                             {{if not .}}
                                 <form action="/authorize-etsy" method="POST" >
                                     <div class="text-center">
-                                        <button class="etsello-button bold" type="submit">Login to Etsy</button>
+                                        <button class="etsello-button medium" type="submit">Login to Etsy</button>
                                     </div>
                                 </form>
                             {{else}}
@@ -62,30 +62,36 @@
                             <i class="fas fa-arrows-alt-v fa-2x"></i>
                         </div>
                         <div class="text-center panel panel-primary">
-                            <div class="panel-heading">Trello Details</div>
+                            <div class="panel-heading medium">Trello Details</div>
                                 <div class="panel-body">
                                     {{ if ne (len .TrelloDetails.TrelloBoards) 0 }}
-                                    <div class="text-center border border-primary">
-                                        <div class="list-group" id="boards">
-                                            {{range .TrelloDetails.TrelloBoards}}
-                                                <button id="{{.ID}}" type="button" class="list-group-item">{{.Name}}</button>
-                                            {{end}}
+                                    <div class="row">
+                                        <div class="col-md-6 col-sm-6 col-xs-6">
+                                            <h5 class="trello-heading">Boards</h5>
+                                            <div class="list-group" id="boards">
+                                                {{range .TrelloDetails.TrelloBoards}}
+                                                    <button id="{{.ID}}" type="button" class="list-group-item">{{.Name}}</button>
+                                                {{end}}
+                                            </div>
                                         </div>
-                                        <div class="list-group" id="boardLists">
-                                            <div id = "spinner-board-list" class="d-flex justify-content-center">
-                                                <div class="spinner-border" role="status">
-                                                    <span class="sr-only">Loading...</span>
+                                        <div class="col-md-6 col-sm-6 col-xs-6">
+                                            <h5 class="trello-heading">Lists</h5>
+                                            <div class="list-group" id="boardLists">
+                                                <div id = "spinner-board-list" class="d-flex justify-content-center">
+                                                    <div class="spinner-border" role="status">
+                                                        <span class="sr-only">Loading...</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="text-center">
-                                            <button class="etsello-button bold" id="saveList" type="submit">Save</button>
-                                        </div>
+                                    </div>
+                                    <div class="row align-items-center justify-content-center">
+                                        <button class="etsello-button medium" id="saveList" type="submit">Save</button>
                                     </div>
                                     {{else}}
                                         <form action="/authorize-trello" method="POST" >
                                             <div class="text-center">
-                                                <button class="etsello-button bold" type="submit">Login to Trello</button>
+                                                <button class="etsello-button medium" type="submit">Login to Trello</button>
                                             </div>
                                         </form>
                                     {{end}}

@@ -1,7 +1,6 @@
-.body
+body
 {   
-    font-family: 'Montserrat' !important;
-    box-sizing: border-box;
+    background-color: #EBEBEB;
 }
 .bold
 {
@@ -14,16 +13,6 @@
     font-weight: 500;
 }
 
-.error{
-    font-weight: 300;
-    color: #ff633b;
-}
-
-.wrapper{
-    margin:50px ;
-    margin:auto;
-    font-family: 'Montserrat';
-}
 input:focus {
     outline: none;
 }
@@ -32,12 +21,13 @@ input:focus {
 .etsello-form {
     margin-top: 40px;
 }
-form b
-{
-   font-size:14px;
-}
+
 form{
     text-align:center;
+}
+
+.navbar {
+    background-color: #92977E;
 }
 
 nav .navbar-nav li a{
@@ -49,44 +39,41 @@ nav .navbar-brand{
 
 .list-group {
     vertical-align: top;
-    width: 40%;
+    margin-left: 10px;
+    margin-top: 10px;
+    margin-right: 10px;
+    max-height: 150px;
+    height: 150px;
+    overflow:scroll;
+    -webkit-overflow-scrolling: touch;
 }
 
 /* Set a style for all buttons */
 .etsello-button {
-    background-color:#A4A9D0;
+    background-color:#504746;
     color: white;
     padding: 15px 35px;
     margin: 20px 0;
     border: none;
     cursor: pointer;
     border-radius: 6px;
-    
+    outline: 0;
 }
 
 .etsello-button:focus {
     outline: none;
 }
 
-/* scan to connect */
-.scan{
-    font-size:12px;
-   }
-.or{
-    margin-top:16px;
-    margin-bottom:16px;
-}
-
 .panel > .panel-heading {
     background-image: none;
-    background-color: #5B4048;
+    background-color: #92977E;
     color: white;
-    border: 1px solid #5B4048;
+    border: 1px solid #92977E;
 }   
 
 .panel {
-    background-color: #FCD1A6;
-    border: 1px solid #5B4048;
+    background-color: #DFBBB1;
+    border: 1px solid #92977E;
     border-radius: 4px;
     -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
@@ -101,13 +88,6 @@ button:hover {
     opacity: 0.8;
 }
 
-/* Extra style for the cancel button (red) */
-.cancelbtn {
-    width: auto;
-    padding: 10px 18px;
-    background-color: #f44336;
-}
-
 /* Center the avatar image inside this container */
 .imgcontainer {
     text-align: center;
@@ -120,32 +100,10 @@ img.avatar {
     border-radius: 50%;
 }
 
-/* Add padding to containers */
 .container {
     padding: 0px;
 }
 
-/* The "Forgot password" text */
-span.psw {
-    float: right;
-    padding-top: 16px;
-}
-/* -------------------------------------------------------------------------- */
-/* castaway css */
-
-.icon{
-    background-image: url("../images/drawable-hdpi/Image\ 2.png");
-    background-repeat: no-repeat;
-    background-position: center; 
-    height: 86px;
-    margin-top:60px;
-}
-
-.download-text{
-margin-top: 15px;
-font-size: 12px;
- vertical-align: middle;
-}
 
 .footer{
 margin-top: 70px;
@@ -175,10 +133,10 @@ margin-right: auto;
 .multi-steps > li.is-active:before, .multi-steps > li.is-active ~ li:before {
     content: counter(stepNum);
     font-family: inherit;
-    font-weight: 700;
+    font-weight: medium;
   }
   .multi-steps > li.is-active:after, .multi-steps > li.is-active ~ li:after {
-    background-color: #ededed;
+    background-color: #DFBBB1;
   }
   
   .multi-steps {
@@ -191,7 +149,7 @@ margin-right: auto;
     text-align: center;
     display: table-cell;
     position: relative;
-    color: #DA4316;
+    color: #FF6700;
   }
   .multi-steps > li:before {
     content: "\f00c";
@@ -209,14 +167,14 @@ margin-right: auto;
     font-weight: bold;
     border-width: 2px;
     border-style: solid;
-    border-color: #DA4316;
+    border-color: #FF6700;
     border-radius: 50%;
   }
   .multi-steps > li:after {
     content: "";
     height: 2px;
     width: 100%;
-    background-color: #DA4316;
+    background-color: #FF6700;
     position: absolute;
     top: 16px;
     left: 50%;
@@ -227,14 +185,14 @@ margin-right: auto;
   }
   .multi-steps > li.is-active:before {
     background-color: #fff;
-    border-color: #DA4316;
+    border-color: #FF6700;
   }
   .multi-steps > li.is-active ~ li {
     color: #808080;
   }
   .multi-steps > li.is-active ~ li:before {
     background-color: #ededed;
-    border-color: #ededed;
+    border-color: #DFBBB1;
   }
 
 .link-arrow-container {
@@ -263,33 +221,52 @@ margin-right: auto;
   }
   
   .profile-usertitle-email {
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: medium;
     margin-bottom: 7px;
   }
   
   .profile-usertitle-name{
-    text-transform: uppercase;
     font-size: 12px;
-    font-weight: 600;
+    font-weight: medium;
     margin-bottom: 15px;
   }
 
   .profile-shoptitle-name {
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: medium;
     margin-bottom: 7px;
   }
 
   .profile-shoptitle-title {
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: medium;
     margin-bottom: 7px;
   }
 
   .profile-shoptitle-favorites {
     font-size: 10px;
-    font-weight: 600;
+    font-weight: medium;
     margin-bottom: 7px;
+  }
+
+  .list-group-item {
+    font-size: 14px;
+    font-weight: medium;
+    padding: .5rem .75rem;
+  }
+
+  .list-group-item.active {
+      background-color: #007991;
+      border-color: #007991;
+  }
+
+  .list-group-item:focus,.list-group-item:active {
+    outline: none !important;
+    box-shadow: none;
+  }
+
+  .trello-heading {
+    margin-top:10px;
   }
   

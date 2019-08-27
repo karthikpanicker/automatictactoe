@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"io/ioutil"
 
@@ -34,6 +35,32 @@ func (hoc *httpOAuthClient) getMarshalledAPIResponse(url string, responseContain
 	err = json.Unmarshal(body, responseContainer)
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+func (hoc *httpOAuthClient) postResource(url string, resource interface{},
+	responseContainer interface{}) error {
+	token := oauth1.NewToken(hoc.accessToken, hoc.accessSecret)
+	httpClient := hoc.oauthConfig.Client(oauth1.NoContext, token)
+	requestBody, err := json.Marshal(resource)
+	if err != nil {
+		return err
+	}
+	resp, err := httpClient.Post(url, "application/json", bytes.NewReader(requestBody))
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	responseBody, _ := ioutil.ReadAll(resp.Body)
+	Info(string(responseBody))
+	//Only if respose container is passed response need to be unmarshalled
+	if responseContainer != nil {
+		responseBody, _ := ioutil.ReadAll(resp.Body)
+		err = json.Unmarshal(responseBody, responseContainer)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
