@@ -4,10 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strconv"
+	"os"
 
+	"github.com/gorilla/sessions"
 	"github.com/thedevsaddam/renderer"
 )
+
+var sessionStore = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
 
 type handlerCommon struct {
 	rnd *renderer.Render
@@ -68,11 +71,20 @@ func (hc *handlerCommon) ProcessResponse(response interface{}, w http.ResponseWr
 	w.Write(payload)
 }
 
-func (hc *handlerCommon) ExtractSessionID(r *http.Request) int {
-	cookie, err := r.Cookie("session_id")
+func (hc *handlerCommon) GetUserIDFromSession(r *http.Request) int {
+	session, err := sessionStore.Get(r, "userSession")
 	if err != nil {
 		Error(err)
 	}
-	sessionID, _ := strconv.Atoi(cookie.Value)
-	return sessionID
+	userID := session.Values["userID"].(int)
+	return userID
+}
+
+func (hc *handlerCommon) SaveUserIDInSession(r *http.Request, w http.ResponseWriter, userID int) {
+	session, err := sessionStore.Get(r, "userSession")
+	if err != nil {
+		Error(err)
+	}
+	session.Values["userID"] = userID
+	session.Save(r, w)
 }

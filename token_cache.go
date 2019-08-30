@@ -1,24 +1,24 @@
 package main
 
 type userInfo struct {
-	EmailID       string
-	UserID        int
-	EtsyDetails   etsyDetails
-	TrelloDetails trelloDetails
-	CurrentStep   int
+	EmailID       string        `bson:"emailId"`
+	UserID        int           `bson:"_id"`
+	EtsyDetails   etsyDetails   `bson:"etsyDetails"`
+	TrelloDetails trelloDetails `bson:"trelloDetails"`
+	CurrentStep   int           `bson:"currentStep"`
 }
 
 type trelloDetails struct {
-	trelloAccessToken  string
-	trelloAccessSecret string
+	TrelloAccessToken  string
+	TrelloAccessSecret string
 	TrelloBoards       []boardDetails
 	SelectedBoardID    string `json:"boardId"`
 	SelectedListID     string `json:"listId"`
 }
 
 type etsyDetails struct {
-	etsyAccessToken  string
-	etsyAccessSecret string
+	EtsyAccessToken  string
+	EtsyAccessSecret string
 	UserShopDetails  shopDetails
 	UserProfileURL   string
 	UserName         string
@@ -31,10 +31,6 @@ type shopDetails struct {
 	BannerImageURL string `json:"image_url_760x100"`
 	ShopIconURL    string `json:"icon_url_fullxfull"`
 	ShopFavorites  int    `json:"num_favorers"`
-}
-
-type userCache struct {
-	userMap map[int]userInfo
 }
 
 type boardDetails struct {
@@ -54,24 +50,27 @@ type trelloCardDetails struct {
 	Name       string `json:"name"`
 	Descripton string `json:"desc"`
 	ListID     string `json:"idList"`
-	Labels     string `json:"idLabels"`
+	Labels     string `json:"idLabels"` //expected as comma separate strings
 	URL        string `json:"urlSource"`
 }
 
-func newUserCache() *userCache {
-	uc := new(userCache)
-	uc.userMap = make(map[int]userInfo)
-	return uc
+type trelloCardDetailsResponse struct {
+	ID         string   `json:"id"`
+	Name       string   `json:"name"`
+	Descripton string   `json:"desc"`
+	ListID     string   `json:"idList"`
+	Labels     []string `json:"idLabels"` //array of labels
+	URL        string   `json:"urlSource"`
 }
 
-func (uc *userCache) saveDetailsToCache(userID int, userInfo userInfo) {
-	uc.userMap[userID] = userInfo
+func newDataCache() dataCache {
+	dc := newMongoDataCache()
+	return dc
 }
 
-func (uc *userCache) getUserInfo(userID int) userInfo {
-	return uc.userMap[userID]
-}
-
-func (uc *userCache) getUserMap() map[int]userInfo {
-	return uc.userMap
+type dataCache interface {
+	saveDetailsToCache(userID int, userInfo userInfo)
+	getUserInfo(userID int) (*userInfo, error)
+	getUserMap() map[int]userInfo
+	disconnectCache()
 }

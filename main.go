@@ -8,11 +8,12 @@ import (
 
 func main() {
 	gotenv.Load()
-	userCache := newUserCache()
+	dCache := newDataCache()
+	defer dCache.disconnectCache()
 	httpManager := newHTTPManager()
-	go httpManager.startServer(userCache, "localhost", 8900)
+	go httpManager.startServer(dCache, "localhost", 8900)
 
-	es := newEtsySynchronizer(userCache)
+	es := newEtsySynchronizer(dCache)
 	go es.processOrdersForUsers()
 
 	var wg sync.WaitGroup
