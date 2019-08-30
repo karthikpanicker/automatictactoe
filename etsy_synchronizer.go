@@ -6,19 +6,19 @@ import (
 )
 
 type etsySynchronizer struct {
-	userCache *userCache
+	dCache dataCache
 }
 
-func newEtsySynchronizer(cache *userCache) *etsySynchronizer {
+func newEtsySynchronizer(cache dataCache) *etsySynchronizer {
 	es := new(etsySynchronizer)
-	es.userCache = cache
+	es.dCache = cache
 	return es
 }
 
 func (es *etsySynchronizer) processOrdersForUsers() {
 	for {
 		edm := newEtsyDataManager()
-		userList := es.userCache.getUserMap()
+		userList := es.dCache.getUserMap()
 		for _, value := range userList {
 			orderList, err := edm.getTransactionList(value)
 			if err != nil {
@@ -44,7 +44,7 @@ func (es *etsySynchronizer) postTransactionToTrello(tranDetails transactionDetai
 		//Labels:     info.EtsyDetails.UserShopDetails.ShopName,
 		URL: tranDetails.EtsyURL,
 	}
-	tdm.addCard(info, card)
+	tdm.addCard(info, card, nil)
 }
 
 func logUserInfo(info *userInfo) {

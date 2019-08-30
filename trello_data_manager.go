@@ -7,27 +7,25 @@ import (
 	"github.com/dghubble/oauth1"
 )
 
-const (
-	trelloBaseURL = "https://api.trello.com/1/"
-)
-
 type trelloDataManager struct {
 	config               oauth1.Config
 	requestSecret        string
 	trelloConsumerKey    string
 	trelloConsumerSecret string
+	trelloBaseURL        string
 }
 
 func newTrelloDataManager() *trelloDataManager {
 	tdm := new(trelloDataManager)
+	tdm.trelloBaseURL = os.Getenv("TRELLO_API_BASE_URL")
 	tdm.config = oauth1.Config{
 		ConsumerKey:    os.Getenv("TRELLO_CONSUMER_KEY"),
 		ConsumerSecret: os.Getenv("TRELLO_CONSUMER_SECRET"),
 		CallbackURL:    "http://localhost:8900/callback-trello",
 		Endpoint: oauth1.Endpoint{
-			AccessTokenURL:  "https://trello.com/1/OAuthGetAccessToken",
-			AuthorizeURL:    "https://trello.com/1/OAuthAuthorizeToken",
-			RequestTokenURL: "https://trello.com/1/OAuthGetRequestToken",
+			AccessTokenURL:  os.Getenv("TRELLO_OAUTH_BASE_URL") + "OAuthGetAccessToken",
+			AuthorizeURL:    os.Getenv("TRELLO_OAUTH_BASE_URL") + "OAuthAuthorizeToken",
+			RequestTokenURL: os.Getenv("TRELLO_OAUTH_BASE_URL") + "OAuthGetRequestToken",
 		},
 	}
 	return tdm
@@ -50,8 +48,8 @@ func (tm *trelloDataManager) getAndPopulateTrelloDetails(r *http.Request, userIn
 		return err
 	}
 	userInfo.TrelloDetails = trelloDetails{
-		trelloAccessToken:  accessToken,
-		trelloAccessSecret: accessSecret,
+		TrelloAccessToken:  accessToken,
+		TrelloAccessSecret: accessSecret,
 	}
 
 	trelloBoardIds, _ := tm.getUserBoards(userInfo)
@@ -63,21 +61,20 @@ func (tm *trelloDataManager) getAndPopulateTrelloDetails(r *http.Request, userIn
 	return nil
 }
 
-func (tm *trelloDataManager) addCard(info *userInfo, card trelloCardDetails) error {
-	path := trelloBaseURL + "cards"
-	httpOAuthClient := newHTTPOAuthClient(info.TrelloDetails.trelloAccessToken,
-		info.TrelloDetails.trelloAccessSecret, tm.config)
-	var result string
-	err := httpOAuthClient.postResource(path, card, &result)
-	Info(result)
+func (tm *trelloDataManager) addCard(info *userInfo, card trelloCardDetails,
+	resultCard *trelloCardDetailsResponse) error {
+	path := tm.trelloBaseURL + "cards"
+	httpOAuthClient := newHTTPOAuthClient(info.TrelloDetails.TrelloAccessToken,
+		info.TrelloDetails.TrelloAccessSecret, tm.config)
+	err := httpOAuthClient.postResource(path, card, resultCard)
 	return err
 }
 
 func (tm *trelloDataManager) getUserBoards(info *userInfo) ([]string, error) {
-	path := trelloBaseURL + "members/me"
+	path := tm.trelloBaseURL + "members/me"
 	var result map[string]interface{}
-	httpOAuthClient := newHTTPOAuthClient(info.TrelloDetails.trelloAccessToken,
-		info.TrelloDetails.trelloAccessSecret, tm.config)
+	httpOAuthClient := newHTTPOAuthClient(info.TrelloDetails.TrelloAccessToken,
+		info.TrelloDetails.TrelloAccessSecret, tm.config)
 	httpOAuthClient.getMarshalledAPIResponse(path, &result)
 	boardIds := make([]string, 0)
 	for _, idBoard := range result["idBoards"].([]interface{}) {
@@ -87,19 +84,19 @@ func (tm *trelloDataManager) getUserBoards(info *userInfo) ([]string, error) {
 }
 
 func (tm *trelloDataManager) getBoardInfo(info *userInfo, boardID string) (*boardDetails, error) {
-	path := trelloBaseURL + "boards/" + boardID
+	path := tm.trelloBaseURL + "boards/" + boardID
 	var result boardDetails
-	httpOAuthClient := newHTTPOAuthClient(info.TrelloDetails.trelloAccessToken,
-		info.TrelloDetails.trelloAccessSecret, tm.config)
+	httpOAuthClient := newHTTPOAuthClient(info.TrelloDetails.TrelloAccessToken,
+		info.TrelloDetails.TrelloAccessSecret, tm.config)
 	httpOAuthClient.getMarshalledAPIResponse(path, &result)
 	return &result, nil
 }
 
 func (tm *trelloDataManager) getBoardLists(info *userInfo, boardID string) ([]boardList, error) {
-	path := trelloBaseURL + "boards/" + boardID + "/lists"
+	path := tm.trelloBaseURL + "boards/" + boardID + "/lists"
 	var result []boardList
-	httpOAuthClient := newHTTPOAuthClient(info.TrelloDetails.trelloAccessToken,
-		info.TrelloDetails.trelloAccessSecret, tm.config)
+	httpOAuthClient := newHTTPOAuthClient(info.TrelloDetails.TrelloAccessToken,
+		info.TrelloDetails.TrelloAccessSecret, tm.config)
 	httpOAuthClient.getMarshalledAPIResponse(path, &result)
 	return result, nil
 }

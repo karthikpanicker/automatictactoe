@@ -52,8 +52,6 @@ func (hoc *httpOAuthClient) postResource(url string, resource interface{},
 		return err
 	}
 	defer resp.Body.Close()
-	responseBody, _ := ioutil.ReadAll(resp.Body)
-	Info(string(responseBody))
 	//Only if respose container is passed response need to be unmarshalled
 	if responseContainer != nil {
 		responseBody, _ := ioutil.ReadAll(resp.Body)

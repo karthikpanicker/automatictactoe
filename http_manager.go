@@ -15,8 +15,8 @@ func newHTTPManager() *httpManager {
 	return &apiManager
 }
 
-func (wam *httpManager) startServer(userCache *userCache, hostIP string, hostPort int) {
-	rm := newRouteManager(userCache)
+func (wam *httpManager) startServer(dCache dataCache, hostIP string, hostPort int) {
+	rm := newRouteManager(dCache)
 	address := fmt.Sprintf("%s:%d", hostIP, hostPort)
 	Info("Starting http service at: ", address)
 	corsOpts := cors.New(cors.Options{
