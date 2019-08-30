@@ -10,7 +10,7 @@ import (
 type apiHandler struct {
 	handlerCom    *handlerCommon
 	trelloManager *trelloDataManager
-	dCache        dataCache
+	dCache        dataStore
 }
 
 type trialInfo struct {
@@ -18,7 +18,7 @@ type trialInfo struct {
 	SelectedListID  string `json:"listId"`
 }
 
-func newAPIHandler(cache dataCache) *apiHandler {
+func newAPIHandler(cache dataStore) *apiHandler {
 	ah := new(apiHandler)
 	ah.handlerCom = newHandlerCommon()
 	ah.trelloManager = newTrelloDataManager()

@@ -70,6 +70,18 @@ func (tm *trelloDataManager) addCard(info *userInfo, card trelloCardDetails,
 	return err
 }
 
+func (tm *trelloDataManager) attachImage(info *userInfo, resultCard *trelloCardDetailsResponse,
+	etsyImage etsyImageDetails) error {
+	path := tm.trelloBaseURL + "cards/" + resultCard.ID + "/attachments"
+	httpOAuthClient := newHTTPOAuthClient(info.TrelloDetails.TrelloAccessToken,
+		info.TrelloDetails.TrelloAccessSecret, tm.config)
+	err := httpOAuthClient.postResource(path, trelloImageAttachment{
+		Name: "Primary Image",
+		URL:  etsyImage.ImageURL,
+	}, nil)
+	return err
+}
+
 func (tm *trelloDataManager) getUserBoards(info *userInfo) ([]string, error) {
 	path := tm.trelloBaseURL + "members/me"
 	var result map[string]interface{}

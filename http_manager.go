@@ -15,7 +15,7 @@ func newHTTPManager() *httpManager {
 	return &apiManager
 }
 
-func (wam *httpManager) startServer(dCache dataCache, hostIP string, hostPort int) {
+func (wam *httpManager) startServer(dCache dataStore, hostIP string, hostPort int) {
 	rm := newRouteManager(dCache)
 	address := fmt.Sprintf("%s:%d", hostIP, hostPort)
 	Info("Starting http service at: ", address)

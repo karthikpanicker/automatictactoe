@@ -8,7 +8,7 @@ import (
 
 func main() {
 	gotenv.Load()
-	dCache := newDataCache()
+	dCache := newDataStore()
 	defer dCache.disconnectCache()
 	httpManager := newHTTPManager()
 	go httpManager.startServer(dCache, "localhost", 8900)

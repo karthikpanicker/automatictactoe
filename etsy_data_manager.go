@@ -17,41 +17,6 @@ type etsyDataManager struct {
 	requestSecret string
 }
 
-type etsyProfileResponse struct {
-	Count   int           `json:"count"`
-	Results []userProfile `json:"results"`
-}
-
-type etsyShopResponse struct {
-	Count   int           `json:"count"`
-	Results []shopDetails `json:"results"`
-}
-
-type etsyTransactionResponse struct {
-	Count   int                  `json:"count"`
-	Results []transactionDetails `json:"results"`
-}
-
-type transactionDetails struct {
-	ID             int    `json:"transaction_id"`
-	Title          string `json:"title"`
-	Description    string `json:"description"`
-	BuyerUserID    int    `json:"buyer_user_id"`
-	CreationTime   int64  `json:"creation_tsz"`
-	Price          string `json:"price"`
-	Currency       string `json:"currency_code"`
-	ShippingPrice  string `json:"shipping_cost"`
-	ImageListingID int    `json:"image_listing_id"`
-	EtsyURL        string `json:"url"`
-}
-
-type userProfile struct {
-	EmailID        string `json:"primary_email"`
-	EtsyUserID     int    `json:"user_id"`
-	UserProfileURL string `json:"image_url_75x75"`
-	UserName       string `json:"login_name"`
-}
-
 func newEtsyDataManager() *etsyDataManager {
 	edm := new(etsyDataManager)
 	edm.config = oauth1.Config{
@@ -140,4 +105,15 @@ func (edm *etsyDataManager) getProfileDetails(info *userInfo) error {
 	info.EtsyDetails.UserProfileURL = result.Results[0].UserProfileURL
 	info.EtsyDetails.UserName = result.Results[0].UserName
 	return nil
+}
+
+func (edm *etsyDataManager) getImageDetails(info *userInfo,
+	tranDetails etsyTransactionDetails) (etsyImageDetails, error) {
+	path := etsyBaseURL + "listings/" + strconv.Itoa(tranDetails.ListingID) +
+		"/images/" + strconv.Itoa(tranDetails.ImageListingID)
+	var result etsyImageResponse
+	httpOAuthClient := newHTTPOAuthClient(info.EtsyDetails.EtsyAccessToken,
+		info.EtsyDetails.EtsyAccessSecret, edm.config)
+	httpOAuthClient.getMarshalledAPIResponse(path, &result)
+	return result.Results[0], nil
 }

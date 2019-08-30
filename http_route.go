@@ -19,10 +19,10 @@ type routeManager struct {
 	pageHandler   *pageHandler
 	apiHandler    *apiHandler
 	Router        *mux.Router
-	dCache        dataCache
+	dCache        dataStore
 }
 
-func newRouteManager(dCache dataCache) *routeManager {
+func newRouteManager(dCache dataStore) *routeManager {
 	rm := new(routeManager)
 	rm.pageHandler = newPageHandler(dCache)
 	rm.apiHandler = newAPIHandler(dCache)

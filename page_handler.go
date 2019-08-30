@@ -10,10 +10,10 @@ type pageHandler struct {
 	requestSecret string
 	etsyManager   *etsyDataManager
 	trelloManger  *trelloDataManager
-	dCache        dataCache
+	dCache        dataStore
 }
 
-func newPageHandler(cache dataCache) *pageHandler {
+func newPageHandler(cache dataStore) *pageHandler {
 	ph := new(pageHandler)
 	ph.handlerCom = newHandlerCommon()
 	ph.etsyManager = newEtsyDataManager()

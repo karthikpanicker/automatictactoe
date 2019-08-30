@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -31,7 +32,7 @@ func newMongoDataCache() *mongoDataCache {
 }
 
 func (mdc mongoDataCache) saveDetailsToCache(userID int, info userInfo) {
-	filter := bson.D{{"_id", userID}}
+	filter := bson.D{primitive.E{Key: "_id", Value: userID}}
 	bsonDocument, _ := toDoc(info)
 	upsertValue := true
 	uOptions := options.MergeReplaceOptions()
@@ -44,7 +45,7 @@ func (mdc mongoDataCache) saveDetailsToCache(userID int, info userInfo) {
 
 func (mdc mongoDataCache) getUserInfo(userID int) (*userInfo, error) {
 	var result userInfo
-	filter := bson.D{{"_id", userID}}
+	filter := bson.D{primitive.E{Key: "_id", Value: userID}}
 	err := mdc.collection.FindOne(context.TODO(), filter).Decode(&result)
 	if err != nil {
 		Error(err)
