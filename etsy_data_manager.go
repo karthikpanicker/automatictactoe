@@ -61,17 +61,21 @@ func (edm *etsyDataManager) getUserProfileInfo(accessToken string, accessSecret 
 	result := etsyProfileResponse{}
 	httpOAuthClient := newHTTPOAuthClient(accessToken, accessSecret, edm.config)
 	httpOAuthClient.getMarshalledAPIResponse(path, &result)
-	userInfo := &userInfo{
-		EmailID: result.Results[0].EmailID,
-		UserID:  result.Results[0].EtsyUserID,
-		EtsyDetails: etsyDetails{
-			EtsyAccessToken:  accessToken,
-			EtsyAccessSecret: accessSecret,
-		},
-		CurrentStep: 1,
+	store := newDataStore()
+	info, err := store.getUserInfo(result.Results[0].EtsyUserID)
+	if err != nil || info == nil {
+		info = &userInfo{
+			EmailID: result.Results[0].EmailID,
+			UserID:  result.Results[0].EtsyUserID,
+			EtsyDetails: etsyDetails{
+				EtsyAccessToken:  accessToken,
+				EtsyAccessSecret: accessSecret,
+			},
+			CurrentStep: 1,
+		}
 	}
-	edm.getProfileDetails(userInfo)
-	return userInfo, nil
+	edm.getProfileDetails(info)
+	return info, nil
 }
 
 func (edm *etsyDataManager) getShops(info *userInfo) error {

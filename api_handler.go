@@ -52,6 +52,14 @@ func (ah *apiHandler) saveBoardAndList(w http.ResponseWriter, r *http.Request) {
 		ah.handlerCom.ProcessErrorMessage(messageInvalidBoardList, w)
 		return
 	}
+	// Mark the selected board in the list of boards as selected and mark others as unselected
+	for index, board := range info.TrelloDetails.TrelloBoards {
+		if board.ID == info.TrelloDetails.SelectedBoardID {
+			info.TrelloDetails.TrelloBoards[index].IsSelected = true
+		} else {
+			info.TrelloDetails.TrelloBoards[index].IsSelected = false
+		}
+	}
 	ah.dCache.saveDetailsToCache(userID, *info)
 	ah.handlerCom.ProcessSuccessMessage(messageSavedBoardList, w)
 }

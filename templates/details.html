@@ -70,7 +70,11 @@
                                             <h5 class="trello-heading">Boards</h5>
                                             <div class="list-group" id="boards">
                                                 {{range .TrelloDetails.TrelloBoards}}
-                                                    <button id="{{.ID}}" type="button" class="list-group-item">{{.Name}}</button>
+                                                    {{if eq .IsSelected true}}
+                                                        <button id="{{.ID}}" type="button" class="list-group-item active">{{.Name}}</button>
+                                                    {{else}}
+                                                        <button id="{{.ID}}" type="button" class="list-group-item">{{.Name}}</button>
+                                                    {{end}}
                                                 {{end}}
                                             </div>
                                         </div>

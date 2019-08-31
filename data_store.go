@@ -40,11 +40,13 @@ type boardDetails struct {
 	Description string `json:"desc"`
 	URL         string `json:"url"`
 	boardLists  []boardList
+	IsSelected  bool `json:"isSelected"`
 }
 
 type boardList struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID         string `json:"id"`
+	Name       string `json:"name"`
+	IsSelected bool   `json:"isSelected"`
 }
 
 type trelloCardDetails struct {

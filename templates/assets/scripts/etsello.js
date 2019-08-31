@@ -4,9 +4,12 @@
         loadBoardLists(boardId,$(this));
      });
      if ($('#boards button').length > 0) {
-        var firstElem = $('#boards button')[0];
-        var boardId = $(firstElem).attr('id');
-        loadBoardLists(boardId,$(firstElem));
+         var selectedElem = $('#boards button')[0];
+        if ($('#boards button.active').length > 0){
+            selectedElem = $('#boards button.active')[0];
+        }
+        var boardId = $(selectedElem).attr('id');
+        loadBoardLists(boardId,$(selectedElem));
      }
 
      $("#saveList").on("click",function(){
@@ -38,11 +41,11 @@ function loadBoardLists(boardId,selectedBoard) {
     $.get( "api/trello-boards/" + boardId + "/lists", function( boardLists ) {
         $('#boardLists button').remove();
         $.each(boardLists, function( index, list ) {
+            var activeClass = (list.isSelected) ? ' active' : '' 
             $('#boardLists').append('<button id="' + list.id 
-            + '" type="button" class="list-group-item">' + list.name + '</button>');
+            + '" type="button" class="list-group-item' + activeClass +'">' + list.name + '</button>');
         });
         if ($('#boardLists button').length > 0) {
-            $('#boardLists button').eq(0).addClass('active');
             // Bind click action on newly added items
             $('#boardLists button').on("click",function(){ 
                 $('#boardLists button').removeClass('active');

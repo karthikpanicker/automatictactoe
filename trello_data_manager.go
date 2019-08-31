@@ -41,23 +41,23 @@ func (tm *trelloDataManager) getAuthorizationURL() string {
 	return authorizationURL.String() + "&name=" + "Etsello - an etsy order capture for trello" + "&expiration=never&scope=read,write"
 }
 
-func (tm *trelloDataManager) getAndPopulateTrelloDetails(r *http.Request, userInfo *userInfo) error {
+func (tm *trelloDataManager) getAndPopulateTrelloDetails(r *http.Request, info *userInfo) error {
 	requestToken, verifier, err := oauth1.ParseAuthorizationCallback(r)
 	accessToken, accessSecret, err := tm.config.AccessToken(requestToken, tm.requestSecret, verifier)
 	if err != nil {
 		return err
 	}
-	userInfo.TrelloDetails = trelloDetails{
+	info.TrelloDetails = trelloDetails{
 		TrelloAccessToken:  accessToken,
 		TrelloAccessSecret: accessSecret,
 	}
 
-	trelloBoardIds, _ := tm.getUserBoards(userInfo)
+	trelloBoardIds, _ := tm.getUserBoards(info)
 	for _, boardID := range trelloBoardIds {
-		boardDetails, _ := tm.getBoardInfo(userInfo, boardID)
-		userInfo.TrelloDetails.TrelloBoards = append(userInfo.TrelloDetails.TrelloBoards, *boardDetails)
+		boardDetails, _ := tm.getBoardInfo(info, boardID)
+		info.TrelloDetails.TrelloBoards = append(info.TrelloDetails.TrelloBoards, *boardDetails)
 	}
-	userInfo.CurrentStep = 2
+	info.CurrentStep = 2
 	return nil
 }
 
@@ -110,5 +110,10 @@ func (tm *trelloDataManager) getBoardLists(info *userInfo, boardID string) ([]bo
 	httpOAuthClient := newHTTPOAuthClient(info.TrelloDetails.TrelloAccessToken,
 		info.TrelloDetails.TrelloAccessSecret, tm.config)
 	httpOAuthClient.getMarshalledAPIResponse(path, &result)
+	for index, list := range result {
+		if list.ID == info.TrelloDetails.SelectedListID {
+			result[index].IsSelected = true
+		}
+	}
 	return result, nil
 }

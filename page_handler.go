@@ -49,10 +49,10 @@ func (ph *pageHandler) trelloAuthorizationCallback(w http.ResponseWriter, r *htt
 	userID := ph.handlerCom.GetUserIDFromSession(r)
 	info, _ := ph.dCache.getUserInfo(userID)
 	err := ph.trelloManger.getAndPopulateTrelloDetails(r, info)
-	ph.dCache.saveDetailsToCache(info.UserID, *info)
 	if err != nil {
 		Error("Error in login page template.", err)
 	} else {
+		ph.dCache.saveDetailsToCache(info.UserID, *info)
 		ph.handlerCom.rnd.HTML(w, http.StatusOK, "details", info)
 	}
 }
