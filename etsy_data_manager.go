@@ -49,7 +49,6 @@ func (edm *etsyDataManager) getAndPopulateEtsyDetails(r *http.Request) (*userInf
 		return nil, err
 	}
 	userInfo, err := edm.getUserProfileInfo(accessToken, accessSecret)
-	edm.getShops(userInfo)
 	if err != nil {
 		return nil, err
 	}

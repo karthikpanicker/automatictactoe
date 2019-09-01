@@ -77,6 +77,12 @@ func (rm *routeManager) routeMapping() {
 			rm.pageHandler.trelloAuthorizationCallback,
 		},
 		{
+			"Show details page after successful login",
+			[]string{"GET"},
+			"/details",
+			rm.pageHandler.showDetails,
+		},
+		{
 			"Get a list of boards associated with trello",
 			[]string{"GET"},
 			"/api/trello-boards/{boardId}/lists",

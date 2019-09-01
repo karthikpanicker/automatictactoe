@@ -12,6 +12,6 @@ services:
     image: etsello
     restart: always
     ports:
-      - 8080:80
+      - 80:80
     environment:
       MONGO_URL: mongodb://mongo:27017
