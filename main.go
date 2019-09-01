@@ -11,7 +11,7 @@ func main() {
 	dCache := newDataStore()
 	defer dCache.disconnectCache()
 	httpManager := newHTTPManager()
-	go httpManager.startServer(dCache, "localhost", 8900)
+	go httpManager.startServer(dCache, "", 80)
 
 	es := newEtsySynchronizer(dCache)
 	go es.processOrdersForUsers()

@@ -21,7 +21,7 @@ func newTrelloDataManager() *trelloDataManager {
 	tdm.config = oauth1.Config{
 		ConsumerKey:    os.Getenv("TRELLO_CONSUMER_KEY"),
 		ConsumerSecret: os.Getenv("TRELLO_CONSUMER_SECRET"),
-		CallbackURL:    "http://localhost:8900/callback-trello",
+		CallbackURL:    os.Getenv("HOST_URL") + "callback-trello",
 		Endpoint: oauth1.Endpoint{
 			AccessTokenURL:  os.Getenv("TRELLO_OAUTH_BASE_URL") + "OAuthGetAccessToken",
 			AuthorizeURL:    os.Getenv("TRELLO_OAUTH_BASE_URL") + "OAuthAuthorizeToken",

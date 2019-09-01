@@ -28,6 +28,7 @@ func newMongoDataCache() *mongoDataCache {
 		Fatal(err)
 	}
 	mdc.collection = mdc.client.Database("etsello").Collection("users")
+	Info("Connected to db and created collections.")
 	return mdc
 }
 

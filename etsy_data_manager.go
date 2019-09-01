@@ -22,7 +22,7 @@ func newEtsyDataManager() *etsyDataManager {
 	edm.config = oauth1.Config{
 		ConsumerKey:    os.Getenv("ETSY_CONSUMER_KEY"),
 		ConsumerSecret: os.Getenv("ETSY_CONSUMER_SECRET"),
-		CallbackURL:    "http://localhost:8900/callback-etsy",
+		CallbackURL:    os.Getenv("HOST_URL") + "callback-etsy",
 		Endpoint: oauth1.Endpoint{
 			AccessTokenURL:  etsyBaseURL + "oauth/access_token",
 			AuthorizeURL:    "https://www.etsy.com/oauth/signin?oauth_consumer_key=" + os.Getenv("ETSY_CONSUMER_KEY") + "&service=v2_prod",
