@@ -1,6 +1,6 @@
 body
 {   
-    background-color: #EBEBEB;
+    background-color: #fff;
 }
 .bold
 {
@@ -28,13 +28,28 @@ form{
 
 .navbar {
     background-color: #fff;
+    -webkit-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.05);
+    box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.05);
+}
+li.nav-item {
+  position: relative;
+  padding: 0px 25px;
+}
+li.nav-item i{
+  font-size: 25px;
+}
+a.nav-link {
+  display: inline-block;
 }
 
 nav .navbar-nav li a{
-    color: white !important;
+    color: #000 !important;
 }
 nav .navbar-brand{
-    color: white !important;
+    /* text-shadow: 0px 6px 3px rgba(244, 98, 58, 0.61); */
+    font-size: 30px;
+    font-weight: 600;
 }
 
 .list-group {
@@ -48,16 +63,22 @@ nav .navbar-brand{
     -webkit-overflow-scrolling: touch;
 }
 
+.row.align-items-center.justify-content-center {
+  height: calc(100vh - 250px);
+}
+
 /* Set a style for all buttons */
 .etsello-button {
-    background-color:#504746;
-    color: white;
-    padding: 15px 35px;
-    margin: 20px 0;
-    border: none;
-    cursor: pointer;
-    border-radius: 6px;
-    outline: 0;
+      background-color: #fff;
+      color: #000;
+      padding: 15px 35px;
+      margin: 20px 0;
+      /* border: 33px; */
+      cursor: pointer;
+      border-radius: 40px;
+      outline: none;
+      box-shadow: none;
+      /* border-color: #d3d3d36e; */
 }
 
 .etsello-button:focus {
