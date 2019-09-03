@@ -9,7 +9,7 @@ services:
     volumes:
       - ./data:/data/db
   etsello:
-    image: etsello
+    image: karthikraveendranoss/etsello
     restart: always
     ports:
       - 80:80
