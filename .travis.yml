@@ -1,0 +1,34 @@
+language: go
+
+services:
+- docker
+
+env:
+ global:
+    - SERVER_IP_ADDRESS=207.246.89.240
+    - SERVER_USERNAME=root
+    - DOCKER_IMAGE=carmaldocker/etsello
+    - DEPLOY_DIR=/root/etsello-deploy-scripts	
+before_install:
+- eval "$(ssh-agent -s)"
+- chmod 600 ./deploy_key
+- echo -e "Host $SERVER_IP_ADDRESS\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+- ssh-add ./deploy_key
+#test ssh connection
+- ssh -i ./deploy_key $SERVER_USERNAME@$SERVER_IP_ADDRESS pwd
+# docker build steps
+- docker build --no-cache -t $DOCKER_IMAGE .
+- docker-compose up -d
+- docker ps
+
+script:
+- curl 127.0.0.1:80
+- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+- docker images
+- docker push $DOCKER_IMAGE
+
+after_success:
+- ssh -i ./deploy_key $SERVER_USERNAME@$SERVER_IP_ADDRESS mkdir -p $DEPLOY_DIR
+- scp -i ./deploy_key docker-compose.yaml etsello-deploy.sh $SERVER_USERNAME@$SERVER_IP_ADDRESS:$DEPLOY_DIR
+- ssh -i ./deploy_key $SERVER_USERNAME@$SERVER_IP_ADDRESS chmod +x $DEPLOY_DIR/etsello-deploy.sh
+- ssh -i ./deploy_key $SERVER_USERNAME@$SERVER_IP_ADDRESS $DEPLOY_DIR/etsello-deploy.sh $DOCKER_IMAGE $DEPLOY_DIR
