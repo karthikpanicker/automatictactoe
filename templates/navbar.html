@@ -1,6 +1,4 @@
 {{ define "navbar" }}
-
-
 <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
   <div class="container-fluid">
     <a class="navbar-brand" href="">Etsello</a>
@@ -19,19 +17,19 @@
          <i class="fas fa-hand-holding-usd"></i>
          <a class="nav-link " href="#">Donate</a>
        </li>
-
       </ul>
     </div>
-<div class="login-wraper">
-  <div class="login-image"></div>
-  <div class="login-text">
-    <p>arunthiruvaikkodu@gmail.com</p>
-    <span>shop</span>
-    </div>
-</div>
-
-
+    <div class="login-wraper">
+      {{if not .}}
+      {{else}}
+        <div class="login-image">
+          <img src="{{.EtsyDetails.UserProfileURL}}" alt="{{.EtsyDetails.UserName}}"/>
+        </div>
+        <div class="login-text">
+          <p>{{.EmailID}}</p>
+          <span>{{.EtsyDetails.UserShopDetails.ShopName}}</span>
+        </div>
+      {{end}}
   </div>
 </nav>
-  
 {{ end }}

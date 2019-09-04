@@ -1,0 +1,30 @@
+{{define "trello-card"}}
+    {{if not .}}
+    <div  class="cards">
+    {{else}}
+        {{ if eq (len .TrelloDetails.TrelloBoards) 0 }}
+        <div  class="cards">
+        {{else}}
+            <div  class="cards active">
+        {{end}}
+    {{end}}
+        <div class="card">
+            <div class="image-box trello-logo"></div>
+            <div class="card-body">
+                <h5 class="card-title">Trello</h5>
+                <p class="card-text">Link your trello board with etsy. A new order in etsy will 
+                    create a new card in your trello board.
+                </p>
+                {{if not .}}
+                {{else}}
+                    {{ if eq (len .TrelloDetails.TrelloBoards) 0 }}
+                        <a href="#" id="trello-authorize" class="btn btn-primary">Link to Trello</a>
+                    {{else}}
+                        <a href="#" class="btn btn-primary">Configure</a>
+                    {{end}}
+                {{end}}
+            </div>
+        </div>
+    </div>
+{{end}}
+

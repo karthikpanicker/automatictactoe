@@ -40,8 +40,6 @@
     $("#trello-authorize").on("click",function(){
         window.open('/authorize-trello','TrelloAuthorize', "width=500, height=600, top=" + top + ", left=" + left);
     });
-
-    trello-authorize
 });
 
 function loadBoardLists(boardId,selectedBoard) {

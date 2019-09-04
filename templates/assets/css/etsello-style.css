@@ -76,11 +76,9 @@ nav .navbar-brand{
   background-color: #000;
   margin-right: 5px;
   align-self: center;
-  background-image: url('../images/iusa_75x75.68533680_qr7o.jpg');
   background-repeat: no-repeat;
   background-position: center;
-background-size:cover; 
-
+  background-size:cover; 
 }
 .login-text{
       font-size: 14px;

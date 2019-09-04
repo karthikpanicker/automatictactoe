@@ -46,7 +46,7 @@ func (ph *pageHandler) etsyAuthorizationCallback(w http.ResponseWriter, r *http.
 func (ph *pageHandler) showDetails(w http.ResponseWriter, r *http.Request) {
 	userID := ph.handlerCom.GetUserIDFromSession(r)
 	info, _ := ph.dCache.getUserInfo(userID)
-	ph.handlerCom.rnd.HTML(w, http.StatusOK, "details", info)
+	ph.handlerCom.rnd.HTML(w, http.StatusOK, "home", info)
 }
 
 func (ph *pageHandler) redirectToTrello(w http.ResponseWriter, r *http.Request) {
