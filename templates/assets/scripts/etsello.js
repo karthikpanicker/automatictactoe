@@ -32,6 +32,16 @@
             }
           });
     });
+    var left  = ($(window).width()/2)-(500/2);
+    var top   = ($(window).height()/2)-(600/2);
+    $("#etsy-authorize").on("click",function(){
+        window.open('/authorize-etsy','EtsyAuthorize', "width=500, height=600, top=" + top + ", left=" + left);
+    });
+    $("#trello-authorize").on("click",function(){
+        window.open('/authorize-trello','TrelloAuthorize', "width=500, height=600, top=" + top + ", left=" + left);
+    });
+
+    trello-authorize
 });
 
 function loadBoardLists(boardId,selectedBoard) {

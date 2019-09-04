@@ -39,7 +39,7 @@ func (ph *pageHandler) etsyAuthorizationCallback(w http.ResponseWriter, r *http.
 	} else {
 		ph.dCache.saveDetailsToCache(info.UserID, *info)
 		ph.handlerCom.SaveUserIDInSession(r, w, info.UserID)
-		http.Redirect(w, r, "/details", http.StatusFound)
+		ph.handlerCom.rnd.HTML(w, http.StatusOK, "callbacksuccess", nil)
 	}
 }
 
@@ -62,6 +62,6 @@ func (ph *pageHandler) trelloAuthorizationCallback(w http.ResponseWriter, r *htt
 		ph.handlerCom.rnd.HTML(w, http.StatusOK, "details", nil)
 	} else {
 		ph.dCache.saveDetailsToCache(info.UserID, *info)
-		http.Redirect(w, r, "/details", http.StatusFound)
+		ph.handlerCom.rnd.HTML(w, http.StatusOK, "callbacksuccess", nil)
 	}
 }

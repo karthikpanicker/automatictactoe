@@ -12,11 +12,9 @@
                         <div class="panel-heading medium">Etsy Details</div>
                         <div class="panel-body">
                             {{if not .}}
-                                <form action="/authorize-etsy" method="POST" >
-                                    <div class="text-center">
-                                        <button class="etsello-button medium" type="submit">Login to Etsy</button>
-                                    </div>
-                                </form>
+                                <div class="text-center">
+                                    <button class="etsello-button medium" id ="etsy-authorize" type="submit">Login to Etsy</button>
+                                </div>
                             {{else}}
                                 <div class="row">
                                     <div class="col-md-6 col-sm-6 col-xs-6">
@@ -93,11 +91,9 @@
                                         <button class="etsello-button medium" id="saveList" type="submit">Save</button>
                                     </div>
                                     {{else}}
-                                        <form action="/authorize-trello" method="POST" >
-                                            <div class="text-center">
-                                                <button class="etsello-button medium" type="submit">Login to Trello</button>
-                                            </div>
-                                        </form>
+                                        <div class="text-center">
+                                            <button class="etsello-button medium" id="trello-authorize" type="submit">Login to Trello</button>
+                                        </div>            
                                     {{end}}
                                 </div>
                             </div>

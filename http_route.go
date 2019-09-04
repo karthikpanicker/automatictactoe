@@ -54,7 +54,7 @@ func (rm *routeManager) routeMapping() {
 		},
 		{
 			"Etsy login page",
-			[]string{"POST"},
+			[]string{"GET"},
 			"/authorize-etsy",
 			rm.pageHandler.redirectToEtsy,
 		},
@@ -66,7 +66,7 @@ func (rm *routeManager) routeMapping() {
 		},
 		{
 			"Redirection to trello for authorizaton",
-			[]string{"POST"},
+			[]string{"GET"},
 			"/authorize-trello",
 			rm.pageHandler.redirectToTrello,
 		},
