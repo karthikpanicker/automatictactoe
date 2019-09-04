@@ -128,8 +128,22 @@ background-size:cover;
           z-index: 1;
           /* background-color: #FF6700; */
           line-height: 1;
+}
+.image-box{
+
+      height: 200px;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: 100% 100%;
 
 
+}
+
+.trello-logo{
+  background-image: url('../images/Trello-icon.png');
+}
+.etsy-logo{
+  background-image: url('../images/etsy.png');
 }
 
 
