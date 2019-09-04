@@ -4,17 +4,26 @@
     {{ template "header" }}
     <body>
         {{ template "navbar" }}
-        {{template "multistep-progress" .}}
-        <div class="container">
+        <!-- {{template "multistep-progress" .}} -->
+        <section class="landing-page">
+        <div class="container ">
             <div class="row align-items-center justify-content-center">
                 <div class="col-md-8 col-sm-8 col-xs-8">
-                    <div class="text-center panel panel-primary">
-                        <div class="panel-heading medium">Etsy Details</div>
-                        <div class="panel-body">
+
+                    <!-- <h2>Heading</h2>
+                    <p class="mb-5">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                        labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                        laboris nisi ut aliquip ex ea commodo consequat."</p> -->
+                    <!-- <div class="text-center panel panel-primary"> -->
+                        <!-- <div class="panel-heading medium">Etsy Details</div> -->
+                        <!-- <div class="panel-body"> -->
                             {{if not .}}
-                                <div class="text-center">
-                                    <button class="etsello-button medium" id ="etsy-authorize" type="submit">Login to Etsy</button>
-                                </div>
+                                <form action="/authorize-etsy" method="POST" >
+                                    <div class="text-center pt-5">
+                                        <button class="etsello-button btn btn-outline-secondary" type="submit">Login to
+                                            Etsy</button>
+                                    </div>
+                                </form>
                             {{else}}
                                 <div class="row">
                                     <div class="col-md-6 col-sm-6 col-xs-6">
@@ -98,6 +107,41 @@
                                 </div>
                             </div>
                         </div>
+                        </section>
+
+    
+                        <div class="container">
+
+<section class="trello-details d-flex justify-content-center">
+<div class="panel-wraper col-lg-5">
+    <h5 class="card-title text-center">Boards</h5>
+ <div class="card board-list ">
+     <div class="card-body">
+         <button id="5d6e1a624be6b15120154052" type="button" class="list-group-item active">etsy</button>
+          <button id="5d6e1a624be6b15120154052" type="button" class="list-group-item ">etsy</button>
+  
+     </div>
+ </div>
+</div>
+<div class="panel-wraper col-lg-5">
+    <h5 class="card-title text-center">Lists</h5>
+    <div class="card board-list ">
+        <div class="card-body">
+            <button id="5d6e1a62b2a30d116978e56d" type="button" class="list-group-item active">Things To Do</button>
+            <button id="5d6e1a627852d537d8b5d023" type="button" class="list-group-item">Doing</button>
+            <button id="5d6e1a637dcd4d70d6df68f4" type="button" class="list-group-item">Done</button>
+            <button id="5d6e1a627852d537d8b5d023" type="button" class="list-group-item">Doing</button>
+            <button id="5d6e1a637dcd4d70d6df68f4" type="button" class="list-group-item">Done</button>
+        </div>
+    </div>
+</div>
+
+    </div>
+     <div class="text-center">
+         <button class="etsello-button btn btn-outline-secondary" type="submit">
+            Save</button>
+     </div>
+</section>
                     {{end}}
                 </div>
             </div>

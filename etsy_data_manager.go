@@ -83,7 +83,7 @@ func (edm *etsyDataManager) getShops(info *userInfo) error {
 	httpOAuthClient := newHTTPOAuthClient(info.EtsyDetails.EtsyAccessToken,
 		info.EtsyDetails.EtsyAccessSecret, edm.config)
 	httpOAuthClient.getMarshalledAPIResponse(path, &result)
-	info.EtsyDetails.UserShopDetails = result.Results[0]
+	//info.EtsyDetails.UserShopDetails = result.Results[0]
 	return nil
 }
 
