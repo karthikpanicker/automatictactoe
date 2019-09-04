@@ -19,7 +19,7 @@ before_install:
 - docker-compose up -d
 - docker ps
 script:
-- curl 127.0.0.1:80
+- curl 127.0.0.1:8000
 - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 - docker images
 - docker push $DOCKER_IMAGE
