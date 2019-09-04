@@ -23,7 +23,7 @@ func newPageHandler(cache dataStore) *pageHandler {
 }
 
 func (ph *pageHandler) getLoginPage(w http.ResponseWriter, r *http.Request) {
-	ph.handlerCom.rnd.HTML(w, http.StatusOK, "details", nil)
+	ph.handlerCom.rnd.HTML(w, http.StatusOK, "home", nil)
 }
 
 func (ph *pageHandler) redirectToEtsy(w http.ResponseWriter, r *http.Request) {
