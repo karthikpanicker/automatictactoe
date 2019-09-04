@@ -15,3 +15,7 @@ services:
       - 80:80
     environment:
       MONGO_URL: mongodb://mongo:27017
+      ETSY_CONSUMER_KEY:
+      ETSY_CONSUMER_SECRET:
+      TRELLO_CONSUMER_KEY:
+      TRELLO_CONSUMER_SECRET:
