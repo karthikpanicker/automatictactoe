@@ -3,7 +3,7 @@
 
 DOCKER_IMAGE=$1
 BUILD_DIR=$2
-
+TRELLO_CONSUMER_SECRET=$3
 executor()
 {
 cd $BUILD_DIR
@@ -12,7 +12,7 @@ docker-compose down
 docker rmi -f $(docker images | grep $DOCKER_IMAGE | tr -s ' ' | cut -d ' ' -f 3)
 docker images
 docker-compose pull --quiet
-docker-compose up -d --force-recreate
+TRELLO_CONSUMER_SECRET=$TRELLO_CONSUMER_SECRET docker-compose up -d --force-recreate
 }
 
 executor
