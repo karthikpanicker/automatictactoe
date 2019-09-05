@@ -75,10 +75,14 @@ nav .navbar-brand{
   border-radius: 50%;
   background-color: #000;
   margin-right: 5px;
+  overflow: hidden;
   align-self: center;
   background-repeat: no-repeat;
   background-position: center;
   background-size:cover; 
+}
+.login-image img{
+  width: 100%;
 }
 .login-text{
       font-size: 14px;
