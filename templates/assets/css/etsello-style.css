@@ -147,6 +147,17 @@ nav .navbar-brand{
 .etsy-logo{
   background-image: url('../images/etsy.png');
 }
+.todoist-logo{
+  background-image: url('../images/todoist.png');
+}
+
+.wunderlist-logo{
+  background-image: url('../images/wunderlist.png');
+}
+
+.custom-logo{
+  background-image: url('../images/idea.png');
+}
 
 
 

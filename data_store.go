@@ -112,6 +112,10 @@ type etsyUserProfile struct {
 	EtsyUserID     int    `json:"user_id"`
 	UserProfileURL string `json:"image_url_75x75"`
 	UserName       string `json:"login_name"`
+	FirstName      string `json:"first_name"`
+	LastName       string `json:"last_name"`
+	Region         string `json:"region"`
+	City           string `json:"city"`
 }
 
 type trelloImageAttachment struct {

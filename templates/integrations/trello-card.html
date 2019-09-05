@@ -1,0 +1,51 @@
+{{define "trello-card"}}
+    {{if not .}}
+    <div  class="cards">
+    {{else}}
+        {{ if eq (len .TrelloDetails.TrelloBoards) 0 }}
+        <div  class="cards">
+        {{else}}
+            <div  class="cards active">
+        {{end}}
+    {{end}}
+        <div class="card">
+            <div class="image-box trello-logo"></div>
+            <div class="card-body">
+                <h5 class="card-title">Trello</h5>
+                <p class="card-text">Link your trello board with etsy. A new order in etsy will 
+                    create a new card in your trello board.
+                </p>
+                {{if not .}}
+                {{else}}
+                    {{ if eq (len .TrelloDetails.TrelloBoards) 0 }}
+                        <a href="#" id="trello-authorize" class="btn btn-primary">Link to Trello</a>
+                    {{else}}
+                        <a href="#" data-toggle="modal" data-target="#configurationModal" 
+                            class="btn btn-primary">Configure</a>
+                    {{end}}
+                {{end}}
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="configurationModal" tabindex="-1" 
+        role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Boards & Lists
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{{end}}
+
