@@ -512,7 +512,7 @@ margin-right: auto;
  }
 
  .card-btn.active {
-   display: block;
+   display: inline-block;
  }
 .card-title{
    font-size: 20px;

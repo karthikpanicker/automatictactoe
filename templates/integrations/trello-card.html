@@ -21,9 +21,9 @@
                 {{if not .}}
                 {{else}}
                     {{ if eq (len .TrelloDetails.TrelloBoards) 0 }}
-                    <span type="button" class="btn btn-outline-primary card-btn ">Link to Trello</span>
+                    <span  class="btn btn-outline-primary card-btn ">Link to Trello</span>
                     {{else}}
-                    <span type="button" data-toggle="modal" data-target="#configurationModal"
+                    <span  data-toggle="modal" data-target="#configurationModal"
                         class="btn btn-outline-success card-btn active">Configure</span>
                     {{end}}
                 {{end}}
