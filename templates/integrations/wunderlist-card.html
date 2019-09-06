@@ -1,12 +1,24 @@
 {{define "wunderlist-card"}}
-    <div class="cards">
-        <div class="card">
-            <div class="image-box wunderlist-logo"></div>
-            <div class="card-body">
-                <h5 class="card-title">Wunderlist</h5>
-                <p class="card-text">Link to your wunderlist account to receive new orders as todo items in wunderlist.</p>
-                <a href="#" class="btn btn-primary">Link to Wunderlist</a>
+
+
+<div class="card text-center">
+    <a href="" class="tag">
+        <div class="card-icon wunderlist-logo "></div>
+        <h3 class="card-title"> Wunderlist</h3>
+            <div class="text-container">
+                <p class="card-content" data-title="">Link to your wunderlist account to receive new orders as todo
+                    items in
+                    wunderlist.</p>
             </div>
+            
+    
+        
+        <div class="btn-wraper">
+            <span type="button" class="btn btn-outline-primary card-btn ">Link to Wunderlist</span>
+            <span type="button" class="btn btn-outline-success card-btn active">Configure</span>
         </div>
-    </div>
+
+</div>
+
+
 {{end}}

@@ -1,31 +1,34 @@
 {{define "trello-card"}}
     {{if not .}}
-    <div  class="cards">
+    <div class="card text-center">
     {{else}}
         {{ if eq (len .TrelloDetails.TrelloBoards) 0 }}
-        <div  class="cards">
+        <div class="card text-center">
         {{else}}
-            <div  class="cards active">
+            <div class="card text-center active">
         {{end}}
     {{end}}
-        <div class="card">
-            <div class="image-box trello-logo"></div>
-            <div class="card-body">
-                <h5 class="card-title">Trello</h5>
-                <p class="card-text">Link your trello board with etsy. A new order in etsy will 
-                    create a new card in your trello board.
-                </p>
+        <span href="" class="tag">
+            <div class="card-icon trello-logo ">
+            </div>
+            <h3 class="card-title"> Trello</h3>
+            <div class="text-container">
+                  <p class="card-content" data-title="">Link your trello board with etsy. A new order in etsy will
+                      create a new card in your trello board.</p>
+            </div>
+          
+            <div class="btn-wraper">
                 {{if not .}}
                 {{else}}
                     {{ if eq (len .TrelloDetails.TrelloBoards) 0 }}
-                        <a href="#" id="trello-authorize" class="btn btn-primary">Link to Trello</a>
+                    <span type="button" class="btn btn-outline-primary card-btn ">Link to Trello</span>
                     {{else}}
-                        <a href="#" data-toggle="modal" data-target="#configurationModal" 
-                            class="btn btn-primary">Configure</a>
+                    <span type="button" data-toggle="modal" data-target="#configurationModal"
+                        class="btn btn-outline-success card-btn active">Configure</span>
                     {{end}}
                 {{end}}
             </div>
-        </div>
+        </a>
     </div>
     <div class="modal fade" id="configurationModal" tabindex="-1" 
         role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
