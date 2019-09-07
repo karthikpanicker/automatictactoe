@@ -32,6 +32,7 @@ func (hoc *httpOAuthClient) getMarshalledAPIResponse(url string, responseContain
 	}
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
+	Info(string(body))
 	err = json.Unmarshal(body, responseContainer)
 	if err != nil {
 		return err

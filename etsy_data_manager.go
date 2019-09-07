@@ -82,13 +82,13 @@ func (edm *etsyDataManager) getUserProfileInfo(accessToken string, accessSecret 
 	return info, nil
 }
 
-func (edm *etsyDataManager) getShops(info *userInfo) error {
+func (edm *etsyDataManager) getShops(info *userInfo) (shopDetails, error) {
 	path := etsyBaseURL + "/users/" + strconv.Itoa(info.UserID) + "/shops"
 	var result etsyShopResponse
 	httpOAuthClient := newHTTPOAuthClient(info.EtsyDetails.EtsyAccessToken,
 		info.EtsyDetails.EtsyAccessSecret, edm.config)
 	httpOAuthClient.getMarshalledAPIResponse(path, &result)
-	return nil
+	return result.Results[0], nil
 }
 
 func (edm *etsyDataManager) getTransactionList(info userInfo) (*etsyTransactionResponse, error) {

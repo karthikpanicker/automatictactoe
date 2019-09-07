@@ -40,39 +40,56 @@ func (es *etsySynchronizer) processOrdersForUsers() {
 			userDetails.EtsyDetails.LastProcessedTrasactionID = lptID
 			es.dCache.saveDetailsToCache(userDetails.UserID, userDetails)
 		}
-		time.Sleep(time.Second * 30)
+		time.Sleep(time.Second * 300)
 	}
 }
 
 func (es *etsySynchronizer) postTransactionToTrello(tranDetails etsyTransactionDetails,
 	info *userInfo, buyerProfile *etsyUserProfile) {
 	tdm := newTrelloDataManager()
-	edm := newEtsyDataManager()
-	imageDetails, _ := edm.getImageDetails(info, tranDetails)
 	card := trelloCardDetails{
-		Name:       tranDetails.Title,
-		Descripton: es.formattedDescriptionWithMarkDown(tranDetails, buyerProfile),
-		ListID:     info.TrelloDetails.SelectedListID,
-		URL:        tranDetails.EtsyURL,
+		Name:   tranDetails.Title,
+		ListID: info.TrelloDetails.SelectedListID,
+	}
+	if contains(info.TrelloDetails.FieldsToUse, "listing_desc") {
+		card.Descripton = es.formattedDescriptionWithMarkDown(tranDetails, buyerProfile, info)
+	}
+	if contains(info.TrelloDetails.FieldsToUse, "listing_link") {
+		card.URL = tranDetails.EtsyURL
 	}
 	var resultCard trelloCardDetailsResponse
 	tdm.addCard(info, card, &resultCard)
-	tdm.attachImage(info, &resultCard, imageDetails)
+	if contains(info.TrelloDetails.FieldsToUse, "listing_image") {
+		edm := newEtsyDataManager()
+		imageDetails, _ := edm.getImageDetails(info, tranDetails)
+		tdm.attachImage(info, &resultCard, imageDetails)
+	}
 }
 
 func (es *etsySynchronizer) formattedDescriptionWithMarkDown(tranDetails etsyTransactionDetails,
-	buyerProfile *etsyUserProfile) string {
+	buyerProfile *etsyUserProfile, info *userInfo) string {
 	var sb strings.Builder
 	sb.WriteString(tranDetails.Description)
 	sb.WriteString("\n\n")
-	sb.WriteString("Buyer Details\n")
-	sb.WriteString("--------------\n")
-	sb.WriteString(buyerProfile.FirstName)
-	sb.WriteString(" ")
-	sb.WriteString(buyerProfile.LastName)
-	sb.WriteString("\n")
-	sb.WriteString(buyerProfile.Region)
-	sb.WriteString(", ")
-	sb.WriteString(buyerProfile.City)
+	if contains(info.TrelloDetails.FieldsToUse, "listing_buy_profile") && buyerProfile != nil {
+		sb.WriteString("Buyer Details\n")
+		sb.WriteString("--------------\n")
+		sb.WriteString(buyerProfile.FirstName)
+		sb.WriteString(" ")
+		sb.WriteString(buyerProfile.LastName)
+		sb.WriteString("\n")
+		sb.WriteString(buyerProfile.Region)
+		sb.WriteString(", ")
+		sb.WriteString(buyerProfile.City)
+	}
 	return sb.String()
+}
+
+func contains(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
 }

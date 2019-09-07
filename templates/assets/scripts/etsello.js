@@ -21,10 +21,23 @@
         }
         var bId = $('#boards button').filter('.active').attr('id');
         var lId = $('#boardLists button').filter('.active').attr('id');
+        var fields = []
+        if ($('#listing_desc').prop("checked")){
+            fields.push("listing_desc");
+        }
+        if ($('#listing_image').prop("checked")){
+            fields.push("listing_image");
+        }
+        if ($('#listing_buy_profile').prop("checked")){
+            fields.push("listing_buy_profile");
+        }
+        if ($('#listing_link').prop("checked")){
+            fields.push("listing_link");
+        }
         $.ajax({
             type: "POST",
             url: "api/user-info",
-            data: JSON.stringify({"boardId": bId, "listId": lId}),
+            data: JSON.stringify({"boardId": bId, "listId": lId, "fieldsToUse": fields}),
             success: function(data){
                 setTimeout(function () {
                     $this.html($this.data('original-text'));

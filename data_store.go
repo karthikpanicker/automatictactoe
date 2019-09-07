@@ -12,8 +12,9 @@ type trelloDetails struct {
 	TrelloAccessToken  string
 	TrelloAccessSecret string
 	TrelloBoards       []boardDetails
-	SelectedBoardID    string `json:"boardId"`
-	SelectedListID     string `json:"listId"`
+	SelectedBoardID    string   `json:"boardId"`
+	SelectedListID     string   `json:"listId"`
+	FieldsToUse        []string `json:"fieldsToUse"`
 }
 
 type etsyDetails struct {
