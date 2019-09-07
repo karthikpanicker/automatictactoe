@@ -53,6 +53,11 @@
     $("#trello-authorize").on("click",function(){
         window.open('/authorize-trello','TrelloAuthorize', "width=500, height=600, top=" + top + ", left=" + left);
     });
+
+    $('.github-link').on("click",function(e){
+        e.preventDefault(); 
+        window.open('https://github.com/karthikpanicker/etsello','_blank');
+    });
 });
 
 function loadBoardLists(boardId,selectedBoard) {

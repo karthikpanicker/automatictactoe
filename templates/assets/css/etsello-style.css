@@ -158,9 +158,6 @@ nav .navbar-brand{
   background-image: url('../images/idea.png');
 }
 
-
-
-
 /* Set a style for all buttons */
 .etsello-button {
         
@@ -611,4 +608,8 @@ fieldset.border-set {
   margin: 0 0 1.5em 0 !important;
   -webkit-box-shadow:  0px 0px 0px 0px #000;
           box-shadow:  0px 0px 0px 0px #000;
+}
+
+.coming-soon {
+  background-image: url('../images/coming-soon.png');
 }
