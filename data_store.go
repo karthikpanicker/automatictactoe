@@ -5,7 +5,7 @@ type userInfo struct {
 	UserID        int           `bson:"_id"`
 	EtsyDetails   etsyDetails   `bson:"etsyDetails"`
 	TrelloDetails trelloDetails `bson:"trelloDetails"`
-	CurrentStep   int           `bson:"currentStep"`
+	GTasksDetails gTasksDetails `bson:"gTaksksDetails"`
 }
 
 type trelloDetails struct {
@@ -15,6 +15,8 @@ type trelloDetails struct {
 	SelectedBoardID    string   `json:"boardId"`
 	SelectedListID     string   `json:"listId"`
 	FieldsToUse        []string `json:"fieldsToUse"`
+	IsLinked           bool     `json:"isLinked"`
+	fromDate           int
 }
 
 type etsyDetails struct {
@@ -24,6 +26,12 @@ type etsyDetails struct {
 	UserProfileURL            string
 	UserName                  string
 	LastProcessedTrasactionID int
+}
+
+type gTasksDetails struct {
+	Token              string
+	SelectedTaskListID string
+	IsLinked           bool
 }
 
 type shopDetails struct {

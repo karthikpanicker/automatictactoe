@@ -70,7 +70,6 @@ func (edm *etsyDataManager) getUserProfileInfo(accessToken string, accessSecret 
 				EtsyAccessToken:  accessToken,
 				EtsyAccessSecret: accessSecret,
 			},
-			CurrentStep: 1,
 		}
 	}
 	profileDetails, err := edm.getProfileDetails(info.UserID, info)

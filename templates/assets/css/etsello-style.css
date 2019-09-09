@@ -100,8 +100,8 @@ nav .navbar-brand{
     margin-left: 10px;
     margin-top: 10px;
     margin-right: 10px;
-    max-height: 150px;
-    height: 150px;
+    max-height: 100px;
+    height: 100px;
     overflow:scroll;
     -webkit-overflow-scrolling: touch;
 }
@@ -156,6 +156,10 @@ nav .navbar-brand{
 
 .custom-logo{
   background-image: url('../images/idea.png');
+}
+
+.gtask-logo{
+  background-image: url('../images/google-tasks.png');
 }
 
 /* Set a style for all buttons */
@@ -534,8 +538,10 @@ margin-right: auto;
 .checkbox label {
   display: inline-block;
   position: relative;
-  padding-left: 5px; }
-  .checkbox label::before {
+  padding-left: 5px;
+  font-size: 14px;
+ }
+.checkbox label::before {
     content: "";
     display: inline-block;
     position: absolute;
@@ -612,4 +618,8 @@ fieldset.border-set {
 
 .coming-soon {
   background-image: url('../images/coming-soon.png');
+}
+
+.radio-label {
+  font-size: 14px;
 }

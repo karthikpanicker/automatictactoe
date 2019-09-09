@@ -1,12 +1,8 @@
 {{define "trello-card"}}
-    {{if not .}}
-    <div class="card text-center">
+    {{ if .TrelloDetails.IsLinked }}
+        <div class="card text-center active">
     {{else}}
-        {{ if eq (len .TrelloDetails.TrelloBoards) 0 }}
         <div class="card text-center">
-        {{else}}
-            <div class="card text-center active">
-        {{end}}
     {{end}}
         <span href="" class="tag">
             <div class="card-icon trello-logo ">
@@ -18,14 +14,11 @@
             </div>
           
             <div class="btn-wraper">
-                {{if not .}}
-                {{else}}
-                    {{ if eq (len .TrelloDetails.TrelloBoards) 0 }}
-                    <span  id="trello-authorize" class="btn btn-outline-primary card-btn ">Link to Trello</span>
-                    {{else}}
+                {{ if .TrelloDetails.IsLinked }}
                     <span  data-toggle="modal" data-target="#configurationModal"
                         class="btn btn-outline-success card-btn active">Configure</span>
-                    {{end}}
+                {{else if .UserID}}
+                    <span  id="trello-authorize" class="btn btn-outline-primary card-btn ">Link to Trello</span>
                 {{end}}
             </div>
         </a>
@@ -60,8 +53,8 @@
                             </div>
                         </div>
                     </fieldset>
-                    <div class="row mt-5">
-                        <div class="col-md-10">
+                    <div class="row mt-1">
+                        <div class="col-md-12">
                             <fieldset class="border-set">
                                 <legend class="border-set regular">Etsy fields to be used in trello card</legend>
                                 <div class="checkbox checkbox-success">
@@ -87,6 +80,33 @@
                                     <label for="listing_link">
                                             Link to etsy transaction
                                                 </label>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                    <div class="row mt-1">
+                        <div class="col-md-12">
+                            <fieldset id="trello-radio-set" class="border-set">
+                                <legend class="border-set regular">Sync transactions</legend>
+                                <div class="form-check-inline">
+                                <label class="form-check-label radio-label">
+                                    <input type="radio" class="form-check-input" name="optradio" value="1" checked>In the future
+                                </label>
+                                </div>
+                                <div class="form-check-inline">
+                                <label class="form-check-label radio-label">
+                                    <input type="radio" class="form-check-input" name="optradio" value="2">From past month
+                                </label>
+                                </div>
+                                <div class="form-check-inline">
+                                <label class="form-check-label radio-label">
+                                    <input type="radio" class="form-check-input" name="optradio" value="3">From past week
+                                </label>
+                                </div>
+                                <div class="form-check-inline">
+                                <label class="form-check-label radio-label">
+                                    <input type="radio" class="form-check-input" name="optradio" value="4">That are not shipped yet
+                                </label>
                                 </div>
                             </fieldset>
                         </div>

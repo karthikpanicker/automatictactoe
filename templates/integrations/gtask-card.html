@@ -1,0 +1,23 @@
+{{define "gtasks-card"}}
+    {{ if .GTasksDetails.IsLinked }}
+        <div class="card text-center active">
+    {{else}}
+        <div class="card text-center">
+    {{end}}
+    <a href="" class="tag">
+        <div class="card-icon gtask-logo"></div>
+        <h3 class="card-title"> Todoist</h3>
+        <div class="text-container">
+        <p class="card-content" data-title="">Link to your google tasks account to receive 
+            new orders as todo items in google tasks.</p>
+        </div>
+        <div class="btn-wraper">
+            {{ if .GTasksDetails.IsLinked }}
+                <span class="btn btn-outline-success card-btn active">Configure</span>
+            {{else if .UserID}}
+                <span class="btn btn-outline-primary card-btn" id="gtask-authorize">Link to Google Tasks</span>
+            {{end}}
+        </div>
+    </a>
+</div>
+{{end}}

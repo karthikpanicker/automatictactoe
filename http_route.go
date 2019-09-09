@@ -94,5 +94,17 @@ func (rm *routeManager) routeMapping() {
 			"/api/user-info",
 			rm.apiHandler.saveBoardAndList,
 		},
+		{
+			"Redirection to google for authorizaton",
+			[]string{"GET"},
+			"/authorize-gtask",
+			rm.pageHandler.redirectToGTask,
+		},
+		{
+			"Callback from google after successful authorization",
+			[]string{"GET"},
+			"/callback-google",
+			rm.pageHandler.gTasksAuthorizationCallback,
+		},
 	}
 }

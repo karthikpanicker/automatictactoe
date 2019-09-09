@@ -34,10 +34,12 @@
         if ($('#listing_link').prop("checked")){
             fields.push("listing_link");
         }
+        var transactionFilter = $('#trello-radio-set input:radio:checked').val();
         $.ajax({
             type: "POST",
             url: "api/user-info",
-            data: JSON.stringify({"boardId": bId, "listId": lId, "fieldsToUse": fields}),
+            data: JSON.stringify({"boardId": bId, "listId": lId,
+                "fieldsToUse": fields, "transactionFilter": transactionFilter}),
             success: function(data){
                 setTimeout(function () {
                     $this.html($this.data('original-text'));
@@ -57,6 +59,10 @@
     $('.github-link').on("click",function(e){
         e.preventDefault(); 
         window.open('https://github.com/karthikpanicker/etsello','_blank');
+    });
+
+    $("#gtask-authorize").on("click",function(){
+        window.open('/authorize-gtask','GoogleAuthorize', "width=500, height=600, top=" + top + ", left=" + left);
     });
 });
 

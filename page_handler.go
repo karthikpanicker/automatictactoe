@@ -10,6 +10,7 @@ type pageHandler struct {
 	requestSecret string
 	etsyManager   *etsyDataManager
 	trelloManger  *trelloDataManager
+	gTaskManager  *gTasksDataManager
 	dCache        dataStore
 }
 
@@ -18,6 +19,7 @@ func newPageHandler(cache dataStore) *pageHandler {
 	ph.handlerCom = newHandlerCommon()
 	ph.etsyManager = newEtsyDataManager()
 	ph.trelloManger = newTrelloDataManager()
+	ph.gTaskManager = newGTasksDataManager()
 	ph.dCache = cache
 	return ph
 }
@@ -47,7 +49,7 @@ func (ph *pageHandler) showDetails(w http.ResponseWriter, r *http.Request) {
 	userID := ph.handlerCom.GetUserIDFromSession(r)
 	info, err := ph.dCache.getUserInfo(userID)
 	if err != nil {
-		ph.handlerCom.rnd.HTML(w, http.StatusOK, "home", nil)
+		ph.handlerCom.rnd.HTML(w, http.StatusOK, "home", userInfo{})
 	}
 	ph.handlerCom.rnd.HTML(w, http.StatusOK, "home", info)
 }
@@ -62,7 +64,25 @@ func (ph *pageHandler) trelloAuthorizationCallback(w http.ResponseWriter, r *htt
 	err := ph.trelloManger.getAndPopulateTrelloDetails(r, info)
 	if err != nil {
 		Error("Error in login page template.", err)
-		ph.handlerCom.rnd.HTML(w, http.StatusOK, "details", nil)
+		ph.handlerCom.rnd.HTML(w, http.StatusOK, "details", userInfo{})
+	} else {
+		ph.dCache.saveDetailsToCache(info.UserID, *info)
+		ph.handlerCom.rnd.HTML(w, http.StatusOK, "callbacksuccess", nil)
+	}
+}
+
+func (ph *pageHandler) redirectToGTask(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, ph.gTaskManager.getAuthorizationURL(), http.StatusFound)
+}
+
+func (ph *pageHandler) gTasksAuthorizationCallback(w http.ResponseWriter, r *http.Request) {
+	userID := ph.handlerCom.GetUserIDFromSession(r)
+	info, _ := ph.dCache.getUserInfo(userID)
+	code := r.URL.Query().Get("code")
+	err := ph.gTaskManager.getAndPopulateGTasksDetails(code, info)
+	if err != nil {
+		Error("Error in login page template.", err)
+		ph.handlerCom.rnd.HTML(w, http.StatusOK, "details", userInfo{})
 	} else {
 		ph.dCache.saveDetailsToCache(info.UserID, *info)
 		ph.handlerCom.rnd.HTML(w, http.StatusOK, "callbacksuccess", nil)
