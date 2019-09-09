@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -59,6 +60,19 @@ func (ah *apiHandler) saveBoardAndList(w http.ResponseWriter, r *http.Request) {
 		} else {
 			info.TrelloDetails.TrelloBoards[index].IsSelected = false
 		}
+	}
+	switch info.TrelloDetails.TransactionFilter {
+	case 1:
+		info.TrelloDetails.FromDate = int(time.Now().Unix())
+		break
+	case 2:
+		info.TrelloDetails.FromDate = int(time.Now().AddDate(0, -1, 0).Unix())
+		break
+	case 3:
+		info.TrelloDetails.FromDate = int(time.Now().AddDate(0, 0, -7).Unix())
+		break
+	case 4:
+		info.TrelloDetails.FromDate = 0
 	}
 	ah.dCache.saveDetailsToCache(userID, *info)
 	ah.handlerCom.ProcessSuccessMessage(messageSavedBoardList, w)

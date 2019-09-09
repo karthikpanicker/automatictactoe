@@ -31,7 +31,8 @@ func (es *etsySynchronizer) processOrdersForUsers() {
 			lptID := userDetails.EtsyDetails.LastProcessedTrasactionID
 			for i := len(orderList.Results) - 1; i >= 0; i-- {
 				etsyTransaction := orderList.Results[i]
-				if etsyTransaction.ID > lptID && etsyTransaction.ShippedTime == 0 {
+				if etsyTransaction.ID > lptID && etsyTransaction.ShippedTime == 0 &&
+					etsyTransaction.PaidTime > userDetails.TrelloDetails.FromDate {
 					buyerProfile, _ := edm.getProfileDetails(etsyTransaction.BuyerUserID, &userDetails)
 					es.postTransactionToTrello(etsyTransaction, &userDetails, buyerProfile)
 					lptID = etsyTransaction.ID

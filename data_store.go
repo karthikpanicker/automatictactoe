@@ -16,7 +16,8 @@ type trelloDetails struct {
 	SelectedListID     string   `json:"listId"`
 	FieldsToUse        []string `json:"fieldsToUse"`
 	IsLinked           bool     `json:"isLinked"`
-	fromDate           int
+	TransactionFilter  int      `json:"transactionFilter"`
+	FromDate           int
 }
 
 type etsyDetails struct {
@@ -107,6 +108,7 @@ type etsyTransactionDetails struct {
 	Description    string `json:"description"`
 	BuyerUserID    int    `json:"buyer_user_id"`
 	CreationTime   int    `json:"creation_tsz"`
+	PaidTime       int    `json:"paid_tsz"`
 	Price          string `json:"price"`
 	Currency       string `json:"currency_code"`
 	ShippingPrice  string `json:"shipping_cost"`

@@ -34,7 +34,7 @@
         if ($('#listing_link').prop("checked")){
             fields.push("listing_link");
         }
-        var transactionFilter = $('#trello-radio-set input:radio:checked').val();
+        var transactionFilter = parseInt($('#trello-radio-set input:radio:checked').val(),10);
         $.ajax({
             type: "POST",
             url: "api/user-info",
