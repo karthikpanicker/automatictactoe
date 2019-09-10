@@ -3,6 +3,8 @@ package main
 import (
 	"strings"
 	"time"
+
+	"google.golang.org/api/tasks/v1"
 )
 
 type etsySynchronizer struct {
@@ -20,7 +22,8 @@ func (es *etsySynchronizer) processOrdersForUsers() {
 		edm := newEtsyDataManager()
 		userList := es.dCache.getUserMap()
 		for _, userDetails := range userList {
-			if userDetails.TrelloDetails.SelectedBoardID == "" {
+			//Need to fetch transactions for the user only if he has linked any of the apps
+			if !userDetails.TrelloDetails.IsLinked || !userDetails.GTasksDetails.IsLinked {
 				continue
 			}
 			orderList, err := edm.getTransactionList(userDetails)
@@ -31,10 +34,14 @@ func (es *etsySynchronizer) processOrdersForUsers() {
 			lptID := userDetails.EtsyDetails.LastProcessedTrasactionID
 			for i := len(orderList.Results) - 1; i >= 0; i-- {
 				etsyTransaction := orderList.Results[i]
-				if etsyTransaction.ID > lptID && etsyTransaction.ShippedTime == 0 &&
-					etsyTransaction.PaidTime > userDetails.TrelloDetails.FromDate {
+				if etsyTransaction.ID > lptID && etsyTransaction.ShippedTime == 0 {
 					buyerProfile, _ := edm.getProfileDetails(etsyTransaction.BuyerUserID, &userDetails)
-					es.postTransactionToTrello(etsyTransaction, &userDetails, buyerProfile)
+					if userDetails.TrelloDetails.IsLinked {
+						es.postTransactionToTrello(etsyTransaction, &userDetails, buyerProfile)
+					}
+					if userDetails.GTasksDetails.IsLinked {
+						es.postTransactionToGTasks(etsyTransaction, &userDetails, buyerProfile)
+					}
 					lptID = etsyTransaction.ID
 				}
 			}
@@ -47,6 +54,9 @@ func (es *etsySynchronizer) processOrdersForUsers() {
 
 func (es *etsySynchronizer) postTransactionToTrello(tranDetails etsyTransactionDetails,
 	info *userInfo, buyerProfile *etsyUserProfile) {
+	if tranDetails.PaidTime > info.TrelloDetails.FromDate {
+		return
+	}
 	tdm := newTrelloDataManager()
 	card := trelloCardDetails{
 		Name:   tranDetails.Title,
@@ -67,6 +77,16 @@ func (es *etsySynchronizer) postTransactionToTrello(tranDetails etsyTransactionD
 	}
 }
 
+func (es *etsySynchronizer) postTransactionToGTasks(tranDetails etsyTransactionDetails,
+	info *userInfo, buyerProfile *etsyUserProfile) {
+	todoItem := &tasks.Task{
+		Title: tranDetails.Title,
+		Notes: tranDetails.Description,
+	}
+	gtm := newGTasksDataManager()
+	gtm.addToDoItem(info, todoItem)
+}
+
 func (es *etsySynchronizer) formattedDescriptionWithMarkDown(tranDetails etsyTransactionDetails,
 	buyerProfile *etsyUserProfile, info *userInfo) string {
 	var sb strings.Builder
@@ -79,9 +99,11 @@ func (es *etsySynchronizer) formattedDescriptionWithMarkDown(tranDetails etsyTra
 		sb.WriteString(" ")
 		sb.WriteString(buyerProfile.LastName)
 		sb.WriteString("\n")
-		sb.WriteString(buyerProfile.Region)
-		sb.WriteString(", ")
-		sb.WriteString(buyerProfile.City)
+		if buyerProfile.Region == "" || buyerProfile.City == "" {
+			sb.WriteString(buyerProfile.Region)
+			sb.WriteString(" ")
+			sb.WriteString(buyerProfile.City)
+		}
 	}
 	return sb.String()
 }
