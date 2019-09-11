@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"os"
 
 	"golang.org/x/net/context"
 	"golang.org/x/oauth2"
@@ -16,14 +17,14 @@ type gTasksDataManager struct {
 func newGTasksDataManager() *gTasksDataManager {
 	gtm := new(gTasksDataManager)
 	gtm.config = &oauth2.Config{
-		ClientID:     "598823989725-il1f05povf8cfo2osgvu57oij5950tv0.apps.googleusercontent.com",
-		ClientSecret: "flux3hoFfgbXwNrAEO3jnID-",
+		ClientID:     os.Getenv("GTASKS_CLIENT_ID"),
+		ClientSecret: os.Getenv("GTASKS_CLIENT_SECRET"),
 		Endpoint: oauth2.Endpoint{
 			AuthURL:   "https://accounts.google.com/o/oauth2/auth",
 			TokenURL:  "https://oauth2.googleapis.com/token",
 			AuthStyle: oauth2.AuthStyleInParams,
 		},
-		RedirectURL: "http://localhost/callback-google",
+		RedirectURL: os.Getenv("HOST_URL") + "callback-google",
 		Scopes:      []string{tasks.TasksScope},
 	}
 	return gtm
