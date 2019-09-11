@@ -57,20 +57,23 @@ func (gtm *gTasksDataManager) getGTasksService(info *userInfo) (*tasks.Service, 
 	return srv, nil
 }
 
-func (gtm *gTasksDataManager) addToDoItem(info *userInfo, todoItem *tasks.Task) error {
-	srv, err := gtm.getGTasksService(info)
-	if err != nil {
-		return err
-	}
-	srv.Tasks.Insert(info.GTasksDetails.SelectedTaskListID, todoItem)
-	return err
-}
-
-func (gtm *gTasksDataManager) getTaskLists(info *userInfo) (*tasks.TasklistsListCall, error) {
+func (gtm *gTasksDataManager) addToDoItem(info *userInfo, todoItem *tasks.Task) (*tasks.Task, error) {
 	srv, err := gtm.getGTasksService(info)
 	if err != nil {
 		return nil, err
 	}
-	lists := srv.Tasklists.List()
+	task, err := srv.Tasks.Insert(info.GTasksDetails.SelectedTaskListID, todoItem).Do()
+	return task, err
+}
+
+func (gtm *gTasksDataManager) getTaskLists(info *userInfo) (*tasks.TaskLists, error) {
+	srv, err := gtm.getGTasksService(info)
+	if err != nil {
+		return nil, err
+	}
+	lists, err := srv.Tasklists.List().MaxResults(10).Do()
+	if err != nil {
+		return nil, err
+	}
 	return lists, nil
 }

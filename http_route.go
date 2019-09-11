@@ -77,24 +77,6 @@ func (rm *routeManager) routeMapping() {
 			rm.pageHandler.trelloAuthorizationCallback,
 		},
 		{
-			"Show details page after successful login",
-			[]string{"GET"},
-			"/details",
-			rm.pageHandler.showDetails,
-		},
-		{
-			"Get a list of boards associated with trello",
-			[]string{"GET"},
-			"/api/trello-boards/{boardId}/lists",
-			rm.apiHandler.getBordLists,
-		},
-		{
-			"Save board and list and link it to etsy",
-			[]string{"POST"},
-			"/api/user-info",
-			rm.apiHandler.saveBoardAndList,
-		},
-		{
 			"Redirection to google for authorizaton",
 			[]string{"GET"},
 			"/authorize-gtask",
@@ -105,6 +87,36 @@ func (rm *routeManager) routeMapping() {
 			[]string{"GET"},
 			"/callback-google",
 			rm.pageHandler.gTasksAuthorizationCallback,
+		},
+		{
+			"Show details page after successful login",
+			[]string{"GET"},
+			"/details",
+			rm.pageHandler.showDetails,
+		},
+		{
+			"Get a list of boards associated with trello",
+			[]string{"GET"},
+			"/api/users/{userId}/trello-boards/{boardId}/lists",
+			rm.apiHandler.getBordLists,
+		},
+		{
+			"Save trello configuration details",
+			[]string{"POST"},
+			"/api/users/{userId}/trello-details",
+			rm.apiHandler.saveBoardAndList,
+		},
+		{
+			"Get google tasks list",
+			[]string{"GET"},
+			"/api/users/{userId}/gtask-lists",
+			rm.apiHandler.getGTasksLists,
+		},
+		{
+			"Save google tasks configuration details",
+			[]string{"POST"},
+			"/api/users/{userId}/gtasks-details",
+			rm.apiHandler.saveGTasksConfig,
 		},
 	}
 }

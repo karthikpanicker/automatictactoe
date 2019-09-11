@@ -54,7 +54,7 @@ func (es *etsySynchronizer) processOrdersForUsers() {
 
 func (es *etsySynchronizer) postTransactionToTrello(tranDetails etsyTransactionDetails,
 	info *userInfo, buyerProfile *etsyUserProfile) {
-	if tranDetails.PaidTime > info.TrelloDetails.FromDate {
+	if tranDetails.PaidTime < info.TrelloDetails.FromDate {
 		return
 	}
 	tdm := newTrelloDataManager()
@@ -79,12 +79,18 @@ func (es *etsySynchronizer) postTransactionToTrello(tranDetails etsyTransactionD
 
 func (es *etsySynchronizer) postTransactionToGTasks(tranDetails etsyTransactionDetails,
 	info *userInfo, buyerProfile *etsyUserProfile) {
+	if tranDetails.PaidTime < info.GTasksDetails.FromDate {
+		return
+	}
 	todoItem := &tasks.Task{
 		Title: tranDetails.Title,
 		Notes: tranDetails.Description,
 	}
 	gtm := newGTasksDataManager()
-	gtm.addToDoItem(info, todoItem)
+	_, err := gtm.addToDoItem(info, todoItem)
+	if err != nil {
+		Error(err)
+	}
 }
 
 func (es *etsySynchronizer) formattedDescriptionWithMarkDown(tranDetails etsyTransactionDetails,

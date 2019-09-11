@@ -34,15 +34,21 @@
             <div class="modal-body">
                 <fieldset class="border-set">
                     <legend class="border-set regular">Google Tasks Lists</legend>
-                    <div class="row">
+                    <div class="row justify-content-center">
                         <div class="col-md-6 col-sm-6 col-xs-6">
-                            <div class="list-group" id="googleLists"></div>
+                            <div class="list-group" id="googleLists">
+                                <div class="d-flex justify-content-center">
+                                    <div id="spinner" class="spinner-border" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </fieldset>
                 <div class="row mt-1">
                     <div class="col-md-12">
-                        <fieldset id="trello-radio-set" class="border-set">
+                        <fieldset id="gtask-radio-set" class="border-set">
                             <legend class="border-set regular">Sync transactions</legend>
                             <div class="form-check-inline">
                             <label class="form-check-label radio-label">

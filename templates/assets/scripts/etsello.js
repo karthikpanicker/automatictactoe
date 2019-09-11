@@ -12,13 +12,26 @@
         loadBoardLists(boardId,$(selectedElem));
      }
 
-     $("#saveList").on("click",function(){
+     $("#saveGTaskConfig").on("click",function(){
         var $this = $(this);
-        var loadingText = '<i class="fa fa-circle-o-notch fa-spin"></i> Saving...';
-        if ($(this).html() !== loadingText) {
-            $this.data('original-text', $(this).html());
-            $this.html(loadingText);
-        }
+        buttonLoading($this);
+        var gTaskListId = $('#googleLists button').filter('.active').attr('id');
+        var transactionFilter = parseInt($('#gtask-radio-set input:radio:checked').val(),10);
+        $.ajax({
+            type: "POST",
+            url: "api/users/1/gtasks-details",
+            data: JSON.stringify({"listId": gTaskListId, "transactionFilter": transactionFilter}),
+            success: function(data){
+                setTimeout(function () {
+                    $this.html($this.data('original-text'));
+                }, 1000);
+            }
+        });
+     });
+
+     $("#saveTrelloConfig").on("click",function(){
+        var $this = $(this);
+        buttonLoading($this);
         var bId = $('#boards button').filter('.active').attr('id');
         var lId = $('#boardLists button').filter('.active').attr('id');
         var fields = []
@@ -37,7 +50,7 @@
         var transactionFilter = parseInt($('#trello-radio-set input:radio:checked').val(),10);
         $.ajax({
             type: "POST",
-            url: "api/user-info",
+            url: "api/users/1/trello-details",
             data: JSON.stringify({"boardId": bId, "listId": lId,
                 "fieldsToUse": fields, "transactionFilter": transactionFilter}),
             success: function(data){
@@ -64,26 +77,50 @@
     $("#gtask-authorize").on("click",function(){
         window.open('/authorize-gtask','GoogleAuthorize', "width=500, height=600, top=" + top + ", left=" + left);
     });
+
+    $('#gTaskConfigModal').on('show.bs.modal', function () {
+        $('#googleLists button').remove();
+        $('#spinner').show();
+        $.get( "api/users/1/gtask-lists", function( gTasksLists ) {
+            $.each(gTasksLists.items, function( index, list ) {
+                var activeClass = (list.isSelected) ? ' active' : '' 
+                $('#googleLists').append('<button id="' + list.id 
+                + '" type="button" class="list-group-item' + activeClass +'">' + list.title + '</button>');
+            });
+            $('#spinner').hide();
+            markActiveButton($('#googleLists button'),$(this));
+        });
+    });
 });
 
 function loadBoardLists(boardId,selectedBoard) {
-    $('#spinner-board-list').show();
     $('#boards button').removeClass('active');
     selectedBoard.addClass('active');
-    $.get( "api/trello-boards/" + boardId + "/lists", function( boardLists ) {
+    $.get( "api/users/1/trello-boards/" + boardId + "/lists", function( boardLists ) {
         $('#boardLists button').remove();
         $.each(boardLists, function( index, list ) {
             var activeClass = (list.isSelected) ? ' active' : '' 
             $('#boardLists').append('<button id="' + list.id 
             + '" type="button" class="list-group-item' + activeClass +'">' + list.name + '</button>');
         });
-        if ($('#boardLists button').length > 0) {
-            // Bind click action on newly added items
-            $('#boardLists button').on("click",function(){ 
-                $('#boardLists button').removeClass('active');
-                $(this).addClass('active');
-                $('#spinner-board-list').hide();
-            });
-        }
+        markActiveButton($('#boardLists button'),$(this));
       }); 
+}
+
+function markActiveButton(buttonGroup,currentButton) {
+    if (buttonGroup.length > 0) {
+        // Bind click action on newly added items
+        buttonGroup.on("click",function(){ 
+            buttonGroup.removeClass('active');
+            $(this).addClass('active');
+        });
+    }
+}
+
+function buttonLoading($this) {
+    var loadingText = '<i class="fa fa-circle-o-notch fa-spin"></i> Saving...';
+    if ($this.html() !== loadingText) {
+        $this.data('original-text', $this.html());
+        $this.html(loadingText);
+    }
 }

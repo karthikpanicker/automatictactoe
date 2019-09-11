@@ -31,8 +31,10 @@ type etsyDetails struct {
 
 type gTasksDetails struct {
 	Token              string
-	SelectedTaskListID string
+	SelectedTaskListID string `json:"listId"`
 	IsLinked           bool
+	TransactionFilter  int `json:"transactionFilter"`
+	FromDate           int
 }
 
 type shopDetails struct {

@@ -19,7 +19,8 @@ type handlerCommon struct {
 const (
 	messageInvalidBoardID   = "Invalid trello board id specified"
 	messageInvalidBoardList = "Invalid board or list specified"
-	messageSavedBoardList   = "Linked board and list to etsy shop"
+	messageSavedTrello      = "Saved trello configuration"
+	messageSavedGTasks      = "Saved google tasks configuration"
 )
 
 // Message is the message payload that would be send to client
