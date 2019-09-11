@@ -37,7 +37,7 @@ func (gtm *gTasksDataManager) getAuthorizationURL() string {
 func (gtm *gTasksDataManager) getAndPopulateGTasksDetails(authCode string, info *userInfo) error {
 	tok, err := gtm.config.Exchange(context.TODO(), authCode)
 	if err != nil {
-		Error("Unable to retrieve token from web: %v", err)
+		Error("Unable to retrieve token from web", err)
 		return err
 	}
 	tokBytes, _ := json.Marshal(tok)
@@ -52,7 +52,7 @@ func (gtm *gTasksDataManager) getGTasksService(info *userInfo) (*tasks.Service, 
 	client := gtm.config.Client(context.Background(), &res)
 	srv, err := tasks.New(client)
 	if err != nil {
-		Error("Unable to retrieve tasks Client %v", err)
+		Error("Unable to retrieve tasks Client", err)
 		return nil, err
 	}
 	return srv, nil

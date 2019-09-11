@@ -87,8 +87,12 @@ func (tm *trelloDataManager) getUserBoards(info *userInfo) ([]string, error) {
 	var result map[string]interface{}
 	httpOAuthClient := newHTTPOAuthClient(info.TrelloDetails.TrelloAccessToken,
 		info.TrelloDetails.TrelloAccessSecret, tm.config)
-	httpOAuthClient.getMarshalledAPIResponse(path, &result)
+	err := httpOAuthClient.getMarshalledAPIResponse(path, &result)
+	if err != nil {
+		return nil, err
+	}
 	boardIds := make([]string, 0)
+	Info(path)
 	for _, idBoard := range result["idBoards"].([]interface{}) {
 		boardIds = append(boardIds, idBoard.(string))
 	}
