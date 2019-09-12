@@ -92,7 +92,6 @@ func (tm *trelloDataManager) getUserBoards(info *userInfo) ([]string, error) {
 		return nil, err
 	}
 	boardIds := make([]string, 0)
-	Info(path)
 	for _, idBoard := range result["idBoards"].([]interface{}) {
 		boardIds = append(boardIds, idBoard.(string))
 	}
