@@ -20,8 +20,8 @@ func newGTasksDataManager() *gTasksDataManager {
 		ClientID:     os.Getenv("GTASKS_CLIENT_ID"),
 		ClientSecret: os.Getenv("GTASKS_CLIENT_SECRET"),
 		Endpoint: oauth2.Endpoint{
-			AuthURL:   "https://accounts.google.com/o/oauth2/auth",
-			TokenURL:  "https://oauth2.googleapis.com/token",
+			AuthURL:   os.Getenv("GTASKS_AUTH_URL"),
+			TokenURL:  os.Getenv("GTASKS_TOKEN_URL"),
 			AuthStyle: oauth2.AuthStyleInParams,
 		},
 		RedirectURL: os.Getenv("HOST_URL") + "callback-google",

@@ -14,75 +14,74 @@ func TestGetGTasksAuthorizationURL(t *testing.T) {
 	gotenv.OverApply(strings.NewReader("GTASKS_CLIENT_ID=abc"))
 	gotenv.OverApply(strings.NewReader("GTASKS_CLIENT_SECRET=abc"))
 	gotenv.OverApply(strings.NewReader("HOST_URL=http://localhost:80/"))
+	gotenv.OverApply(strings.NewReader("GTASKS_AUTH_URL=http://localhost/o/oauth2/auth"))
+	gotenv.OverApply(strings.NewReader("GTASKS_TOKEN_URL=http://localhost/token"))
 	gtm := newGTasksDataManager()
 	authURL := gtm.getAuthorizationURL()
-	assert.Equal(t, "https://accounts.google.com/o/oauth2/auth?access_type=offline&"+
+	assert.Equal(t, "http://localhost/o/oauth2/auth?access_type=offline&"+
 		"client_id=abc&"+
 		"redirect_uri=http%3A%2F%2Flocalhost%3A80%2Fcallback-google&response_type=code&"+
 		"scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ftasks&state=state-token", authURL)
 }
 
-func TestAddToDoItem(t *testing.T) {
-	boardID := "513227cad846f3834300649c"
+func TestGetAndPopulateGTasksDetails(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 		// Test request parameters
-		assert.Equal(t, req.URL.String(), "/boards/"+boardID+"/lists")
+		assert.Equal(t, req.URL.String(), "/token")
 		// Send response to be tested
-		rw.Write([]byte(`[
-			{
-			  "id": "5d72e23d9e6aa902f8f8a701",
-			  "name": "New Order",
-			  "closed": false,
-			  "idBoard": "5d5b89f68c4e1144e3693792",
-			  "pos": 18432,
-			  "subscribed": false,
-			  "softLimit": null
-			},
-			{
-			  "id": "5d5b89f68c4e1144e3693794",
-			  "name": "Vendor Procurement",
-			  "closed": false,
-			  "idBoard": "5d5b89f68c4e1144e3693792",
-			  "pos": 32768,
-			  "subscribed": false,
-			  "softLimit": null
-			},
-			{
-			  "id": "5d5b89f68c4e1144e3693795",
-			  "name": "Handwork",
-			  "closed": false,
-			  "idBoard": "5d5b89f68c4e1144e3693792",
-			  "pos": 49152,
-			  "subscribed": false,
-			  "softLimit": null
-			},
-			{
-			  "id": "5d5b8a351ff2e25d6fa8d0b7",
-			  "name": "Tailoring",
-			  "closed": false,
-			  "idBoard": "5d5b89f68c4e1144e3693792",
-			  "pos": 114688,
-			  "subscribed": false,
-			  "softLimit": null
-			},
-			{
-			  "id": "5d5b8a43d58da58cd9e3729e",
-			  "name": "Shipped",
-			  "closed": false,
-			  "idBoard": "5d5b89f68c4e1144e3693792",
-			  "pos": 180224,
-			  "subscribed": false,
-			  "softLimit": null
-			}
-		  ]`))
+		rw.Header().Set("Content-Type", "application/json")
+		rw.Write([]byte(`{"access_token":"ya29.GluCBy-lBDcy9k7vSE1k0Ixh1uBqVC-fYksrKjIcNFjtQxlcVwMTK4jcXqL978bhhShPUU2FZ9_miwB4556d-Da3HheqHxk4FdwYqQ2PO1skjGlp7pvUAogAvbR6",
+		"token_type":"Bearer","refresh_token":"1/sStalRv7dB1YLxIDjZVxlhQ205yRhmG7tbWKT5bXMkQ",
+		"expiry":"2019-09-13T23:37:45.282532+05:30"}`))
 	}))
 	defer server.Close()
-	gotenv.OverApply(strings.NewReader("TRELLO_API_BASE_URL=" + server.URL + "/"))
+	gotenv.OverApply(strings.NewReader("GTASKS_AUTH_URL=" + server.URL + "/o/oauth2/auth"))
+	gotenv.OverApply(strings.NewReader("GTASKS_TOKEN_URL=" + server.URL + "/token"))
 	info := buildDummyUserInfo()
-	info.TrelloDetails.SelectedListID = "5d72e23d9e6aa902f8f8a701"
-	info.TrelloDetails.SelectedBoardID = "513227cad846f3834300649c"
-	tdm := newTrelloDataManager()
-	boardLists, err := tdm.getBoardLists(info, boardID)
+	gtm := newGTasksDataManager()
+	err := gtm.getAndPopulateGTasksDetails("hello", info)
 	assert.Nil(t, err)
-	assert.Equal(t, "5d72e23d9e6aa902f8f8a701", boardLists[0].ID)
+}
+
+func TestGetGTasksService(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+		// Test request parameters
+		assert.Equal(t, req.URL.String(), "/token")
+		// Send response to be tested
+		rw.Header().Set("Content-Type", "application/json")
+		rw.Write([]byte(`{"access_token":"ya29.GluCBy-lBDcy9k7vSE1k0Ixh1uBqVC-fYksrKjIcNFjtQxlcVwMTK4jcXqL978bhhShPUU2FZ9_miwB4556d-Da3HheqHxk4FdwYqQ2PO1skjGlp7pvUAogAvbR6",
+		"token_type":"Bearer","refresh_token":"1/sStalRv7dB1YLxIDjZVxlhQ205yRhmG7tbWKT5bXMkQ",
+		"expiry":"2019-09-13T23:37:45.282532+05:30"}`))
+	}))
+	defer server.Close()
+	gotenv.OverApply(strings.NewReader("GTASKS_AUTH_URL=" + server.URL + "/o/oauth2/auth"))
+	gotenv.OverApply(strings.NewReader("GTASKS_TOKEN_URL=" + server.URL + "/token"))
+	info := buildDummyUserInfo()
+	gtm := newGTasksDataManager()
+	err := gtm.getAndPopulateGTasksDetails("hello", info)
+	assert.Nil(t, err)
+	_, err = gtm.getGTasksService(info)
+	assert.Nil(t, err)
+}
+
+func TestGetTaskLists(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+		// Test request parameters
+		assert.Equal(t, req.URL.String(), "/token")
+		// Send response to be tested
+		rw.Header().Set("Content-Type", "application/json")
+		rw.Write([]byte(`{"access_token":"ya29.GluCBy-lBDcy9k7vSE1k0Ixh1uBqVC-fYksrKjIcNFjtQxlcVwMTK4jcXqL978bhhShPUU2FZ9_miwB4556d-Da3HheqHxk4FdwYqQ2PO1skjGlp7pvUAogAvbR6",
+		"token_type":"Bearer","refresh_token":"1/sStalRv7dB1YLxIDjZVxlhQ205yRhmG7tbWKT5bXMkQ",
+		"expiry":"2019-09-13T23:37:45.282532+05:30"}`))
+	}))
+	defer server.Close()
+	gotenv.OverApply(strings.NewReader("GTASKS_AUTH_URL=" + server.URL + "/o/oauth2/auth"))
+	gotenv.OverApply(strings.NewReader("GTASKS_TOKEN_URL=" + server.URL + "/token"))
+	info := buildDummyUserInfo()
+	gtm := newGTasksDataManager()
+	err := gtm.getAndPopulateGTasksDetails("hello", info)
+	assert.Nil(t, err)
+	lists, err := gtm.getTaskLists(info)
+	Info(lists)
+	assert.Nil(t, err)
 }
