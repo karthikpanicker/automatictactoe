@@ -5,15 +5,19 @@ type userInfo struct {
 	UserID        int           `bson:"_id"`
 	EtsyDetails   etsyDetails   `bson:"etsyDetails"`
 	TrelloDetails trelloDetails `bson:"trelloDetails"`
-	CurrentStep   int           `bson:"currentStep"`
+	GTasksDetails gTasksDetails `bson:"gTaksksDetails"`
 }
 
 type trelloDetails struct {
 	TrelloAccessToken  string
 	TrelloAccessSecret string
 	TrelloBoards       []boardDetails
-	SelectedBoardID    string `json:"boardId"`
-	SelectedListID     string `json:"listId"`
+	SelectedBoardID    string   `json:"boardId"`
+	SelectedListID     string   `json:"listId"`
+	FieldsToUse        []string `json:"fieldsToUse"`
+	IsLinked           bool     `json:"isLinked"`
+	TransactionFilter  int      `json:"transactionFilter"`
+	FromDate           int
 }
 
 type etsyDetails struct {
@@ -23,6 +27,14 @@ type etsyDetails struct {
 	UserProfileURL            string
 	UserName                  string
 	LastProcessedTrasactionID int
+}
+
+type gTasksDetails struct {
+	Token              string
+	SelectedTaskListID string `json:"listId"`
+	IsLinked           bool
+	TransactionFilter  int `json:"transactionFilter"`
+	FromDate           int
 }
 
 type shopDetails struct {
@@ -98,6 +110,7 @@ type etsyTransactionDetails struct {
 	Description    string `json:"description"`
 	BuyerUserID    int    `json:"buyer_user_id"`
 	CreationTime   int    `json:"creation_tsz"`
+	PaidTime       int    `json:"paid_tsz"`
 	Price          string `json:"price"`
 	Currency       string `json:"currency_code"`
 	ShippingPrice  string `json:"shipping_cost"`
@@ -112,6 +125,10 @@ type etsyUserProfile struct {
 	EtsyUserID     int    `json:"user_id"`
 	UserProfileURL string `json:"image_url_75x75"`
 	UserName       string `json:"login_name"`
+	FirstName      string `json:"first_name"`
+	LastName       string `json:"last_name"`
+	Region         string `json:"region"`
+	City           string `json:"city"`
 }
 
 type trelloImageAttachment struct {

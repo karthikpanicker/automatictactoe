@@ -47,6 +47,18 @@ func (rm *routeManager) registerRoutes() *mux.Router {
 func (rm *routeManager) routeMapping() {
 	rm.webPageRoutes = []route{
 		{
+			"Site private policy",
+			[]string{"GET"},
+			"/privacy-policy",
+			rm.pageHandler.showPrivacyPolicy,
+		},
+		{
+			"Terms and Conditions",
+			[]string{"GET"},
+			"/terms-and-conditions",
+			rm.pageHandler.showTermsAndConditions,
+		},
+		{
 			"Login page",
 			[]string{"GET"},
 			"/",
@@ -54,7 +66,7 @@ func (rm *routeManager) routeMapping() {
 		},
 		{
 			"Etsy login page",
-			[]string{"POST"},
+			[]string{"GET"},
 			"/authorize-etsy",
 			rm.pageHandler.redirectToEtsy,
 		},
@@ -66,7 +78,7 @@ func (rm *routeManager) routeMapping() {
 		},
 		{
 			"Redirection to trello for authorizaton",
-			[]string{"POST"},
+			[]string{"GET"},
 			"/authorize-trello",
 			rm.pageHandler.redirectToTrello,
 		},
@@ -77,6 +89,18 @@ func (rm *routeManager) routeMapping() {
 			rm.pageHandler.trelloAuthorizationCallback,
 		},
 		{
+			"Redirection to google for authorizaton",
+			[]string{"GET"},
+			"/authorize-gtask",
+			rm.pageHandler.redirectToGTask,
+		},
+		{
+			"Callback from google after successful authorization",
+			[]string{"GET"},
+			"/callback-google",
+			rm.pageHandler.gTasksAuthorizationCallback,
+		},
+		{
 			"Show details page after successful login",
 			[]string{"GET"},
 			"/details",
@@ -85,14 +109,26 @@ func (rm *routeManager) routeMapping() {
 		{
 			"Get a list of boards associated with trello",
 			[]string{"GET"},
-			"/api/trello-boards/{boardId}/lists",
+			"/api/users/{userId}/trello-boards/{boardId}/lists",
 			rm.apiHandler.getBordLists,
 		},
 		{
-			"Save board and list and link it to etsy",
+			"Save trello configuration details",
 			[]string{"POST"},
-			"/api/user-info",
+			"/api/users/{userId}/trello-details",
 			rm.apiHandler.saveBoardAndList,
+		},
+		{
+			"Get google tasks list",
+			[]string{"GET"},
+			"/api/users/{userId}/gtask-lists",
+			rm.apiHandler.getGTasksLists,
+		},
+		{
+			"Save google tasks configuration details",
+			[]string{"POST"},
+			"/api/users/{userId}/gtasks-details",
+			rm.apiHandler.saveGTasksConfig,
 		},
 	}
 }

@@ -11,6 +11,7 @@ import (
 func TestSaveUserInfo(t *testing.T) {
 	gotenv.Apply(strings.NewReader("MONGO_URL=mongodb://localhost:27017"))
 	mdc := newMongoDataCache()
+	defer mdc.disconnectCache()
 	info := buildDummyUserInfo()
 	info.EtsyDetails.UserShopDetails.ShopName = "Whatay Shop"
 	info.EtsyDetails.UserShopDetails.ShopID = 54321
@@ -20,6 +21,7 @@ func TestSaveUserInfo(t *testing.T) {
 func TestGetUserInfo(t *testing.T) {
 	gotenv.Apply(strings.NewReader("MONGO_URL=mongodb://localhost:27017"))
 	mdc := newMongoDataCache()
+	defer mdc.disconnectCache()
 	info := buildDummyUserInfo()
 	info.EtsyDetails.UserShopDetails.ShopName = "Whatay Shop"
 	info.EtsyDetails.UserShopDetails.ShopID = 54321
@@ -32,6 +34,7 @@ func TestGetUserInfo(t *testing.T) {
 func TestGetUserMap(t *testing.T) {
 	gotenv.Apply(strings.NewReader("MONGO_URL=mongodb://localhost:27017"))
 	mdc := newMongoDataCache()
+	defer mdc.disconnectCache()
 	info := buildDummyUserInfo()
 	info.EtsyDetails.UserShopDetails.ShopName = "Whatay Shop"
 	info.EtsyDetails.UserShopDetails.ShopID = 54321

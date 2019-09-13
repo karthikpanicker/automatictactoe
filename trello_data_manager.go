@@ -57,7 +57,7 @@ func (tm *trelloDataManager) getAndPopulateTrelloDetails(r *http.Request, info *
 		boardDetails, _ := tm.getBoardInfo(info, boardID)
 		info.TrelloDetails.TrelloBoards = append(info.TrelloDetails.TrelloBoards, *boardDetails)
 	}
-	info.CurrentStep = 2
+	info.TrelloDetails.IsLinked = true
 	return nil
 }
 
@@ -87,7 +87,10 @@ func (tm *trelloDataManager) getUserBoards(info *userInfo) ([]string, error) {
 	var result map[string]interface{}
 	httpOAuthClient := newHTTPOAuthClient(info.TrelloDetails.TrelloAccessToken,
 		info.TrelloDetails.TrelloAccessSecret, tm.config)
-	httpOAuthClient.getMarshalledAPIResponse(path, &result)
+	err := httpOAuthClient.getMarshalledAPIResponse(path, &result)
+	if err != nil {
+		return nil, err
+	}
 	boardIds := make([]string, 0)
 	for _, idBoard := range result["idBoards"].([]interface{}) {
 		boardIds = append(boardIds, idBoard.(string))

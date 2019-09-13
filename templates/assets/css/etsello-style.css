@@ -1,6 +1,6 @@
 body
 {   
-    background-color: #EBEBEB;
+    background-color: #fff;
 }
 .bold
 {
@@ -27,14 +27,72 @@ form{
 }
 
 .navbar {
-    background-color: #92977E;
+    background-color: #fff;
+    -webkit-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.05);
+    box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.05);
+    padding: 0px 15px;
+}
+.navbar-brand{
+  color: #FF6700 !important;
+}
+li.nav-item {
+  position: relative;
+  padding: 15px 25px;
+ border-bottom: 3px solid transparent;
+ transition: 0.2s ease-in;
+ margin-right: 15px;
+  
+}
+li.nav-item:hover{
+  border-bottom-color: #FF6700 !important;
+}
+li.nav-item i{
+  font-size: 25px;
+}
+a.nav-link {
+  display: inline-block;
 }
 
 nav .navbar-nav li a{
-    color: white !important;
+    color: #000 !important;
 }
 nav .navbar-brand{
-    color: white !important;
+    /* text-shadow: 0px 6px 3px rgba(244, 98, 58, 0.61); */
+    font-size: 30px;
+    font-weight: 600;
+}
+
+.login-wraper{
+  display: flex;
+  text-align: left;
+
+}
+.login-image {
+
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #000;
+  margin-right: 5px;
+  overflow: hidden;
+  align-self: center;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size:cover; 
+}
+.login-image img{
+  width: 100%;
+}
+.login-text{
+      font-size: 14px;
+      width: 180px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+}
+.login-text p{
+  font-weight: 500;
+  margin-bottom: 0;
 }
 
 .list-group {
@@ -42,22 +100,104 @@ nav .navbar-brand{
     margin-left: 10px;
     margin-top: 10px;
     margin-right: 10px;
-    max-height: 150px;
-    height: 150px;
+    max-height: 100px;
+    height: 100px;
     overflow:scroll;
     -webkit-overflow-scrolling: touch;
+}
+.landing-page{
+  padding: 40px 15px ;
+  background-color: #FFFBFC;
+}
+
+.cards{
+  width: 25%;
+  padding: 0px 15px;
+  position: relative;
+}
+
+.cards.active::before{
+
+          content: "\f058";
+          font-weight: 400;
+          font-family: "Font Awesome 5 Pro";
+          color: green;
+          font-size: 45px;
+          border-radius: 50%;
+          position: absolute;
+          left: -10px;
+          top: -25px;
+          z-index: 1;
+          /* background-color: #FF6700; */
+          line-height: 1;
+}
+.image-box{
+
+      height: 200px;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: 100% 100%;
+
+
+}
+
+.trello-logo{
+  background-image: url('../images/Trello-icon.png');
+}
+.etsy-logo{
+  background-image: url('../images/etsy.png');
+}
+.todoist-logo{
+  background-image: url('../images/todoist.png');
+}
+
+.wunderlist-logo{
+  background-image: url('../images/wunderlist.png');
+}
+
+.custom-logo{
+  background-image: url('../images/idea.png');
+}
+
+.gtask-logo{
+  background-image: url('../images/google-tasks.png');
 }
 
 /* Set a style for all buttons */
 .etsello-button {
-    background-color:#504746;
-    color: white;
-    padding: 15px 35px;
-    margin: 20px 0;
-    border: none;
-    cursor: pointer;
-    border-radius: 6px;
-    outline: 0;
+        
+         padding: 15px 40px;
+         margin: 20px 0;
+        font-weight: 600;
+         cursor: pointer;
+         border-radius: 40px;
+         outline: none;
+         box-shadow: none;
+         background-color: #fff;
+         outline: none;
+         color: #FF6700;
+         border-color: #FF6700;
+         transform: translateY(-3px);
+          -webkit-box-shadow: 0px 3px 6px 0px rgba(255, 103, 0, 0.5);
+          -moz-box-shadow: 0px 3px 6px 0px rgba(255, 103, 0, 0.5);
+          box-shadow: 0px 3px 6px 0px rgba(255, 103, 0, 0.5);
+}
+.etsello-button:hover{
+  background-color: #fff;
+  color: #FF6700;
+  border-color: #FF6700;
+  outline: none;
+  box-shadow: none;
+  transform: translateY(0px);
+  transition: 0.2s ease-in;
+  box-shadow: none;
+
+}
+.etsello-button:active {
+  background-color: #fff;
+  outline: none;
+  color: #FF6700;
+  border-color: #FF6700;
 }
 
 .etsello-button:focus {
@@ -269,4 +409,218 @@ margin-right: auto;
   .trello-heading {
     margin-top:10px;
   }
-  
+
+  .trello-details{
+    margin-bottom: 50px;
+  }
+  .board-list{
+    min-height: 200px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  .board-list button{
+    width: 100%;
+    margin-bottom: 3px;
+  }
+
+ .board-list::-webkit-scrollbar {
+   width: 5px;
+ }
+
+ /* Track */
+ .board-list::-webkit-scrollbar-track {
+   box-shadow: inset 0 0 5px grey;
+   border-radius: 10px;
+ }
+
+ /* Handle */
+  .board-list::-webkit-scrollbar-thumb {
+   background: #FF6700;
+   border-radius: 10px;
+ }
+
+ /* Handle on hover */
+  .board-list::-webkit-scrollbar-thumb:hover {
+   background: #FF6700;
+ }
+
+ .card-wraper {
+   display: flex;
+   flex-wrap: wrap;
+ }
+
+ .card-wraper .tag {
+   text-decoration: none;
+ }
+
+ .card-wraper .tag:hover {
+   color: #007bff;
+ }
+
+ .card-wraper .card.active {
+   border-bottom: 5px solid green;
+ }
+
+ .card-wraper .card {
+   padding: 20px 15px;
+   background: #fff;
+   box-shadow: 0px 15px 20px 0px rgba(17, 71, 139, 0.2);
+   height: 350px;
+   overflow: hidden;
+   cursor: pointer;
+   width: 24%;
+   /* border-radius: 1.25rem; */
+   min-width: 250px;
+   margin: 5px;
+   border-bottom: 5px solid transparent;
+ }
+
+ .card-wraper .card .card-icon {
+   height: 100px;
+   width: 100px;
+   margin-left: auto;
+   margin-right: auto;
+   /* border-radius: 50%; */
+   position: relative;
+   margin-bottom: 10px;
+     background-repeat: no-repeat;
+     background-position: center center;
+     background-size: 100% 100%;
+
+ }
+
+ .card-wraper .card .card-icon .card-title {
+   color: #004072;
+   font-size: 18px;
+   font-weight: 700;
+   letter-spacing: 2px;
+ }
+
+ .card-btn {
+   display: inline-block;
+   margin: auto;
+   
+ }
+
+ .card-btn:focus {
+   outline: none;
+ }
+
+ .card-btn.active {
+   display: inline-block;
+ }
+.card-title{
+   font-size: 20px;
+ }
+
+ .text-container{
+   height: 100px;
+ }
+ .btn-wraper{
+   margin-top: 10px;
+ }
+ p.card-content {
+   color: #808080;
+   font-weight: 500;
+ }
+ .sub-text{
+       font-size: 16px;
+       color: #808080;
+       font-weight: 500;
+ }
+
+ label.btn span {
+  font-size: 1.5em ;
+}
+
+.checkbox {
+  padding-left: 20px; 
+}
+.checkbox label {
+  display: inline-block;
+  position: relative;
+  padding-left: 5px;
+  font-size: 14px;
+ }
+.checkbox label::before {
+    content: "";
+    display: inline-block;
+    position: absolute;
+    width: 17px;
+    height: 17px;
+    left: 0;
+    margin-left: -20px;
+    border: 1px solid #cccccc;
+    border-radius: 3px;
+    background-color: #fff;
+    -webkit-transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
+    -o-transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
+    transition: border 0.15s ease-in-out, color 0.15s ease-in-out; 
+  }
+  .checkbox label::after {
+    display: inline-block;
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    left: 0;
+    top: 0;
+    margin-left: -20px;
+    padding-left: 3px;
+    padding-top: 1px;
+    font-size: 11px;
+    color: #555555; 
+  }
+.checkbox input[type="checkbox"] {
+  opacity: 0; 
+}
+.checkbox input[type="checkbox"]:focus + label::before {
+  outline: thin dotted;
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px; 
+}
+.checkbox input[type="checkbox"]:checked + label::after {
+  font-family: 'FontAwesome';
+  content: "\f00c"; 
+}
+.checkbox input[type="checkbox"]:disabled + label {
+  opacity: 0.65; 
+}
+.checkbox input[type="checkbox"]:disabled + label::before {
+  background-color: #eeeeee;
+  cursor: not-allowed; 
+}
+.checkbox.checkbox-circle label::before {
+  border-radius: 50%; 
+}
+.checkbox.checkbox-inline {
+  margin-top: 0; 
+}
+.checkbox-success input[type="checkbox"]:checked + label::before {
+  background-color: #5cb85c;
+  border-color: #5cb85c; }
+.checkbox-success input[type="checkbox"]:checked + label::after {
+  color: #fff; }
+
+legend.border-set {
+  width:inherit; /* Or auto */
+  padding:0 10px; /* To give a bit of padding on the left and right */
+  border-bottom:none;
+  font-weight: bold;
+  font-size:14px;
+}
+
+fieldset.border-set {
+  border: 1px groove #ddd !important;
+  padding: 0 1.4em 1.4em 1.4em !important;
+  margin: 0 0 1.5em 0 !important;
+  -webkit-box-shadow:  0px 0px 0px 0px #000;
+          box-shadow:  0px 0px 0px 0px #000;
+}
+
+.coming-soon {
+  background-image: url('../images/coming-soon.png');
+}
+
+.radio-label {
+  font-size: 14px;
+}

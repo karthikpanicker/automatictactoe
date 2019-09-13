@@ -1,0 +1,37 @@
+{{define "home"}}
+<!DOCTYPE html>
+<html lang="en">
+{{ template "header" }}
+<body>
+    {{ template "navbar" .}}
+    {{if not .}}
+    <section class="landing-page">
+        <div class="container ">
+            <div class="row align-items-center justify-content-center">
+                <div class="col-md-8 col-sm-8 col-xs-8">
+                    <h2>Etsy business flow automation</h2>
+                    <p class="sub-text mb-3">Are you a small seller on Etsy? Are you using todo list apps or simple work flow apps to track 
+                        your Etsy orders? If you are exploring ways to integrate Etsy with these apps you are at the right place.
+                        Signin to Etsy and link your applications.</p>
+                        <div class="text-center pt-2">
+                            <button id="etsy-authorize" class="etsello-button btn btn-outline-secondary" type="submit">Login to
+                                Etsy</button>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    {{end}}
+    <div class="container mt-3 pt-3">
+        <div class="card-wraper d-flex justify-content-between mb-5">
+            {{template "trello-card" .}}
+            {{template "gtasks-card" .}}
+            {{template "todoist-card" .}}
+            {{template "custom-card"}}
+        </div>
+    </div>
+    {{ template "footer" }}
+</body>
+
+</html>
+{{end}}

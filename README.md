@@ -1,8 +1,16 @@
 # Etsello
 
-Etsello integrates etsy with trello boards. This integration can be used by etsy sellers to link their etsy account with trello. Once linked new purchases will automatically create a card in your trello board in the preferred board and list.
+Etsello integrates etsy with task management applications. The application can be used by etsy sellers to link their etsy account with todo apps or other task management applications. Once linked new purchases in your shop will automatically create an entry in your linked applications.
 
-# Running the project
+## Integrations
+Following integrations are currently supported
+
+ 1. Trello boards 
+ 2. Google Tasks
+
+We are actively working on new integrations. If you are looking at integrating your etsy workflow with other applications, please raise an issue in the issues section.
+
+## Running the project
 1. .env file contains all the application parameters. Most of them works with the default values except for the following:
 *ETSY_CONSUMER_KEY and ETSY_CONSUMER_SECRET*:  Register a new app at [https://www.etsy.com/developers/register](https://www.etsy.com/developers/register). Create an etsy account and setup two factor authentication to register a new app. Use the secret and key for you app as the environment values specified above.
 *TRELLO_CONSUMER_KEY and TRELLO_CONSUMER_SECRET*: Onboard a new trello app at [https://trello.com/app-key](https://trello.com/app-key). Use the secret and key as values for the above parameters.

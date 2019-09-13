@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -10,6 +11,7 @@ import (
 type apiHandler struct {
 	handlerCom    *handlerCommon
 	trelloManager *trelloDataManager
+	gTManager     *gTasksDataManager
 	dCache        dataStore
 }
 
@@ -22,6 +24,7 @@ func newAPIHandler(cache dataStore) *apiHandler {
 	ah := new(apiHandler)
 	ah.handlerCom = newHandlerCommon()
 	ah.trelloManager = newTrelloDataManager()
+	ah.gTManager = newGTasksDataManager()
 	ah.dCache = cache
 	return ah
 }
@@ -60,6 +63,51 @@ func (ah *apiHandler) saveBoardAndList(w http.ResponseWriter, r *http.Request) {
 			info.TrelloDetails.TrelloBoards[index].IsSelected = false
 		}
 	}
+	info.TrelloDetails.FromDate = ah.setFromDate(info.TrelloDetails.TransactionFilter)
 	ah.dCache.saveDetailsToCache(userID, *info)
-	ah.handlerCom.ProcessSuccessMessage(messageSavedBoardList, w)
+	ah.handlerCom.ProcessSuccessMessage(messageSavedTrello, w)
+}
+
+func (ah *apiHandler) getGTasksLists(w http.ResponseWriter, r *http.Request) {
+	userID := ah.handlerCom.GetUserIDFromSession(r)
+	info, _ := ah.dCache.getUserInfo(userID)
+	tasks, err := ah.gTManager.getTaskLists(info)
+	if err != nil {
+		ah.handlerCom.ProcessErrorMessage(err.Error(), w)
+	}
+	ah.handlerCom.ProcessResponse(tasks, w)
+}
+
+func (ah *apiHandler) saveGTasksConfig(w http.ResponseWriter, r *http.Request) {
+	userID := ah.handlerCom.GetUserIDFromSession(r)
+	info, _ := ah.dCache.getUserInfo(userID)
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&info.GTasksDetails)
+	if err != nil {
+		ah.handlerCom.ProcessErrorMessage(messageInvalidBoardID, w)
+		return
+	}
+	info.GTasksDetails.FromDate = ah.setFromDate(info.GTasksDetails.TransactionFilter)
+	ah.dCache.saveDetailsToCache(userID, *info)
+	ah.handlerCom.ProcessSuccessMessage(messageSavedGTasks, w)
+}
+
+func (ah *apiHandler) setFromDate(filter int) int {
+	fromDate := 0
+	switch filter {
+	case 1:
+		fromDate = int(time.Now().Unix())
+		break
+	case 2:
+		fromDate = int(time.Now().AddDate(0, -1, 0).Unix())
+		break
+	case 3:
+		fromDate = int(time.Now().AddDate(0, 0, -7).Unix())
+		break
+	case 4:
+		fromDate = 0
+	default:
+		fromDate = 0
+	}
+	return fromDate
 }
