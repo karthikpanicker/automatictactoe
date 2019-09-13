@@ -47,6 +47,18 @@ func (rm *routeManager) registerRoutes() *mux.Router {
 func (rm *routeManager) routeMapping() {
 	rm.webPageRoutes = []route{
 		{
+			"Site private policy",
+			[]string{"GET"},
+			"/privacy-policy",
+			rm.pageHandler.showPrivacyPolicy,
+		},
+		{
+			"Terms and Conditions",
+			[]string{"GET"},
+			"/terms-and-conditions",
+			rm.pageHandler.showTermsAndConditions,
+		},
+		{
 			"Login page",
 			[]string{"GET"},
 			"/",

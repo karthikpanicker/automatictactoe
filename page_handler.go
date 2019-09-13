@@ -28,6 +28,14 @@ func (ph *pageHandler) getLoginPage(w http.ResponseWriter, r *http.Request) {
 	ph.handlerCom.rnd.HTML(w, http.StatusOK, "home", nil)
 }
 
+func (ph *pageHandler) showPrivacyPolicy(w http.ResponseWriter, r *http.Request) {
+	ph.handlerCom.rnd.HTML(w, http.StatusOK, "privacy-policy", nil)
+}
+
+func (ph *pageHandler) showTermsAndConditions(w http.ResponseWriter, r *http.Request) {
+	ph.handlerCom.rnd.HTML(w, http.StatusOK, "terms-and-conditions", nil)
+}
+
 func (ph *pageHandler) redirectToEtsy(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, ph.etsyManager.getAuthorizationURL(), http.StatusFound)
 }
