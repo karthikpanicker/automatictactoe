@@ -48,7 +48,7 @@ func (es *etsySynchronizer) processOrdersForUsers() {
 			userDetails.EtsyDetails.LastProcessedTrasactionID = lptID
 			es.dCache.saveDetailsToCache(userDetails.UserID, userDetails)
 		}
-		time.Sleep(time.Second * 300)
+		time.Sleep(time.Minute * 30)
 	}
 }
 
