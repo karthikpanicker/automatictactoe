@@ -71,7 +71,7 @@ func (ah *apiHandler) saveBoardAndList(w http.ResponseWriter, r *http.Request) {
 func (ah *apiHandler) getGTasksLists(w http.ResponseWriter, r *http.Request) {
 	userID := ah.handlerCom.GetUserIDFromSession(r)
 	info, _ := ah.dCache.getUserInfo(userID)
-	tasks, err := ah.gTManager.getTaskLists(info)
+	tasks, err := ah.gTManager.getTaskLists(info, nil)
 	if err != nil {
 		ah.handlerCom.ProcessErrorMessage(err.Error(), w)
 	}

@@ -87,7 +87,7 @@ func (es *etsySynchronizer) postTransactionToGTasks(tranDetails etsyTransactionD
 		Notes: tranDetails.Description,
 	}
 	gtm := newGTasksDataManager()
-	_, err := gtm.addToDoItem(info, todoItem)
+	_, err := gtm.addToDoItem(info, todoItem, nil)
 	if err != nil {
 		Error(err)
 	}

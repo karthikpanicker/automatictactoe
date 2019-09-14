@@ -1,11 +1,12 @@
 package main
 
 type userInfo struct {
-	EmailID       string        `bson:"emailId"`
-	UserID        int           `bson:"_id"`
-	EtsyDetails   etsyDetails   `bson:"etsyDetails"`
-	TrelloDetails trelloDetails `bson:"trelloDetails"`
-	GTasksDetails gTasksDetails `bson:"gTaksksDetails"`
+	EmailID        string         `bson:"emailId"`
+	UserID         int            `bson:"_id"`
+	EtsyDetails    etsyDetails    `bson:"etsyDetails"`
+	TrelloDetails  trelloDetails  `bson:"trelloDetails"`
+	GTasksDetails  gTasksDetails  `bson:"gTaksksDetails"`
+	TodoistDetails todoistDetails `bson:"todoistDetails"`
 }
 
 type trelloDetails struct {
@@ -35,6 +36,14 @@ type gTasksDetails struct {
 	IsLinked           bool
 	TransactionFilter  int `json:"transactionFilter"`
 	FromDate           int
+}
+
+type todoistDetails struct {
+	Token             string
+	SelectedProjectID string `json:"projectId"`
+	IsLinked          bool
+	TransactionFilter int `json:"transactionFilter"`
+	FromDate          int
 }
 
 type shopDetails struct {

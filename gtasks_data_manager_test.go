@@ -66,13 +66,17 @@ func TestGetGTasksService(t *testing.T) {
 
 func TestGetTaskLists(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
-		// Test request parameters
-		assert.Equal(t, req.URL.String(), "/token")
 		// Send response to be tested
 		rw.Header().Set("Content-Type", "application/json")
-		rw.Write([]byte(`{"access_token":"ya29.GluCBy-lBDcy9k7vSE1k0Ixh1uBqVC-fYksrKjIcNFjtQxlcVwMTK4jcXqL978bhhShPUU2FZ9_miwB4556d-Da3HheqHxk4FdwYqQ2PO1skjGlp7pvUAogAvbR6",
-		"token_type":"Bearer","refresh_token":"1/sStalRv7dB1YLxIDjZVxlhQ205yRhmG7tbWKT5bXMkQ",
-		"expiry":"2019-09-13T23:37:45.282532+05:30"}`))
+		if req.URL.String() == "/token" {
+			rw.Write([]byte(`{"access_token":"ya29.GluCBy-lBDcy9k7vSE1k0Ixh1uBqVC-fYksrKjIcNFjtQxlcVwMTK4jcXqL978bhhShPUU2FZ9_miwB4556d-Da3HheqHxk4FdwYqQ2PO1skjGlp7pvUAogAvbR6",
+			"token_type":"Bearer","refresh_token":"1/sStalRv7dB1YLxIDjZVxlhQ205yRhmG7tbWKT5bXMkQ",
+			"expiry":"2019-09-13T23:37:45.282532+05:30"}`))
+			return
+		} else if req.URL.String() == "/users/@me/lists?alt=json&maxResults=10&prettyPrint=false" {
+			return
+		}
+		assert.Fail(t, "Unknow URL to be handled")
 	}))
 	defer server.Close()
 	gotenv.OverApply(strings.NewReader("GTASKS_AUTH_URL=" + server.URL + "/o/oauth2/auth"))
@@ -81,7 +85,9 @@ func TestGetTaskLists(t *testing.T) {
 	gtm := newGTasksDataManager()
 	err := gtm.getAndPopulateGTasksDetails("hello", info)
 	assert.Nil(t, err)
-	lists, err := gtm.getTaskLists(info)
+	svc, err := gtm.getGTasksService(info)
+	svc.BasePath = server.URL
+	lists, err := gtm.getTaskLists(info, svc)
 	Info(lists)
 	assert.Nil(t, err)
 }

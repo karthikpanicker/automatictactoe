@@ -78,6 +78,10 @@
         window.open('/authorize-gtask','GoogleAuthorize', "width=500, height=600, top=" + top + ", left=" + left);
     });
 
+    $("#todoist-authorize").on("click",function(){
+        window.open('/authorize-todoist','TodoistAuthorize', "width=500, height=600, top=" + top + ", left=" + left);
+    });
+
     $('#gTaskConfigModal').on('show.bs.modal', function () {
         $('#googleLists button').remove();
         $('#spinner').show();
