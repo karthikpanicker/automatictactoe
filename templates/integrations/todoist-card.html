@@ -4,7 +4,7 @@
     {{else}}
         <div class="card text-center">
     {{end}}
-    <a href="" class="tag">
+    <span href="" class="tag">
         <div class="card-icon todoist-logo"></div>
         <h3 class="card-title"> Todoist</h3>
         <div class="text-container">
@@ -19,6 +19,66 @@
                 <span class="btn btn-outline-primary card-btn" id="todoist-authorize">Link to Todoist</span>
             {{end}}
         </div>
-    </a>
+    </span>
+</div>
+<div class="modal fade" id="todoistConfigModal" tabindex="-1" 
+    role="dialog" aria-labelledby="todoistModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="todoistModalLabel">Todoist Configuration</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <fieldset class="border-set">
+                    <legend class="border-set regular">Todoist Projects</legend>
+                    <div class="row justify-content-center">
+                        <div class="col-md-6 col-sm-6 col-xs-6">
+                            <div class="list-group" id="todoistProjects">
+                                <div class="d-flex justify-content-center">
+                                    <div id="todoist-spinner" class="spinner-border" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="row mt-1">
+                    <div class="col-md-12">
+                        <fieldset id="todoist-radio-set" class="border-set">
+                            <legend class="border-set regular">Sync transactions</legend>
+                            <div class="form-check-inline">
+                            <label class="form-check-label radio-label">
+                                <input type="radio" class="form-check-input" name="optradio" value="1" checked>In the future
+                            </label>
+                            </div>
+                            <div class="form-check-inline">
+                            <label class="form-check-label radio-label">
+                                <input type="radio" class="form-check-input" name="optradio" value="2">From past month
+                            </label>
+                            </div>
+                            <div class="form-check-inline">
+                            <label class="form-check-label radio-label">
+                                <input type="radio" class="form-check-input" name="optradio" value="3">From past week
+                            </label>
+                            </div>
+                            <div class="form-check-inline">
+                            <label class="form-check-label radio-label">
+                                <input type="radio" class="form-check-input" name="optradio" value="4">That are not shipped yet
+                            </label>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="saveTodoistConfig" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
 </div>
 {{end}}

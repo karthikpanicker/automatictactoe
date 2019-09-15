@@ -1,6 +1,9 @@
 language: go
 services:
 - docker
+branches:
+  except:
+  - feature/*
 env:
   global:
   - SERVER_IP_ADDRESS=207.246.89.240

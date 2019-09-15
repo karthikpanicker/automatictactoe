@@ -103,6 +103,15 @@ func (ah *apiHandler) getTodoistProjects(w http.ResponseWriter, r *http.Request)
 	}
 	ah.handlerCom.ProcessResponse(projects, w)
 }
+func (ah *apiHandler) saveTodoistConfig(w http.ResponseWriter, r *http.Request) {
+	userID := ah.handlerCom.GetUserIDFromSession(r)
+	info, _ := ah.dCache.getUserInfo(userID)
+	decoder := json.NewDecoder(r.Body)
+	_ = decoder.Decode(&info.TodoistDetails)
+	info.TodoistDetails.FromDate = ah.setFromDate(info.TodoistDetails.TransactionFilter)
+	ah.dCache.saveDetailsToCache(userID, *info)
+	ah.handlerCom.ProcessSuccessMessage(messageSavedGTasks, w)
+}
 
 func (ah *apiHandler) setFromDate(filter int) int {
 	fromDate := 0

@@ -142,5 +142,17 @@ func (rm *routeManager) routeMapping() {
 			"/api/users/{userId}/gtasks-details",
 			rm.apiHandler.saveGTasksConfig,
 		},
+		{
+			"Get todoist projects",
+			[]string{"GET"},
+			"/api/users/{userId}/todoist-projects",
+			rm.apiHandler.getTodoistProjects,
+		},
+		{
+			"Get todoist projects",
+			[]string{"POST"},
+			"/api/users/{userId}/todoist-details",
+			rm.apiHandler.saveTodoistConfig,
+		},
 	}
 }
