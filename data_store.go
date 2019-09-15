@@ -145,6 +145,17 @@ type trelloImageAttachment struct {
 	URL  string `json:"url"`
 }
 
+type todoistProject struct {
+	Name string `json:"name"`
+	ID   int    `json:"id"`
+}
+
+type todoistTask struct {
+	Content   string `json:"content"`
+	ProjectID int    `json:"project_id"`
+	ID        int    `json:"id"`
+}
+
 func newDataStore() dataStore {
 	dc := newMongoDataCache()
 	return dc

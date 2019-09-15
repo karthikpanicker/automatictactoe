@@ -9,10 +9,11 @@ import (
 )
 
 type apiHandler struct {
-	handlerCom    *handlerCommon
-	trelloManager *trelloDataManager
-	gTManager     *gTasksDataManager
-	dCache        dataStore
+	handlerCom     *handlerCommon
+	trelloManager  *trelloDataManager
+	gTManager      *gTasksDataManager
+	todoistManager *todoistDataManager
+	dCache         dataStore
 }
 
 type trialInfo struct {
@@ -25,6 +26,7 @@ func newAPIHandler(cache dataStore) *apiHandler {
 	ah.handlerCom = newHandlerCommon()
 	ah.trelloManager = newTrelloDataManager()
 	ah.gTManager = newGTasksDataManager()
+	ah.todoistManager = newToDoistDataManager()
 	ah.dCache = cache
 	return ah
 }
@@ -90,6 +92,16 @@ func (ah *apiHandler) saveGTasksConfig(w http.ResponseWriter, r *http.Request) {
 	info.GTasksDetails.FromDate = ah.setFromDate(info.GTasksDetails.TransactionFilter)
 	ah.dCache.saveDetailsToCache(userID, *info)
 	ah.handlerCom.ProcessSuccessMessage(messageSavedGTasks, w)
+}
+
+func (ah *apiHandler) getTodoistProjects(w http.ResponseWriter, r *http.Request) {
+	userID := ah.handlerCom.GetUserIDFromSession(r)
+	info, _ := ah.dCache.getUserInfo(userID)
+	projects, err := ah.todoistManager.getProjects(info)
+	if err != nil {
+		ah.handlerCom.ProcessErrorMessage(err.Error(), w)
+	}
+	ah.handlerCom.ProcessResponse(projects, w)
 }
 
 func (ah *apiHandler) setFromDate(filter int) int {

@@ -9,7 +9,8 @@ import (
 )
 
 type todoistDataManager struct {
-	config *oauth2.Config
+	config  *oauth2.Config
+	baseURL string
 }
 
 func newToDoistDataManager() *todoistDataManager {
@@ -25,12 +26,12 @@ func newToDoistDataManager() *todoistDataManager {
 		RedirectURL: os.Getenv("HOST_URL") + "callback-todoist",
 		Scopes:      []string{"data:read_write"},
 	}
+	tdm.baseURL = os.Getenv("TODOIST_API_BASE_URL")
 	return tdm
 }
 
 func (tdm *todoistDataManager) getAuthorizationURL() string {
 	authURL := tdm.config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
-	Info(authURL)
 	return authURL
 }
 
@@ -44,4 +45,22 @@ func (tdm *todoistDataManager) getAndPopulateTodoistDetails(authCode string, inf
 	info.TodoistDetails.Token = string(tokBytes)
 	info.TodoistDetails.IsLinked = true
 	return nil
+}
+
+func (tdm *todoistDataManager) getProjects(info *userInfo) ([]todoistProject, error) {
+	path := tdm.baseURL + "/projects"
+	result := make([]todoistProject, 0)
+	client := newHTTPOauth2Client(tdm.config)
+	err := client.getMarshalledAPIResponse(path, info.TodoistDetails.Token, &result)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func (tdm *todoistDataManager) addTask(info *userInfo, task *todoistTask) error {
+	path := tdm.baseURL + "/tasks"
+	client := newHTTPOauth2Client(tdm.config)
+	err := client.postResource(info.TodoistDetails.Token, path, task, task)
+	return err
 }

@@ -74,6 +74,33 @@ func TestGetTaskLists(t *testing.T) {
 			"expiry":"2019-09-13T23:37:45.282532+05:30"}`))
 			return
 		} else if req.URL.String() == "/users/@me/lists?alt=json&maxResults=10&prettyPrint=false" {
+			rw.Write([]byte(`{
+				"kind": "tasks#taskLists",
+				"etag": "\"NeaKRry_JhdhtP9cvsTMfcXJ-gY/b_H2Wj5LD31e6JwBbkaJ2LvwrQE\"",
+				"items": [
+				  {
+					"kind": "tasks#taskList",
+					"id": "MTAwNDM3NTExNzg4OTEzMzQ4Njk6MDow",
+					"title": "My Tasks",
+					"updated": "2019-09-10T16:35:12.067Z",
+					"selfLink": "https://www.googleapis.com/tasks/v1/users/@me/lists/MTAwNDM3NTExNzg4OTEzMzQ4Njk6MDow"
+				  },
+				  {
+					"kind": "tasks#taskList",
+					"id": "MTAwNDM3NTExNzg4OTEzMzQ4Njk6NDg2MjMzNjY1MjAyNTQxNzow",
+					"title": "karthik's list",
+					"updated": "2019-09-10T17:21:35.444Z",
+					"selfLink": "https://www.googleapis.com/tasks/v1/users/@me/lists/MTAwNDM3NTExNzg4OTEzMzQ4Njk6NDg2MjMzNjY1MjAyNTQxNzow"
+				  },
+				  {
+					"kind": "tasks#taskList",
+					"id": "dTVMX2k3ZThPRXh2bGJQTw",
+					"title": "Etsy List",
+					"updated": "2019-09-11T18:57:31.216Z",
+					"selfLink": "https://www.googleapis.com/tasks/v1/users/@me/lists/dTVMX2k3ZThPRXh2bGJQTw"
+				  }
+				]
+			  }`))
 			return
 		}
 		assert.Fail(t, "Unknow URL to be handled")
@@ -88,6 +115,6 @@ func TestGetTaskLists(t *testing.T) {
 	svc, err := gtm.getGTasksService(info)
 	svc.BasePath = server.URL
 	lists, err := gtm.getTaskLists(info, svc)
-	Info(lists)
 	assert.Nil(t, err)
+	assert.Equal(t, 3, len(lists.Items))
 }
