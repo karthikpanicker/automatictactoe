@@ -26,7 +26,7 @@ func newEtsyDataManager() *etsyDataManager {
 		Endpoint: oauth1.Endpoint{
 			AccessTokenURL:  etsyBaseURL + "oauth/access_token",
 			AuthorizeURL:    "https://www.etsy.com/oauth/signin?oauth_consumer_key=" + os.Getenv("ETSY_CONSUMER_KEY") + "&service=v2_prod",
-			RequestTokenURL: etsyBaseURL + "oauth/request_token?scope=email_r%20listings_r%20transactions_r",
+			RequestTokenURL: etsyBaseURL + "oauth/request_token?scope=email_r%20listings_r%20transactions_r%20address_r",
 		},
 	}
 	return edm
@@ -58,7 +58,7 @@ func (edm *etsyDataManager) getAndPopulateEtsyDetails(r *http.Request) (*userInf
 func (edm *etsyDataManager) getUserProfileInfo(accessToken string, accessSecret string) (*userInfo, error) {
 	path := etsyBaseURL + "users/__SELF__"
 	result := etsyProfileResponse{}
-	httpOAuthClient := newHTTPOAuthClient(accessToken, accessSecret, edm.config)
+	httpOAuthClient := newHTTPOAuth1Client(accessToken, accessSecret, edm.config)
 	httpOAuthClient.getMarshalledAPIResponse(path, &result)
 	store := newDataStore()
 	info, err := store.getUserInfo(result.Results[0].EtsyUserID)
@@ -70,27 +70,30 @@ func (edm *etsyDataManager) getUserProfileInfo(accessToken string, accessSecret 
 				EtsyAccessToken:  accessToken,
 				EtsyAccessSecret: accessSecret,
 			},
-			CurrentStep: 1,
 		}
 	}
-	edm.getProfileDetails(info)
+	profileDetails, err := edm.getProfileDetails(info.UserID, info)
+	if err != nil {
+		return nil, err
+	}
+	info.EtsyDetails.UserName = profileDetails.UserName
+	info.EtsyDetails.UserProfileURL = profileDetails.UserProfileURL
 	return info, nil
 }
 
-func (edm *etsyDataManager) getShops(info *userInfo) error {
+func (edm *etsyDataManager) getShops(info *userInfo) (shopDetails, error) {
 	path := etsyBaseURL + "/users/" + strconv.Itoa(info.UserID) + "/shops"
 	var result etsyShopResponse
-	httpOAuthClient := newHTTPOAuthClient(info.EtsyDetails.EtsyAccessToken,
+	httpOAuthClient := newHTTPOAuth1Client(info.EtsyDetails.EtsyAccessToken,
 		info.EtsyDetails.EtsyAccessSecret, edm.config)
 	httpOAuthClient.getMarshalledAPIResponse(path, &result)
-	info.EtsyDetails.UserShopDetails = result.Results[0]
-	return nil
+	return result.Results[0], nil
 }
 
 func (edm *etsyDataManager) getTransactionList(info userInfo) (*etsyTransactionResponse, error) {
 	path := etsyBaseURL + "shops/" + strconv.Itoa(info.EtsyDetails.UserShopDetails.ShopID) + "/transactions"
 	var result etsyTransactionResponse
-	httpOAuthClient := newHTTPOAuthClient(info.EtsyDetails.EtsyAccessToken,
+	httpOAuthClient := newHTTPOAuth1Client(info.EtsyDetails.EtsyAccessToken,
 		info.EtsyDetails.EtsyAccessSecret, edm.config)
 	err := httpOAuthClient.getMarshalledAPIResponse(path, &result)
 	if err != nil {
@@ -99,15 +102,16 @@ func (edm *etsyDataManager) getTransactionList(info userInfo) (*etsyTransactionR
 	return &result, nil
 }
 
-func (edm *etsyDataManager) getProfileDetails(info *userInfo) error {
-	path := etsyBaseURL + "users/" + strconv.Itoa(info.UserID) + "/profile"
+func (edm *etsyDataManager) getProfileDetails(userid int, info *userInfo) (*etsyUserProfile, error) {
+	path := etsyBaseURL + "users/" + strconv.Itoa(userid) + "/profile"
 	var result etsyProfileResponse
-	httpOAuthClient := newHTTPOAuthClient(info.EtsyDetails.EtsyAccessToken,
+	httpOAuthClient := newHTTPOAuth1Client(info.EtsyDetails.EtsyAccessToken,
 		info.EtsyDetails.EtsyAccessSecret, edm.config)
-	httpOAuthClient.getMarshalledAPIResponse(path, &result)
-	info.EtsyDetails.UserProfileURL = result.Results[0].UserProfileURL
-	info.EtsyDetails.UserName = result.Results[0].UserName
-	return nil
+	err := httpOAuthClient.getMarshalledAPIResponse(path, &result)
+	if err != nil {
+		return nil, err
+	}
+	return &result.Results[0], nil
 }
 
 func (edm *etsyDataManager) getImageDetails(info *userInfo,
@@ -115,7 +119,7 @@ func (edm *etsyDataManager) getImageDetails(info *userInfo,
 	path := etsyBaseURL + "listings/" + strconv.Itoa(tranDetails.ListingID) +
 		"/images/" + strconv.Itoa(tranDetails.ImageListingID)
 	var result etsyImageResponse
-	httpOAuthClient := newHTTPOAuthClient(info.EtsyDetails.EtsyAccessToken,
+	httpOAuthClient := newHTTPOAuth1Client(info.EtsyDetails.EtsyAccessToken,
 		info.EtsyDetails.EtsyAccessSecret, edm.config)
 	httpOAuthClient.getMarshalledAPIResponse(path, &result)
 	return result.Results[0], nil

@@ -5,12 +5,14 @@ import (
 )
 
 type pageHandler struct {
-	handlerCom    *handlerCommon
-	emptyString   string
-	requestSecret string
-	etsyManager   *etsyDataManager
-	trelloManger  *trelloDataManager
-	dCache        dataStore
+	handlerCom     *handlerCommon
+	emptyString    string
+	requestSecret  string
+	etsyManager    *etsyDataManager
+	trelloManger   *trelloDataManager
+	gTaskManager   *gTasksDataManager
+	todoistManager *todoistDataManager
+	dCache         dataStore
 }
 
 func newPageHandler(cache dataStore) *pageHandler {
@@ -18,12 +20,22 @@ func newPageHandler(cache dataStore) *pageHandler {
 	ph.handlerCom = newHandlerCommon()
 	ph.etsyManager = newEtsyDataManager()
 	ph.trelloManger = newTrelloDataManager()
+	ph.gTaskManager = newGTasksDataManager()
+	ph.todoistManager = newToDoistDataManager()
 	ph.dCache = cache
 	return ph
 }
 
 func (ph *pageHandler) getLoginPage(w http.ResponseWriter, r *http.Request) {
-	ph.handlerCom.rnd.HTML(w, http.StatusOK, "details", nil)
+	ph.handlerCom.rnd.HTML(w, http.StatusOK, "home", nil)
+}
+
+func (ph *pageHandler) showPrivacyPolicy(w http.ResponseWriter, r *http.Request) {
+	ph.handlerCom.rnd.HTML(w, http.StatusOK, "privacy-policy", nil)
+}
+
+func (ph *pageHandler) showTermsAndConditions(w http.ResponseWriter, r *http.Request) {
+	ph.handlerCom.rnd.HTML(w, http.StatusOK, "terms-and-conditions", nil)
 }
 
 func (ph *pageHandler) redirectToEtsy(w http.ResponseWriter, r *http.Request) {
@@ -32,21 +44,24 @@ func (ph *pageHandler) redirectToEtsy(w http.ResponseWriter, r *http.Request) {
 
 func (ph *pageHandler) etsyAuthorizationCallback(w http.ResponseWriter, r *http.Request) {
 	info, err := ph.etsyManager.getAndPopulateEtsyDetails(r)
-	ph.etsyManager.getShops(info)
+	info.EtsyDetails.UserShopDetails, _ = ph.etsyManager.getShops(info)
 	if err != nil {
 		Error("Error processing etsy authorization callback.", err)
 		ph.handlerCom.rnd.HTML(w, http.StatusOK, "details", nil)
 	} else {
 		ph.dCache.saveDetailsToCache(info.UserID, *info)
 		ph.handlerCom.SaveUserIDInSession(r, w, info.UserID)
-		http.Redirect(w, r, "/details", http.StatusFound)
+		ph.handlerCom.rnd.HTML(w, http.StatusOK, "callbacksuccess", nil)
 	}
 }
 
 func (ph *pageHandler) showDetails(w http.ResponseWriter, r *http.Request) {
 	userID := ph.handlerCom.GetUserIDFromSession(r)
-	info, _ := ph.dCache.getUserInfo(userID)
-	ph.handlerCom.rnd.HTML(w, http.StatusOK, "details", info)
+	info, err := ph.dCache.getUserInfo(userID)
+	if err != nil {
+		ph.handlerCom.rnd.HTML(w, http.StatusOK, "home", userInfo{})
+	}
+	ph.handlerCom.rnd.HTML(w, http.StatusOK, "home", info)
 }
 
 func (ph *pageHandler) redirectToTrello(w http.ResponseWriter, r *http.Request) {
@@ -59,9 +74,45 @@ func (ph *pageHandler) trelloAuthorizationCallback(w http.ResponseWriter, r *htt
 	err := ph.trelloManger.getAndPopulateTrelloDetails(r, info)
 	if err != nil {
 		Error("Error in login page template.", err)
-		ph.handlerCom.rnd.HTML(w, http.StatusOK, "details", nil)
+		ph.handlerCom.rnd.HTML(w, http.StatusOK, "details", userInfo{})
 	} else {
 		ph.dCache.saveDetailsToCache(info.UserID, *info)
-		http.Redirect(w, r, "/details", http.StatusFound)
+		ph.handlerCom.rnd.HTML(w, http.StatusOK, "callbacksuccess", nil)
+	}
+}
+
+func (ph *pageHandler) redirectToGTask(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, ph.gTaskManager.getAuthorizationURL(), http.StatusFound)
+}
+
+func (ph *pageHandler) gTasksAuthorizationCallback(w http.ResponseWriter, r *http.Request) {
+	userID := ph.handlerCom.GetUserIDFromSession(r)
+	info, _ := ph.dCache.getUserInfo(userID)
+	code := r.URL.Query().Get("code")
+	err := ph.gTaskManager.getAndPopulateGTasksDetails(code, info)
+	if err != nil {
+		Error("Error in login page template.", err)
+		ph.handlerCom.rnd.HTML(w, http.StatusOK, "details", userInfo{})
+	} else {
+		ph.dCache.saveDetailsToCache(info.UserID, *info)
+		ph.handlerCom.rnd.HTML(w, http.StatusOK, "callbacksuccess", nil)
+	}
+}
+
+func (ph *pageHandler) redirectToTodoist(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, ph.todoistManager.getAuthorizationURL(), http.StatusFound)
+}
+
+func (ph *pageHandler) todoistAuthorizationCallback(w http.ResponseWriter, r *http.Request) {
+	userID := ph.handlerCom.GetUserIDFromSession(r)
+	info, _ := ph.dCache.getUserInfo(userID)
+	code := r.URL.Query().Get("code")
+	err := ph.todoistManager.getAndPopulateTodoistDetails(code, info)
+	if err != nil {
+		Error("Error in login page template.", err)
+		ph.handlerCom.rnd.HTML(w, http.StatusOK, "details", userInfo{})
+	} else {
+		ph.dCache.saveDetailsToCache(info.UserID, *info)
+		ph.handlerCom.rnd.HTML(w, http.StatusOK, "callbacksuccess", nil)
 	}
 }

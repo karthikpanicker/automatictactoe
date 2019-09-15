@@ -57,14 +57,14 @@ func (tm *trelloDataManager) getAndPopulateTrelloDetails(r *http.Request, info *
 		boardDetails, _ := tm.getBoardInfo(info, boardID)
 		info.TrelloDetails.TrelloBoards = append(info.TrelloDetails.TrelloBoards, *boardDetails)
 	}
-	info.CurrentStep = 2
+	info.TrelloDetails.IsLinked = true
 	return nil
 }
 
 func (tm *trelloDataManager) addCard(info *userInfo, card trelloCardDetails,
 	resultCard *trelloCardDetailsResponse) error {
 	path := tm.trelloBaseURL + "cards"
-	httpOAuthClient := newHTTPOAuthClient(info.TrelloDetails.TrelloAccessToken,
+	httpOAuthClient := newHTTPOAuth1Client(info.TrelloDetails.TrelloAccessToken,
 		info.TrelloDetails.TrelloAccessSecret, tm.config)
 	err := httpOAuthClient.postResource(path, card, resultCard)
 	return err
@@ -73,7 +73,7 @@ func (tm *trelloDataManager) addCard(info *userInfo, card trelloCardDetails,
 func (tm *trelloDataManager) attachImage(info *userInfo, resultCard *trelloCardDetailsResponse,
 	etsyImage etsyImageDetails) error {
 	path := tm.trelloBaseURL + "cards/" + resultCard.ID + "/attachments"
-	httpOAuthClient := newHTTPOAuthClient(info.TrelloDetails.TrelloAccessToken,
+	httpOAuthClient := newHTTPOAuth1Client(info.TrelloDetails.TrelloAccessToken,
 		info.TrelloDetails.TrelloAccessSecret, tm.config)
 	err := httpOAuthClient.postResource(path, trelloImageAttachment{
 		Name: "Primary Image",
@@ -85,9 +85,12 @@ func (tm *trelloDataManager) attachImage(info *userInfo, resultCard *trelloCardD
 func (tm *trelloDataManager) getUserBoards(info *userInfo) ([]string, error) {
 	path := tm.trelloBaseURL + "members/me"
 	var result map[string]interface{}
-	httpOAuthClient := newHTTPOAuthClient(info.TrelloDetails.TrelloAccessToken,
+	httpOAuthClient := newHTTPOAuth1Client(info.TrelloDetails.TrelloAccessToken,
 		info.TrelloDetails.TrelloAccessSecret, tm.config)
-	httpOAuthClient.getMarshalledAPIResponse(path, &result)
+	err := httpOAuthClient.getMarshalledAPIResponse(path, &result)
+	if err != nil {
+		return nil, err
+	}
 	boardIds := make([]string, 0)
 	for _, idBoard := range result["idBoards"].([]interface{}) {
 		boardIds = append(boardIds, idBoard.(string))
@@ -98,7 +101,7 @@ func (tm *trelloDataManager) getUserBoards(info *userInfo) ([]string, error) {
 func (tm *trelloDataManager) getBoardInfo(info *userInfo, boardID string) (*boardDetails, error) {
 	path := tm.trelloBaseURL + "boards/" + boardID
 	var result boardDetails
-	httpOAuthClient := newHTTPOAuthClient(info.TrelloDetails.TrelloAccessToken,
+	httpOAuthClient := newHTTPOAuth1Client(info.TrelloDetails.TrelloAccessToken,
 		info.TrelloDetails.TrelloAccessSecret, tm.config)
 	httpOAuthClient.getMarshalledAPIResponse(path, &result)
 	return &result, nil
@@ -107,7 +110,7 @@ func (tm *trelloDataManager) getBoardInfo(info *userInfo, boardID string) (*boar
 func (tm *trelloDataManager) getBoardLists(info *userInfo, boardID string) ([]boardList, error) {
 	path := tm.trelloBaseURL + "boards/" + boardID + "/lists"
 	var result []boardList
-	httpOAuthClient := newHTTPOAuthClient(info.TrelloDetails.TrelloAccessToken,
+	httpOAuthClient := newHTTPOAuth1Client(info.TrelloDetails.TrelloAccessToken,
 		info.TrelloDetails.TrelloAccessSecret, tm.config)
 	httpOAuthClient.getMarshalledAPIResponse(path, &result)
 	for index, list := range result {

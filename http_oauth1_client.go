@@ -8,21 +8,21 @@ import (
 	"github.com/dghubble/oauth1"
 )
 
-type httpOAuthClient struct {
+type httpOAuth1Client struct {
 	accessToken  string
 	accessSecret string
 	oauthConfig  oauth1.Config
 }
 
-func newHTTPOAuthClient(aT string, aS string, oC oauth1.Config) *httpOAuthClient {
-	hoc := new(httpOAuthClient)
+func newHTTPOAuth1Client(aT string, aS string, oC oauth1.Config) *httpOAuth1Client {
+	hoc := new(httpOAuth1Client)
 	hoc.accessToken = aT
 	hoc.accessSecret = aS
 	hoc.oauthConfig = oC
 	return hoc
 }
 
-func (hoc *httpOAuthClient) getMarshalledAPIResponse(url string, responseContainer interface{}) error {
+func (hoc *httpOAuth1Client) getMarshalledAPIResponse(url string, responseContainer interface{}) error {
 	token := oauth1.NewToken(hoc.accessToken, hoc.accessSecret)
 	// httpClient will automatically authorize http.Request's
 	httpClient := hoc.oauthConfig.Client(oauth1.NoContext, token)
@@ -32,6 +32,7 @@ func (hoc *httpOAuthClient) getMarshalledAPIResponse(url string, responseContain
 	}
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
+	//Info(string(body))
 	err = json.Unmarshal(body, responseContainer)
 	if err != nil {
 		return err
@@ -39,7 +40,7 @@ func (hoc *httpOAuthClient) getMarshalledAPIResponse(url string, responseContain
 	return nil
 }
 
-func (hoc *httpOAuthClient) postResource(url string, resource interface{},
+func (hoc *httpOAuth1Client) postResource(url string, resource interface{},
 	responseContainer interface{}) error {
 	token := oauth1.NewToken(hoc.accessToken, hoc.accessSecret)
 	httpClient := hoc.oauthConfig.Client(oauth1.NoContext, token)

@@ -1,6 +1,9 @@
 language: go
 services:
 - docker
+branches:
+  except:
+  - feature/*
 env:
   global:
   - SERVER_IP_ADDRESS=207.246.89.240
@@ -27,4 +30,4 @@ after_success:
 - ssh -i ./deploy_key $SERVER_USERNAME@$SERVER_IP_ADDRESS mkdir -p $DEPLOY_DIR
 - scp -i ./deploy_key docker-compose.yaml etsello-deploy.sh $SERVER_USERNAME@$SERVER_IP_ADDRESS:$DEPLOY_DIR
 - ssh -i ./deploy_key $SERVER_USERNAME@$SERVER_IP_ADDRESS chmod +x $DEPLOY_DIR/etsello-deploy.sh
-- ssh -i ./deploy_key $SERVER_USERNAME@$SERVER_IP_ADDRESS $DEPLOY_DIR/etsello-deploy.sh $DOCKER_IMAGE $DEPLOY_DIR $ETSY_CONSUMER_KEY $ETSY_CONSUMER_SECRET $TRELLO_CONSUMER_KEY $TRELLO_CONSUMER_SECRET
+- ssh -i ./deploy_key $SERVER_USERNAME@$SERVER_IP_ADDRESS $DEPLOY_DIR/etsello-deploy.sh $DOCKER_IMAGE $DEPLOY_DIR $ETSY_CONSUMER_KEY $ETSY_CONSUMER_SECRET $TRELLO_CONSUMER_KEY $TRELLO_CONSUMER_SECRET $HOST_URL $GTASKS_CLIENT_ID $GTASKS_CLIENT_SECRET
