@@ -58,8 +58,12 @@ func (gtm *gTasksDataManager) getGTasksService(info *userInfo) (*tasks.Service, 
 	return srv, nil
 }
 
-func (gtm *gTasksDataManager) addToDoItem(info *userInfo, todoItem *tasks.Task) (*tasks.Task, error) {
-	srv, err := gtm.getGTasksService(info)
+func (gtm *gTasksDataManager) addToDoItem(info *userInfo, todoItem *tasks.Task, service *tasks.Service) (*tasks.Task, error) {
+	var srv *tasks.Service = service
+	var err error
+	if srv == nil {
+		srv, err = gtm.getGTasksService(info)
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -67,8 +71,12 @@ func (gtm *gTasksDataManager) addToDoItem(info *userInfo, todoItem *tasks.Task) 
 	return task, err
 }
 
-func (gtm *gTasksDataManager) getTaskLists(info *userInfo) (*tasks.TaskLists, error) {
-	srv, err := gtm.getGTasksService(info)
+func (gtm *gTasksDataManager) getTaskLists(info *userInfo, service *tasks.Service) (*tasks.TaskLists, error) {
+	var srv *tasks.Service = service
+	var err error
+	if srv == nil {
+		srv, err = gtm.getGTasksService(info)
+	}
 	if err != nil {
 		return nil, err
 	}

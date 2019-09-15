@@ -1,12 +1,15 @@
 language: go
 services:
 - docker
+branches:
+  except:
+  - feature/*
 env:
   global:
   - SERVER_IP_ADDRESS=207.246.89.240
   - SERVER_USERNAME=root
-  - DOCKER_IMAGE=karthikraveendranoss/etsello
-  - DEPLOY_DIR=/root/etsello-deploy-scripts
+  - DOCKER_IMAGE=karthikraveendranoss/etsello:dev
+  - DEPLOY_DIR=/root/etsello-develop
 before_install:
 - openssl aes-256-cbc -K $encrypted_48434d1b1ed5_key -iv $encrypted_48434d1b1ed5_iv
   -in deploy_key.enc -out ./deploy_key -d
@@ -19,7 +22,7 @@ before_install:
 - docker-compose up -d
 - docker ps
 script:
-- curl 127.0.0.1:80
+- curl 127.0.0.1:8000
 - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 - docker images
 - docker push $DOCKER_IMAGE

@@ -107,6 +107,18 @@ func (rm *routeManager) routeMapping() {
 			rm.pageHandler.showDetails,
 		},
 		{
+			"Redirection to todoist for authorizaton",
+			[]string{"GET"},
+			"/authorize-todoist",
+			rm.pageHandler.redirectToTodoist,
+		},
+		{
+			"Callback from google after successful authorization",
+			[]string{"GET"},
+			"/callback-todoist",
+			rm.pageHandler.todoistAuthorizationCallback,
+		},
+		{
 			"Get a list of boards associated with trello",
 			[]string{"GET"},
 			"/api/users/{userId}/trello-boards/{boardId}/lists",
@@ -129,6 +141,18 @@ func (rm *routeManager) routeMapping() {
 			[]string{"POST"},
 			"/api/users/{userId}/gtasks-details",
 			rm.apiHandler.saveGTasksConfig,
+		},
+		{
+			"Get todoist projects",
+			[]string{"GET"},
+			"/api/users/{userId}/todoist-projects",
+			rm.apiHandler.getTodoistProjects,
+		},
+		{
+			"Get todoist projects",
+			[]string{"POST"},
+			"/api/users/{userId}/todoist-details",
+			rm.apiHandler.saveTodoistConfig,
 		},
 	}
 }

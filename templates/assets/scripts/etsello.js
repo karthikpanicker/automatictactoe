@@ -60,6 +60,22 @@
             }
           });
     });
+    $("#saveTodoistConfig").on("click",function(){
+        var $this = $(this);
+        buttonLoading($this);
+        var todoistProjectId = $('#todoistProjects button').filter('.active').attr('id');
+        var transactionFilter = parseInt($('#todoist-radio-set input:radio:checked').val(),10);
+        $.ajax({
+            type: "POST",
+            url: "api/users/1/todoist-details",
+            data: JSON.stringify({"projectId": todoistProjectId, "transactionFilter": transactionFilter}),
+            success: function(data){
+                setTimeout(function () {
+                    $this.html($this.data('original-text'));
+                }, 1000);
+            }
+        });
+     });
     var left  = ($(window).width()/2)-(500/2);
     var top   = ($(window).height()/2)-(600/2);
     $("#etsy-authorize").on("click",function(){
@@ -78,6 +94,10 @@
         window.open('/authorize-gtask','GoogleAuthorize', "width=500, height=600, top=" + top + ", left=" + left);
     });
 
+    $("#todoist-authorize").on("click",function(){
+        window.open('/authorize-todoist','TodoistAuthorize', "width=500, height=600, top=" + top + ", left=" + left);
+    });
+
     $('#gTaskConfigModal').on('show.bs.modal', function () {
         $('#googleLists button').remove();
         $('#spinner').show();
@@ -89,6 +109,19 @@
             });
             $('#spinner').hide();
             markActiveButton($('#googleLists button'),$(this));
+        });
+    });
+    $('#todoistConfigModal').on('show.bs.modal', function () {
+        $('#todoistProjects button').remove();
+        $('#todoist-spinner').show();
+        $.get( "api/users/1/todoist-projects", function( projects ) {
+            $.each(projects, function( index, project ) {
+                var activeClass = (project.isSelected) ? ' active' : '' 
+                $('#todoistProjects').append('<button id="' + project.id 
+                + '" type="button" class="list-group-item' + activeClass +'">' + project.name + '</button>');
+            });
+            $('#todoist-spinner').hide();
+            markActiveButton($('#todoistProjects button'),$(this));
         });
     });
 });

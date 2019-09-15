@@ -5,13 +5,14 @@ import (
 )
 
 type pageHandler struct {
-	handlerCom    *handlerCommon
-	emptyString   string
-	requestSecret string
-	etsyManager   *etsyDataManager
-	trelloManger  *trelloDataManager
-	gTaskManager  *gTasksDataManager
-	dCache        dataStore
+	handlerCom     *handlerCommon
+	emptyString    string
+	requestSecret  string
+	etsyManager    *etsyDataManager
+	trelloManger   *trelloDataManager
+	gTaskManager   *gTasksDataManager
+	todoistManager *todoistDataManager
+	dCache         dataStore
 }
 
 func newPageHandler(cache dataStore) *pageHandler {
@@ -20,6 +21,7 @@ func newPageHandler(cache dataStore) *pageHandler {
 	ph.etsyManager = newEtsyDataManager()
 	ph.trelloManger = newTrelloDataManager()
 	ph.gTaskManager = newGTasksDataManager()
+	ph.todoistManager = newToDoistDataManager()
 	ph.dCache = cache
 	return ph
 }
@@ -88,6 +90,24 @@ func (ph *pageHandler) gTasksAuthorizationCallback(w http.ResponseWriter, r *htt
 	info, _ := ph.dCache.getUserInfo(userID)
 	code := r.URL.Query().Get("code")
 	err := ph.gTaskManager.getAndPopulateGTasksDetails(code, info)
+	if err != nil {
+		Error("Error in login page template.", err)
+		ph.handlerCom.rnd.HTML(w, http.StatusOK, "details", userInfo{})
+	} else {
+		ph.dCache.saveDetailsToCache(info.UserID, *info)
+		ph.handlerCom.rnd.HTML(w, http.StatusOK, "callbacksuccess", nil)
+	}
+}
+
+func (ph *pageHandler) redirectToTodoist(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, ph.todoistManager.getAuthorizationURL(), http.StatusFound)
+}
+
+func (ph *pageHandler) todoistAuthorizationCallback(w http.ResponseWriter, r *http.Request) {
+	userID := ph.handlerCom.GetUserIDFromSession(r)
+	info, _ := ph.dCache.getUserInfo(userID)
+	code := r.URL.Query().Get("code")
+	err := ph.todoistManager.getAndPopulateTodoistDetails(code, info)
 	if err != nil {
 		Error("Error in login page template.", err)
 		ph.handlerCom.rnd.HTML(w, http.StatusOK, "details", userInfo{})
