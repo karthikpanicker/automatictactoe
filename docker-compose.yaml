@@ -9,10 +9,10 @@ services:
     volumes:
       - ./data:/data/db
   etsello:
-    image: karthikraveendranoss/etsello:dev
+    image: karthikraveendranoss/etsello:latest
     restart: always
     ports:
-      - 8000:80
+      - 80:80
     environment:
       MONGO_URL: mongodb://mongo:27017
       ETSY_CONSUMER_KEY:
