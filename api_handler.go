@@ -10,9 +10,9 @@ import (
 
 type apiHandler struct {
 	handlerCom     *handlerCommon
-	trelloManager  *trelloDataManager
-	gTManager      *gTasksDataManager
-	todoistManager *todoistDataManager
+	trelloManager  appDataManager
+	gTManager      appDataManager
+	todoistManager appDataManager
 	dCache         dataStore
 }
 
@@ -24,15 +24,15 @@ type trialInfo struct {
 func newAPIHandler(cache dataStore) *apiHandler {
 	ah := new(apiHandler)
 	ah.handlerCom = newHandlerCommon()
-	ah.trelloManager = newTrelloDataManager()
-	ah.gTManager = newGTasksDataManager()
-	ah.todoistManager = newToDoistDataManager()
+	ah.trelloManager = getAppManager("trello")
+	ah.gTManager = getAppManager("gtask")
+	ah.todoistManager = getAppManager("todoist")
 	ah.dCache = cache
 	return ah
 }
 
 func (ah *apiHandler) getBordLists(w http.ResponseWriter, r *http.Request) {
-	userID := ah.handlerCom.GetUserIDFromSession(r)
+	userID := ah.handlerCom.GetValueForKeyFromSession(r, userID).(int)
 	info, _ := ah.dCache.getUserInfo(userID)
 	params := mux.Vars(r)
 	boardID := params["boardId"]
@@ -40,12 +40,14 @@ func (ah *apiHandler) getBordLists(w http.ResponseWriter, r *http.Request) {
 		ah.handlerCom.ProcessErrorMessage(messageInvalidBoardID, w)
 		return
 	}
-	boardLists, _ := ah.trelloManager.getBoardLists(info, boardID)
+	requestParams := make(map[string]interface{})
+	requestParams[trelloBoardIDKey] = boardID
+	boardLists, _ := ah.trelloManager.getAppData(info, trelloBoardListRequest, requestParams)
 	ah.handlerCom.ProcessResponse(boardLists, w)
 }
 
-func (ah *apiHandler) saveBoardAndList(w http.ResponseWriter, r *http.Request) {
-	userID := ah.handlerCom.GetUserIDFromSession(r)
+func (ah *apiHandler) saveTrelloConfiguration(w http.ResponseWriter, r *http.Request) {
+	userID := ah.handlerCom.GetValueForKeyFromSession(r, userID).(int)
 	info, _ := ah.dCache.getUserInfo(userID)
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&info.TrelloDetails)
@@ -71,9 +73,9 @@ func (ah *apiHandler) saveBoardAndList(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ah *apiHandler) getGTasksLists(w http.ResponseWriter, r *http.Request) {
-	userID := ah.handlerCom.GetUserIDFromSession(r)
+	userID := ah.handlerCom.GetValueForKeyFromSession(r, userID).(int)
 	info, _ := ah.dCache.getUserInfo(userID)
-	tasks, err := ah.gTManager.getTaskLists(info, nil)
+	tasks, err := ah.gTManager.getAppData(info, gTaskGetListsRequest, nil)
 	if err != nil {
 		ah.handlerCom.ProcessErrorMessage(err.Error(), w)
 	}
@@ -81,7 +83,7 @@ func (ah *apiHandler) getGTasksLists(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ah *apiHandler) saveGTasksConfig(w http.ResponseWriter, r *http.Request) {
-	userID := ah.handlerCom.GetUserIDFromSession(r)
+	userID := ah.handlerCom.GetValueForKeyFromSession(r, userID).(int)
 	info, _ := ah.dCache.getUserInfo(userID)
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&info.GTasksDetails)
@@ -95,16 +97,16 @@ func (ah *apiHandler) saveGTasksConfig(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ah *apiHandler) getTodoistProjects(w http.ResponseWriter, r *http.Request) {
-	userID := ah.handlerCom.GetUserIDFromSession(r)
+	userID := ah.handlerCom.GetValueForKeyFromSession(r, userID).(int)
 	info, _ := ah.dCache.getUserInfo(userID)
-	projects, err := ah.todoistManager.getProjects(info)
+	projects, err := ah.todoistManager.getAppData(info, todoistProjectsRequest, nil)
 	if err != nil {
 		ah.handlerCom.ProcessErrorMessage(err.Error(), w)
 	}
 	ah.handlerCom.ProcessResponse(projects, w)
 }
 func (ah *apiHandler) saveTodoistConfig(w http.ResponseWriter, r *http.Request) {
-	userID := ah.handlerCom.GetUserIDFromSession(r)
+	userID := ah.handlerCom.GetValueForKeyFromSession(r, userID).(int)
 	info, _ := ah.dCache.getUserInfo(userID)
 	decoder := json.NewDecoder(r.Body)
 	_ = decoder.Decode(&info.TodoistDetails)

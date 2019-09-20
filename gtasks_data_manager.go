@@ -2,6 +2,8 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
+	"net/http"
 	"os"
 
 	"golang.org/x/net/context"
@@ -9,13 +11,15 @@ import (
 	"google.golang.org/api/tasks/v1"
 )
 
+const (
+	gTaskGetListsRequest = "gTaskGetListsRequest"
+)
+
 type gTasksDataManager struct {
-	config        *oauth2.Config
-	requestSecret string
+	config *oauth2.Config
 }
 
-func newGTasksDataManager() *gTasksDataManager {
-	gtm := new(gTasksDataManager)
+func (gtm *gTasksDataManager) initDataManager() {
 	gtm.config = &oauth2.Config{
 		ClientID:     os.Getenv("GTASKS_CLIENT_ID"),
 		ClientSecret: os.Getenv("GTASKS_CLIENT_SECRET"),
@@ -24,26 +28,43 @@ func newGTasksDataManager() *gTasksDataManager {
 			TokenURL:  os.Getenv("GTASKS_TOKEN_URL"),
 			AuthStyle: oauth2.AuthStyleInParams,
 		},
-		RedirectURL: os.Getenv("HOST_URL") + "callback-google",
+		RedirectURL: os.Getenv("HOST_URL") + "apps/gtask/callback",
 		Scopes:      []string{tasks.TasksScope},
 	}
-	return gtm
 }
 
-func (gtm *gTasksDataManager) getAuthorizationURL() string {
-	return gtm.config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
+func (gtm *gTasksDataManager) getAuthorizationURL() (string, string, error) {
+	return gtm.config.AuthCodeURL("state-token", oauth2.AccessTypeOffline), "", nil
 }
 
-func (gtm *gTasksDataManager) getAndPopulateGTasksDetails(authCode string, info *userInfo) error {
+func (gtm *gTasksDataManager) getAndPopulateAppDetails(info *userInfo, r *http.Request, requestSecret string) error {
+	authCode := r.URL.Query().Get("code")
 	tok, err := gtm.config.Exchange(context.TODO(), authCode)
 	if err != nil {
 		Error("Unable to retrieve token from web", err)
 		return err
 	}
-	tokBytes, _ := json.Marshal(tok)
+	tokBytes, err := json.Marshal(tok)
+	if err != nil {
+		return err
+	}
 	info.GTasksDetails.Token = string(tokBytes)
 	info.GTasksDetails.IsLinked = true
 	return nil
+}
+
+func (gtm *gTasksDataManager) addItem(info *userInfo, appItemDetails interface{},
+	requestParams map[string]interface{}, appItemResponse interface{}) error {
+	return nil
+}
+func (gtm *gTasksDataManager) getAppData(info *userInfo, requestType string,
+	requestParams map[string]interface{}) (interface{}, error) {
+	switch requestType {
+	case gTaskGetListsRequest:
+		return gtm.getTaskLists(info, nil)
+	default:
+		return nil, errors.New("Unknown request type")
+	}
 }
 
 func (gtm *gTasksDataManager) getGTasksService(info *userInfo) (*tasks.Service, error) {

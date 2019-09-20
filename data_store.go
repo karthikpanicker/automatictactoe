@@ -1,5 +1,10 @@
 package main
 
+const (
+	userID          string = "userID"
+	activeReqSecret string = "activeRequestSecret"
+)
+
 type userInfo struct {
 	EmailID        string         `bson:"emailId"`
 	UserID         int            `bson:"_id"`

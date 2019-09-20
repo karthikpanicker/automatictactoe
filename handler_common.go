@@ -72,20 +72,21 @@ func (hc *handlerCommon) ProcessResponse(response interface{}, w http.ResponseWr
 	w.Write(payload)
 }
 
-func (hc *handlerCommon) GetUserIDFromSession(r *http.Request) int {
+func (hc *handlerCommon) GetValueForKeyFromSession(r *http.Request, key interface{}) interface{} {
 	session, err := sessionStore.Get(r, "userSession")
 	if err != nil {
 		Error(err)
 	}
-	userID := session.Values["userID"].(int)
-	return userID
+	value := session.Values[key]
+	return value
 }
 
-func (hc *handlerCommon) SaveUserIDInSession(r *http.Request, w http.ResponseWriter, userID int) {
+func (hc *handlerCommon) SaveKeyValueToSession(r *http.Request, w http.ResponseWriter,
+	key interface{}, value interface{}) {
 	session, err := sessionStore.Get(r, "userSession")
 	if err != nil {
 		Error(err)
 	}
-	session.Values["userID"] = userID
+	session.Values[key] = value
 	session.Save(r, w)
 }

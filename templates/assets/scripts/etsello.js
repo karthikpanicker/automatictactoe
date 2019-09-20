@@ -79,10 +79,10 @@
     var left  = ($(window).width()/2)-(500/2);
     var top   = ($(window).height()/2)-(600/2);
     $("#etsy-authorize").on("click",function(){
-        window.open('/authorize-etsy','EtsyAuthorize', "width=500, height=600, top=" + top + ", left=" + left);
+        window.open('/apps/etsy/authorize','EtsyAuthorize', "width=500, height=600, top=" + top + ", left=" + left);
     });
     $("#trello-authorize").on("click",function(){
-        window.open('/authorize-trello','TrelloAuthorize', "width=500, height=600, top=" + top + ", left=" + left);
+        window.open('/apps/trello/authorize','TrelloAuthorize', "width=500, height=600, top=" + top + ", left=" + left);
     });
 
     $('.github-link').on("click",function(e){
@@ -91,11 +91,11 @@
     });
 
     $("#gtask-authorize").on("click",function(){
-        window.open('/authorize-gtask','GoogleAuthorize', "width=500, height=600, top=" + top + ", left=" + left);
+        window.open('/apps/gtask/authorize','GoogleAuthorize', "width=500, height=600, top=" + top + ", left=" + left);
     });
 
     $("#todoist-authorize").on("click",function(){
-        window.open('/authorize-todoist','TodoistAuthorize', "width=500, height=600, top=" + top + ", left=" + left);
+        window.open('/apps/todoist/authorize','TodoistAuthorize', "width=500, height=600, top=" + top + ", left=" + left);
     });
 
     $('#gTaskConfigModal').on('show.bs.modal', function () {

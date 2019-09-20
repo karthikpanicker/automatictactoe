@@ -19,25 +19,29 @@ func newEtsySynchronizer(cache dataStore) *etsySynchronizer {
 
 func (es *etsySynchronizer) processOrdersForUsers() {
 	for {
-		edm := newEtsyDataManager()
+		edm := getAppManager("etsy")
 		userList := es.dCache.getUserMap()
 		for _, userDetails := range userList {
 			//Need to fetch transactions for the user only if he has linked any of the apps
 			if !userDetails.TrelloDetails.IsLinked || !userDetails.GTasksDetails.IsLinked {
 				continue
 			}
-			orderList, err := edm.getTransactionList(userDetails)
+			response, err := edm.getAppData(&userDetails, etsyTransactionListRequest, nil)
 			if err != nil {
 				Error(err)
 				continue
 			}
+			orderList := response.(*etsyTransactionResponse)
 			lptID := userDetails.EtsyDetails.LastProcessedTrasactionID
 			for i := len(orderList.Results) - 1; i >= 0; i-- {
 				etsyTransaction := orderList.Results[i]
 				if etsyTransaction.ID > lptID && etsyTransaction.ShippedTime == 0 {
-					buyerProfile, _ := edm.getProfileDetails(etsyTransaction.BuyerUserID, &userDetails)
+					reqParamsMap := make(map[string]interface{})
+					reqParamsMap[etsyUserIDKey] = etsyTransaction.BuyerUserID
+					response, _ := edm.getAppData(&userDetails, profileDetailsForUserRequest, reqParamsMap)
+					buyerProfile := response.(*etsyUserProfile)
 					if userDetails.TrelloDetails.IsLinked {
-						es.postTransactionToTrello(etsyTransaction, &userDetails, buyerProfile)
+						es.postTransactionToTrello(edm, etsyTransaction, &userDetails, buyerProfile)
 					}
 					if userDetails.GTasksDetails.IsLinked {
 						es.postTransactionToGTasks(etsyTransaction, &userDetails, buyerProfile)
@@ -52,12 +56,12 @@ func (es *etsySynchronizer) processOrdersForUsers() {
 	}
 }
 
-func (es *etsySynchronizer) postTransactionToTrello(tranDetails etsyTransactionDetails,
+func (es *etsySynchronizer) postTransactionToTrello(edm appDataManager, tranDetails etsyTransactionDetails,
 	info *userInfo, buyerProfile *etsyUserProfile) {
 	if tranDetails.PaidTime < info.TrelloDetails.FromDate {
 		return
 	}
-	tdm := newTrelloDataManager()
+	tdm := getAppManager("trello")
 	card := trelloCardDetails{
 		Name:   tranDetails.Title,
 		ListID: info.TrelloDetails.SelectedListID,
@@ -69,11 +73,17 @@ func (es *etsySynchronizer) postTransactionToTrello(tranDetails etsyTransactionD
 		card.URL = tranDetails.EtsyURL
 	}
 	var resultCard trelloCardDetailsResponse
-	tdm.addCard(info, card, &resultCard)
+	trelloReqParamsMap := make(map[string]interface{})
 	if contains(info.TrelloDetails.FieldsToUse, "listing_image") {
-		edm := newEtsyDataManager()
-		imageDetails, _ := edm.getImageDetails(info, tranDetails)
-		tdm.attachImage(info, &resultCard, imageDetails)
+		reqParamsMap := make(map[string]interface{})
+		reqParamsMap[etsyTranDetailsKey] = tranDetails
+		response, _ := edm.getAppData(info, etsyImageDetailsRequest, reqParamsMap)
+		trelloReqParamsMap[trelloShouldAttachImage] = true
+		trelloReqParamsMap[etsyImageDetailsKey] = response
+		tdm.addItem(info, card, trelloReqParamsMap, &resultCard)
+	} else {
+		trelloReqParamsMap[trelloShouldAttachImage] = false
+		tdm.addItem(info, card, trelloReqParamsMap, &resultCard)
 	}
 }
 
@@ -86,8 +96,8 @@ func (es *etsySynchronizer) postTransactionToGTasks(tranDetails etsyTransactionD
 		Title: tranDetails.Title,
 		Notes: tranDetails.Description,
 	}
-	gtm := newGTasksDataManager()
-	_, err := gtm.addToDoItem(info, todoItem, nil)
+	gtm := getAppManager("gtask")
+	err := gtm.addItem(info, todoItem, nil, nil)
 	if err != nil {
 		Error(err)
 	}

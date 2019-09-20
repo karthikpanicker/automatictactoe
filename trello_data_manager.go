@@ -1,49 +1,53 @@
 package main
 
 import (
+	"errors"
 	"net/http"
 	"os"
 
 	"github.com/dghubble/oauth1"
 )
 
+const (
+	trelloShouldAttachImage = "trelloShouldAttachImage"
+	trelloBoardListRequest  = "trelloBoardListRequest"
+	trelloBoardIDKey        = "trelloBoardID"
+)
+
 type trelloDataManager struct {
-	config               oauth1.Config
-	requestSecret        string
-	trelloConsumerKey    string
-	trelloConsumerSecret string
-	trelloBaseURL        string
+	config        oauth1.Config
+	trelloBaseURL string
 }
 
-func newTrelloDataManager() *trelloDataManager {
-	tdm := new(trelloDataManager)
-	tdm.trelloBaseURL = os.Getenv("TRELLO_API_BASE_URL")
-	tdm.config = oauth1.Config{
+func (tm *trelloDataManager) initDataManager() {
+	tm.trelloBaseURL = os.Getenv("TRELLO_API_BASE_URL")
+	tm.config = oauth1.Config{
 		ConsumerKey:    os.Getenv("TRELLO_CONSUMER_KEY"),
 		ConsumerSecret: os.Getenv("TRELLO_CONSUMER_SECRET"),
-		CallbackURL:    os.Getenv("HOST_URL") + "callback-trello",
+		CallbackURL:    os.Getenv("HOST_URL") + "apps/trello/callback",
 		Endpoint: oauth1.Endpoint{
 			AccessTokenURL:  os.Getenv("TRELLO_OAUTH_BASE_URL") + "OAuthGetAccessToken",
 			AuthorizeURL:    os.Getenv("TRELLO_OAUTH_BASE_URL") + "OAuthAuthorizeToken",
 			RequestTokenURL: os.Getenv("TRELLO_OAUTH_BASE_URL") + "OAuthGetRequestToken",
 		},
 	}
-	return tdm
 }
 
-func (tm *trelloDataManager) getAuthorizationURL() string {
+func (tm *trelloDataManager) getAuthorizationURL() (string, string, error) {
 	requestToken, requestSecret, err := tm.config.RequestToken()
 	if err != nil {
 		Error(err)
+		return "", "", err
 	}
-	tm.requestSecret = requestSecret
 	authorizationURL, err := tm.config.AuthorizationURL(requestToken)
-	return authorizationURL.String() + "&name=" + "Etsello - an etsy order capture for trello" + "&expiration=never&scope=read,write"
+	return authorizationURL.String() +
+			"&name=" + "Etsello - an etsy order capture for trello" + "&expiration=never&scope=read,write",
+		requestSecret, nil
 }
 
-func (tm *trelloDataManager) getAndPopulateTrelloDetails(r *http.Request, info *userInfo) error {
+func (tm *trelloDataManager) getAndPopulateAppDetails(info *userInfo, r *http.Request, requestSecret string) error {
 	requestToken, verifier, err := oauth1.ParseAuthorizationCallback(r)
-	accessToken, accessSecret, err := tm.config.AccessToken(requestToken, tm.requestSecret, verifier)
+	accessToken, accessSecret, err := tm.config.AccessToken(requestToken, requestSecret, verifier)
 	if err != nil {
 		return err
 	}
@@ -61,13 +65,31 @@ func (tm *trelloDataManager) getAndPopulateTrelloDetails(r *http.Request, info *
 	return nil
 }
 
-func (tm *trelloDataManager) addCard(info *userInfo, card trelloCardDetails,
-	resultCard *trelloCardDetailsResponse) error {
+func (tm *trelloDataManager) addItem(info *userInfo, appItemDetails interface{},
+	requestParams map[string]interface{}, appItemResponse interface{}) error {
 	path := tm.trelloBaseURL + "cards"
 	httpOAuthClient := newHTTPOAuth1Client(info.TrelloDetails.TrelloAccessToken,
 		info.TrelloDetails.TrelloAccessSecret, tm.config)
-	err := httpOAuthClient.postResource(path, card, resultCard)
-	return err
+	err := httpOAuthClient.postResource(path, appItemDetails, appItemResponse)
+	if err != nil {
+		return err
+	}
+	if requestParams[trelloShouldAttachImage].(bool) {
+		// no need to bother if there is an error while attaching the image
+		tm.attachImage(info, appItemResponse.(*trelloCardDetailsResponse),
+			requestParams[etsyImageDetailsKey].(etsyImageDetails))
+	}
+	return nil
+}
+
+func (tm *trelloDataManager) getAppData(info *userInfo, requestType string,
+	requestParams map[string]interface{}) (interface{}, error) {
+	switch requestType {
+	case trelloBoardListRequest:
+		return tm.getBoardLists(info, requestParams[trelloBoardIDKey].(string))
+	default:
+		return nil, errors.New("Unknown request type provided")
+	}
 }
 
 func (tm *trelloDataManager) attachImage(info *userInfo, resultCard *trelloCardDetailsResponse,
