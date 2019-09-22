@@ -11,6 +11,8 @@ import (
 const (
 	trelloShouldAttachImage = "trelloShouldAttachImage"
 	trelloBoardListRequest  = "trelloBoardListRequest"
+	trelloUserBoardsRequest = "trelloUserBoardsRequest"
+	trelloBoardInfoRequest  = "trelloBoardInfoRequest"
 	trelloBoardIDKey        = "trelloBoardID"
 )
 
@@ -74,7 +76,8 @@ func (tm *trelloDataManager) addItem(info *userInfo, appItemDetails interface{},
 	if err != nil {
 		return err
 	}
-	if requestParams[trelloShouldAttachImage].(bool) {
+	if requestParams[trelloShouldAttachImage] != nil &&
+		requestParams[trelloShouldAttachImage].(bool) {
 		// no need to bother if there is an error while attaching the image
 		tm.attachImage(info, appItemResponse.(*trelloCardDetailsResponse),
 			requestParams[etsyImageDetailsKey].(etsyImageDetails))
@@ -87,6 +90,10 @@ func (tm *trelloDataManager) getAppData(info *userInfo, requestType string,
 	switch requestType {
 	case trelloBoardListRequest:
 		return tm.getBoardLists(info, requestParams[trelloBoardIDKey].(string))
+	case trelloUserBoardsRequest:
+		return tm.getUserBoards(info)
+	case trelloBoardInfoRequest:
+		return tm.getBoardInfo(info, requestParams[trelloBoardIDKey].(string))
 	default:
 		return nil, errors.New("Unknown request type provided")
 	}

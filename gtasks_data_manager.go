@@ -12,7 +12,9 @@ import (
 )
 
 const (
-	gTaskGetListsRequest = "gTaskGetListsRequest"
+	gTaskGetListsRequest   = "gTaskGetListsRequest"
+	gTaskGetServiceRequest = "gTaskGetServiceRequest"
+	gTaskServiceKey        = "gTaskServiceKey"
 )
 
 type gTasksDataManager struct {
@@ -55,13 +57,31 @@ func (gtm *gTasksDataManager) getAndPopulateAppDetails(info *userInfo, r *http.R
 
 func (gtm *gTasksDataManager) addItem(info *userInfo, appItemDetails interface{},
 	requestParams map[string]interface{}, appItemResponse interface{}) error {
-	return nil
+	var srvValue = requestParams[gTaskServiceKey]
+	var err error
+	if srvValue == nil {
+		srvValue, err = gtm.getGTasksService(info)
+	}
+	if err != nil {
+		return err
+	}
+	srv := srvValue.(*tasks.Service)
+	task, err := srv.Tasks.Insert(info.GTasksDetails.SelectedTaskListID, appItemDetails.(*tasks.Task)).Do()
+	appItemResponse = task
+	return err
 }
 func (gtm *gTasksDataManager) getAppData(info *userInfo, requestType string,
 	requestParams map[string]interface{}) (interface{}, error) {
 	switch requestType {
 	case gTaskGetListsRequest:
-		return gtm.getTaskLists(info, nil)
+		var svc *tasks.Service
+		param := requestParams[gTaskServiceKey]
+		if param != nil {
+			svc = param.(*tasks.Service)
+		}
+		return gtm.getTaskLists(info, svc)
+	case gTaskGetServiceRequest:
+		return gtm.getGTasksService(info)
 	default:
 		return nil, errors.New("Unknown request type")
 	}
@@ -77,19 +97,6 @@ func (gtm *gTasksDataManager) getGTasksService(info *userInfo) (*tasks.Service, 
 		return nil, err
 	}
 	return srv, nil
-}
-
-func (gtm *gTasksDataManager) addToDoItem(info *userInfo, todoItem *tasks.Task, service *tasks.Service) (*tasks.Task, error) {
-	var srv *tasks.Service = service
-	var err error
-	if srv == nil {
-		srv, err = gtm.getGTasksService(info)
-	}
-	if err != nil {
-		return nil, err
-	}
-	task, err := srv.Tasks.Insert(info.GTasksDetails.SelectedTaskListID, todoItem).Do()
-	return task, err
 }
 
 func (gtm *gTasksDataManager) getTaskLists(info *userInfo, service *tasks.Service) (*tasks.TaskLists, error) {

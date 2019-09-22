@@ -23,8 +23,9 @@ func TestGetAuthorizationURL(t *testing.T) {
 			`&oauth_token_secret=aa148e1719a0b6f02bca8515b7310283&oauth_callback_confirmed=true`))
 	}))
 	gotenv.OverApply(strings.NewReader("TRELLO_OAUTH_BASE_URL=" + server.URL + "/1/"))
-	tdm := newTrelloDataManager()
-	authURL := tdm.getAuthorizationURL()
+	tdm := getAppManager(trello)
+	authURL, _, err := tdm.getAuthorizationURL()
+	assert.Nil(t, err)
 	assert.Equal(t, server.URL+"/1/OAuthAuthorizeToken?oauth_token=915132350c7d73b3daae0deea59e21d1"+
 		"&name=Etsello - an etsy order capture for trello&expiration=never&scope=read,write",
 		authURL)
@@ -87,14 +88,14 @@ func TestAddCard(t *testing.T) {
 	}))
 	defer server.Close()
 	gotenv.OverApply(strings.NewReader("TRELLO_API_BASE_URL=" + server.URL + "/"))
-	tdm := newTrelloDataManager()
+	tdm := getAppManager(trello)
 	card := trelloCardDetails{
 		Name:       "Test trello for Etsy",
 		Descripton: "Allows you to sink etsy orders with Trello",
 		ListID:     "58e7fee3e06e4001f1cc3658",
 	}
 	var resultCard trelloCardDetailsResponse
-	err := tdm.addCard(buildDummyUserInfo(), card, &resultCard)
+	err := tdm.addItem(buildDummyUserInfo(), card, nil, &resultCard)
 	assert.Nil(t, err)
 	assert.Equal(t, "58e800aa9ebaaa01c586f630", resultCard.ID)
 }
@@ -192,11 +193,10 @@ func TestGetUserBoards(t *testing.T) {
 	}))
 	defer server.Close()
 	gotenv.OverApply(strings.NewReader("TRELLO_API_BASE_URL=" + server.URL + "/"))
-	Info(server.URL)
-	tdm := newTrelloDataManager()
-	boardArray, err := tdm.getUserBoards(buildDummyUserInfo())
+	tdm := getAppManager(trello)
+	response, err := tdm.getAppData(buildDummyUserInfo(), trelloUserBoardsRequest, nil)
 	assert.Nil(t, err)
-	assert.Equal(t, "513227cad846f3834300649c", boardArray[0])
+	assert.Equal(t, "513227cad846f3834300649c", response.([]string)[0])
 }
 
 func TestGetBoardLists(t *testing.T) {
@@ -258,10 +258,12 @@ func TestGetBoardLists(t *testing.T) {
 	info := buildDummyUserInfo()
 	info.TrelloDetails.SelectedListID = "5d72e23d9e6aa902f8f8a701"
 	info.TrelloDetails.SelectedBoardID = "513227cad846f3834300649c"
-	tdm := newTrelloDataManager()
-	boardLists, err := tdm.getBoardLists(info, boardID)
+	tdm := getAppManager(trello)
+	requestParams := make(map[string]interface{})
+	requestParams[trelloBoardIDKey] = boardID
+	boardLists, err := tdm.getAppData(info, trelloBoardListRequest, requestParams)
 	assert.Nil(t, err)
-	assert.Equal(t, "5d72e23d9e6aa902f8f8a701", boardLists[0].ID)
+	assert.Equal(t, "5d72e23d9e6aa902f8f8a701", boardLists.([]boardList)[0].ID)
 }
 
 func TestGetBoardInfo(t *testing.T) {
@@ -321,10 +323,12 @@ func TestGetBoardInfo(t *testing.T) {
 	defer server.Close()
 	gotenv.OverApply(strings.NewReader("TRELLO_API_BASE_URL=" + server.URL + "/"))
 	info := buildDummyUserInfo()
-	tdm := newTrelloDataManager()
-	boardInfo, err := tdm.getBoardInfo(info, boardID)
+	tdm := getAppManager(trello)
+	requestParams := make(map[string]interface{})
+	requestParams[trelloBoardIDKey] = boardID
+	boardInfo, err := tdm.getAppData(info, trelloBoardInfoRequest, requestParams)
 	assert.Nil(t, err)
-	assert.Equal(t, "513227cad846f3834300649c", boardInfo.ID)
+	assert.Equal(t, "513227cad846f3834300649c", boardInfo.(*boardDetails).ID)
 }
 
 func buildDummyUserInfo() *userInfo {

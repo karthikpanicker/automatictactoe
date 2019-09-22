@@ -35,7 +35,13 @@ func (ph *pageHandler) showTermsAndConditions(w http.ResponseWriter, r *http.Req
 func (ph *pageHandler) redirectToAppLogin(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	aTStr := params["appType"]
-	aDataMgr := getAppManager(aTStr)
+	aT, err := getAppTypeForString(aTStr)
+	if err != nil {
+		Error("Error redirecting to app login.", err)
+		ph.handlerCom.rnd.HTML(w, http.StatusOK, "details", nil)
+		return
+	}
+	aDataMgr := getAppManager(aT)
 	authURL, requestSecret, _ := aDataMgr.getAuthorizationURL()
 	ph.handlerCom.SaveKeyValueToSession(r, w, activeReqSecret, requestSecret)
 	http.Redirect(w, r, authURL, http.StatusFound)
@@ -44,7 +50,13 @@ func (ph *pageHandler) redirectToAppLogin(w http.ResponseWriter, r *http.Request
 func (ph *pageHandler) appAuthorizationCallback(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	aTStr := params["appType"]
-	aDataMgr := getAppManager(aTStr)
+	aT, err := getAppTypeForString(aTStr)
+	if err != nil {
+		Error("Error processing etsy authorization callback.", err)
+		ph.handlerCom.rnd.HTML(w, http.StatusOK, "details", nil)
+		return
+	}
+	aDataMgr := getAppManager(aT)
 	requestSecret := ph.handlerCom.GetValueForKeyFromSession(r, activeReqSecret).(string)
 	// Fetch userinfo from db and if not available create a new userinfo instance
 	userID := ph.handlerCom.GetValueForKeyFromSession(r, userID).(int)

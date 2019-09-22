@@ -19,7 +19,7 @@ func newEtsySynchronizer(cache dataStore) *etsySynchronizer {
 
 func (es *etsySynchronizer) processOrdersForUsers() {
 	for {
-		edm := getAppManager("etsy")
+		edm := getAppManager(etsy)
 		userList := es.dCache.getUserMap()
 		for _, userDetails := range userList {
 			//Need to fetch transactions for the user only if he has linked any of the apps
@@ -61,7 +61,7 @@ func (es *etsySynchronizer) postTransactionToTrello(edm appDataManager, tranDeta
 	if tranDetails.PaidTime < info.TrelloDetails.FromDate {
 		return
 	}
-	tdm := getAppManager("trello")
+	tdm := getAppManager(trello)
 	card := trelloCardDetails{
 		Name:   tranDetails.Title,
 		ListID: info.TrelloDetails.SelectedListID,
@@ -96,7 +96,7 @@ func (es *etsySynchronizer) postTransactionToGTasks(tranDetails etsyTransactionD
 		Title: tranDetails.Title,
 		Notes: tranDetails.Description,
 	}
-	gtm := getAppManager("gtask")
+	gtm := getAppManager(gtask)
 	err := gtm.addItem(info, todoItem, nil, nil)
 	if err != nil {
 		Error(err)

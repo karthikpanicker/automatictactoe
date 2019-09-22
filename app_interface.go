@@ -24,23 +24,35 @@ type appDataManager interface {
 		requestParams map[string]interface{}) (interface{}, error)
 }
 
-func getAppManager(aT string) appDataManager {
-	adm, _ := getAppMgrInstanceForApp(aT)
+func getAppManager(aT appType) appDataManager {
+	var adm appDataManager
+	switch aT {
+	case trello:
+		adm = new(trelloDataManager)
+	case gtask:
+		adm = new(gTasksDataManager)
+	case etsy:
+		adm = new(etsyDataManager)
+	case todoist:
+		adm = new(todoistDataManager)
+	default:
+		Fatal("Unknown app type")
+	}
 	adm.initDataManager()
 	return adm
 }
 
-func getAppMgrInstanceForApp(aT string) (appDataManager, error) {
+func getAppTypeForString(aT string) (appType, error) {
 	switch aT {
 	case "trello":
-		return new(trelloDataManager), nil
+		return trello, nil
 	case "gtask":
-		return new(gTasksDataManager), nil
+		return gtask, nil
 	case "etsy":
-		return new(etsyDataManager), nil
+		return etsy, nil
 	case "todoist":
-		return new(todoistDataManager), nil
+		return todoist, nil
 	default:
-		return nil, errors.New("Unknown app type")
+		return 0, errors.New("Unknown app type")
 	}
 }

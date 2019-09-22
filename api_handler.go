@@ -24,9 +24,9 @@ type trialInfo struct {
 func newAPIHandler(cache dataStore) *apiHandler {
 	ah := new(apiHandler)
 	ah.handlerCom = newHandlerCommon()
-	ah.trelloManager = getAppManager("trello")
-	ah.gTManager = getAppManager("gtask")
-	ah.todoistManager = getAppManager("todoist")
+	ah.trelloManager = getAppManager(trello)
+	ah.gTManager = getAppManager(gtask)
+	ah.todoistManager = getAppManager(todoist)
 	ah.dCache = cache
 	return ah
 }
