@@ -1,6 +1,4 @@
-//Gist from https://gist.github.com/gonzaloserrano/d360c1b195f7313b6d19
-
-package main
+package common
 
 import (
 	"fmt"

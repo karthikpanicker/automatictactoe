@@ -1,7 +1,8 @@
-package main
+package web
 
 import (
 	"encoding/json"
+	"etsello/common"
 	"fmt"
 	"net/http"
 	"os"
@@ -75,7 +76,7 @@ func (hc *handlerCommon) ProcessResponse(response interface{}, w http.ResponseWr
 func (hc *handlerCommon) GetValueForKeyFromSession(r *http.Request, key interface{}) interface{} {
 	session, err := sessionStore.Get(r, "userSession")
 	if err != nil {
-		Error(err)
+		common.Error(err)
 	}
 	value := session.Values[key]
 	return value
@@ -85,7 +86,7 @@ func (hc *handlerCommon) SaveKeyValueToSession(r *http.Request, w http.ResponseW
 	key interface{}, value interface{}) {
 	session, err := sessionStore.Get(r, "userSession")
 	if err != nil {
-		Error(err)
+		common.Error(err)
 	}
 	session.Values[key] = value
 	session.Save(r, w)

@@ -1,4 +1,4 @@
-package main
+package common
 
 import (
 	"bytes"
@@ -8,21 +8,24 @@ import (
 	"github.com/dghubble/oauth1"
 )
 
-type httpOAuth1Client struct {
+// HTTPOAuth1Client is a client to negotiate oauth1 authentication
+type HTTPOAuth1Client struct {
 	accessToken  string
 	accessSecret string
 	oauthConfig  oauth1.Config
 }
 
-func newHTTPOAuth1Client(aT string, aS string, oC oauth1.Config) *httpOAuth1Client {
-	hoc := new(httpOAuth1Client)
+// NewHTTPOAuth1Client creates a new http oauth1 client
+func NewHTTPOAuth1Client(aT string, aS string, oC oauth1.Config) *HTTPOAuth1Client {
+	hoc := new(HTTPOAuth1Client)
 	hoc.accessToken = aT
 	hoc.accessSecret = aS
 	hoc.oauthConfig = oC
 	return hoc
 }
 
-func (hoc *httpOAuth1Client) getMarshalledAPIResponse(url string, responseContainer interface{}) error {
+// GetMarshalledAPIResponse get the resource from the given url, with oauth1 headers set.
+func (hoc *HTTPOAuth1Client) GetMarshalledAPIResponse(url string, responseContainer interface{}) error {
 	token := oauth1.NewToken(hoc.accessToken, hoc.accessSecret)
 	// httpClient will automatically authorize http.Request's
 	httpClient := hoc.oauthConfig.Client(oauth1.NoContext, token)
@@ -40,7 +43,8 @@ func (hoc *httpOAuth1Client) getMarshalledAPIResponse(url string, responseContai
 	return nil
 }
 
-func (hoc *httpOAuth1Client) postResource(url string, resource interface{},
+// PostResource posts a new resource against the give url, with oauth1 headers set.
+func (hoc *HTTPOAuth1Client) PostResource(url string, resource interface{},
 	responseContainer interface{}) error {
 	token := oauth1.NewToken(hoc.accessToken, hoc.accessSecret)
 	httpClient := hoc.oauthConfig.Client(oauth1.NoContext, token)

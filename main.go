@@ -1,6 +1,8 @@
 package main
 
 import (
+	"etsello/common"
+	"etsello/web"
 	"sync"
 
 	"github.com/subosito/gotenv"
@@ -8,10 +10,10 @@ import (
 
 func main() {
 	gotenv.Load()
-	dCache := newDataStore()
-	defer dCache.disconnectCache()
-	httpManager := newHTTPManager()
-	go httpManager.startServer(dCache, "", 80)
+	dCache := common.NewDataStore()
+	defer dCache.DisconnectCache()
+	httpManager := web.NewHTTPManager()
+	go httpManager.StartServer(dCache, "", 80)
 
 	es := newEtsySynchronizer(dCache)
 	go es.processOrdersForUsers()

@@ -1,6 +1,7 @@
-package main
+package apps
 
 import (
+	"etsello/common"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -17,8 +18,8 @@ func TestGetGTasksAuthorizationURL(t *testing.T) {
 	gotenv.OverApply(strings.NewReader("HOST_URL=http://localhost:80/"))
 	gotenv.OverApply(strings.NewReader("GTASKS_AUTH_URL=http://localhost/o/oauth2/auth"))
 	gotenv.OverApply(strings.NewReader("GTASKS_TOKEN_URL=http://localhost/token"))
-	gtm := getAppManager(gtask)
-	authURL, _, err := gtm.getAuthorizationURL()
+	gtm := GetAppManager(Gtask)
+	authURL, _, err := gtm.GetAuthorizationURL()
 	assert.Nil(t, err)
 	assert.Equal(t, "http://localhost/o/oauth2/auth?access_type=offline&"+
 		"client_id=abc&"+
@@ -40,8 +41,8 @@ func TestGetAndPopulateGTasksDetails(t *testing.T) {
 	gotenv.OverApply(strings.NewReader("GTASKS_AUTH_URL=" + server.URL + "/o/oauth2/auth"))
 	gotenv.OverApply(strings.NewReader("GTASKS_TOKEN_URL=" + server.URL + "/token"))
 	info := buildDummyUserInfo()
-	gtm := getAppManager(gtask)
-	err := gtm.getAndPopulateAppDetails(info, httptest.NewRequest("GET",
+	gtm := GetAppManager(Gtask)
+	err := gtm.GetAndPopulateAppDetails(info, httptest.NewRequest("GET",
 		"http://localhost/apps/gtask/callback?code=abcd", nil), "abcd")
 	assert.Nil(t, err)
 }
@@ -60,11 +61,11 @@ func TestGetGTasksService(t *testing.T) {
 	gotenv.OverApply(strings.NewReader("GTASKS_AUTH_URL=" + server.URL + "/o/oauth2/auth"))
 	gotenv.OverApply(strings.NewReader("GTASKS_TOKEN_URL=" + server.URL + "/token"))
 	info := buildDummyUserInfo()
-	gtm := getAppManager(gtask)
-	err := gtm.getAndPopulateAppDetails(info, httptest.NewRequest("GET",
+	gtm := GetAppManager(Gtask)
+	err := gtm.GetAndPopulateAppDetails(info, httptest.NewRequest("GET",
 		"http://localhost/apps/gtask/callback?code=abcd", nil), "abcd")
 	assert.Nil(t, err)
-	_, err = gtm.getAppData(info, gTaskGetServiceRequest, nil)
+	_, err = gtm.GetAppData(info, gTaskGetServiceRequest, nil)
 	assert.Nil(t, err)
 }
 
@@ -113,15 +114,15 @@ func TestGetTaskLists(t *testing.T) {
 	gotenv.OverApply(strings.NewReader("GTASKS_AUTH_URL=" + server.URL + "/o/oauth2/auth"))
 	gotenv.OverApply(strings.NewReader("GTASKS_TOKEN_URL=" + server.URL + "/token"))
 	info := buildDummyUserInfo()
-	gtm := getAppManager(gtask)
-	err := gtm.getAndPopulateAppDetails(info, httptest.NewRequest("GET",
+	gtm := GetAppManager(Gtask)
+	err := gtm.GetAndPopulateAppDetails(info, httptest.NewRequest("GET",
 		"http://localhost/apps/gtask/callback?code=abcd", nil), "abcd")
 	assert.Nil(t, err)
-	svc, err := gtm.getAppData(info, gTaskGetServiceRequest, nil)
+	svc, err := gtm.GetAppData(info, gTaskGetServiceRequest, nil)
 	svc.(*tasks.Service).BasePath = server.URL
 	requestParams := make(map[string]interface{})
 	requestParams[gTaskServiceKey] = svc
-	lists, err := gtm.getAppData(info, gTaskGetListsRequest, requestParams)
+	lists, err := gtm.GetAppData(info, GTaskGetListsRequest, requestParams)
 	assert.Nil(t, err)
 	taskLists := lists.(*tasks.TaskLists)
 	assert.Equal(t, 3, len(taskLists.Items))
@@ -130,7 +131,7 @@ func TestGetTaskLists(t *testing.T) {
 func TestAddItem(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 		// Send response to be tested
-		Info(req.URL.String())
+		common.Info(req.URL.String())
 		rw.Header().Set("Content-Type", "application/json")
 		if req.URL.String() == "/token" {
 			rw.Write([]byte(`{"access_token":"ya29.GluCBy-lBDcy9k7vSE1k0Ixh1uBqVC-fYksrKjIcNFjtQxlcVwMTK4jcXqL978bhhShPUU2FZ9_miwB4556d-Da3HheqHxk4FdwYqQ2PO1skjGlp7pvUAogAvbR6",
@@ -149,11 +150,11 @@ func TestAddItem(t *testing.T) {
 	gotenv.OverApply(strings.NewReader("GTASKS_AUTH_URL=" + server.URL + "/o/oauth2/auth"))
 	gotenv.OverApply(strings.NewReader("GTASKS_TOKEN_URL=" + server.URL + "/token"))
 	info := buildDummyUserInfo()
-	gtm := getAppManager(gtask)
-	err := gtm.getAndPopulateAppDetails(info, httptest.NewRequest("GET",
+	gtm := GetAppManager(Gtask)
+	err := gtm.GetAndPopulateAppDetails(info, httptest.NewRequest("GET",
 		"http://localhost/apps/gtask/callback?code=abcd", nil), "abcd")
 	assert.Nil(t, err)
-	svc, err := gtm.getAppData(info, gTaskGetServiceRequest, nil)
+	svc, err := gtm.GetAppData(info, gTaskGetServiceRequest, nil)
 	svc.(*tasks.Service).BasePath = server.URL
 	task := &tasks.Task{
 		Title: "Hello world",
@@ -161,7 +162,7 @@ func TestAddItem(t *testing.T) {
 	var response tasks.Task
 	requestParams := make(map[string]interface{})
 	requestParams[gTaskServiceKey] = svc
-	err = gtm.addItem(info, task, requestParams, &response)
+	err = gtm.AddItem(info, task, requestParams, &response)
 	assert.Nil(t, err)
 	assert.NotNil(t, response)
 }

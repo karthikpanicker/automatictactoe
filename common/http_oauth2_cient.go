@@ -1,4 +1,4 @@
-package main
+package common
 
 import (
 	"bytes"
@@ -9,19 +9,22 @@ import (
 	"golang.org/x/oauth2"
 )
 
-type httpOAuth2Client struct {
+// HTTPOAuth2Client can be used to fire requests to services with oauth2 header set.
+type HTTPOAuth2Client struct {
 	accessToken  string
 	accessSecret string
 	oauthConfig  *oauth2.Config
 }
 
-func newHTTPOauth2Client(config *oauth2.Config) *httpOAuth2Client {
-	hoc := new(httpOAuth2Client)
+// NewHTTPOauth2Client will create a new instance of oauth2 client
+func NewHTTPOauth2Client(config *oauth2.Config) *HTTPOAuth2Client {
+	hoc := new(HTTPOAuth2Client)
 	hoc.oauthConfig = config
 	return hoc
 }
 
-func (hoc *httpOAuth2Client) getMarshalledAPIResponse(url string,
+// GetMarshalledAPIResponse to fire GET requests on services with oauth2 headers.
+func (hoc *HTTPOAuth2Client) GetMarshalledAPIResponse(url string,
 	authToken string, responseContainer interface{}) error {
 	token := oauth2.Token{}
 	json.Unmarshal([]byte(authToken), &token)
@@ -40,7 +43,8 @@ func (hoc *httpOAuth2Client) getMarshalledAPIResponse(url string,
 	return nil
 }
 
-func (hoc *httpOAuth2Client) postResource(authToken string, url string, resource interface{},
+// PostResource to fire POST requests on services with oauth2 headers.
+func (hoc *HTTPOAuth2Client) PostResource(authToken string, url string, resource interface{},
 	responseContainer interface{}) error {
 	token := oauth2.Token{}
 	json.Unmarshal([]byte(authToken), &token)

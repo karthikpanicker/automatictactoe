@@ -1,4 +1,4 @@
-package main
+package common
 
 import (
 	"strings"
@@ -11,22 +11,22 @@ import (
 func TestSaveUserInfo(t *testing.T) {
 	gotenv.Apply(strings.NewReader("MONGO_URL=mongodb://localhost:27017"))
 	mdc := newMongoDataCache()
-	defer mdc.disconnectCache()
+	defer mdc.DisconnectCache()
 	info := buildDummyUserInfo()
 	info.EtsyDetails.UserShopDetails.ShopName = "Whatay Shop"
 	info.EtsyDetails.UserShopDetails.ShopID = 54321
-	mdc.saveDetailsToCache(info.UserID, *info)
+	mdc.SaveDetailsToCache(info.UserID, *info)
 }
 
 func TestGetUserInfo(t *testing.T) {
 	gotenv.Apply(strings.NewReader("MONGO_URL=mongodb://localhost:27017"))
 	mdc := newMongoDataCache()
-	defer mdc.disconnectCache()
+	defer mdc.DisconnectCache()
 	info := buildDummyUserInfo()
 	info.EtsyDetails.UserShopDetails.ShopName = "Whatay Shop"
 	info.EtsyDetails.UserShopDetails.ShopID = 54321
-	mdc.saveDetailsToCache(info.UserID, *info)
-	savedInfo, err := mdc.getUserInfo(info.UserID)
+	mdc.SaveDetailsToCache(info.UserID, *info)
+	savedInfo, err := mdc.GetUserInfo(info.UserID)
 	assert.Nil(t, err)
 	assert.EqualValues(t, savedInfo, info)
 }
@@ -34,11 +34,19 @@ func TestGetUserInfo(t *testing.T) {
 func TestGetUserMap(t *testing.T) {
 	gotenv.Apply(strings.NewReader("MONGO_URL=mongodb://localhost:27017"))
 	mdc := newMongoDataCache()
-	defer mdc.disconnectCache()
+	defer mdc.DisconnectCache()
 	info := buildDummyUserInfo()
 	info.EtsyDetails.UserShopDetails.ShopName = "Whatay Shop"
 	info.EtsyDetails.UserShopDetails.ShopID = 54321
-	mdc.saveDetailsToCache(info.UserID, *info)
-	usersMap := mdc.getUserMap()
+	mdc.SaveDetailsToCache(info.UserID, *info)
+	usersMap := mdc.GetUserMap()
 	assert.EqualValues(t, usersMap[info.UserID], *info)
+}
+
+func buildDummyUserInfo() *UserInfo {
+	info := &UserInfo{
+		UserID:  1234,
+		EmailID: "karthik.panicker@gmail.com",
+	}
+	return info
 }

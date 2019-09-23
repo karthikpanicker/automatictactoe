@@ -1,8 +1,9 @@
-package main
+package apps
 
 import (
 	"encoding/json"
 	"errors"
+	"etsello/common"
 	"net/http"
 	"os"
 
@@ -11,7 +12,9 @@ import (
 )
 
 const (
-	todoistProjectsRequest = "todoistProjectsRequest"
+	// TodoistProjectsRequest is used to specify a request to get all projects associated with the todoist
+	// account
+	TodoistProjectsRequest = "todoistProjectsRequest"
 )
 
 type todoistDataManager struct {
@@ -34,16 +37,16 @@ func (tdm *todoistDataManager) initDataManager() {
 	tdm.baseURL = os.Getenv("TODOIST_API_BASE_URL")
 }
 
-func (tdm *todoistDataManager) getAuthorizationURL() (string, string, error) {
+func (tdm *todoistDataManager) GetAuthorizationURL() (string, string, error) {
 	authURL := tdm.config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
 	return authURL, "", nil
 }
 
-func (tdm *todoistDataManager) getAndPopulateAppDetails(info *userInfo, r *http.Request, requestSecret string) error {
+func (tdm *todoistDataManager) GetAndPopulateAppDetails(info *common.UserInfo, r *http.Request, requestSecret string) error {
 	authCode := r.URL.Query().Get("code")
 	tok, err := tdm.config.Exchange(context.TODO(), authCode)
 	if err != nil {
-		Error("Unable to retrieve token from web", err)
+		common.Error("Unable to retrieve token from web", err)
 		return err
 	}
 	tokBytes, err := json.Marshal(tok)
@@ -55,29 +58,29 @@ func (tdm *todoistDataManager) getAndPopulateAppDetails(info *userInfo, r *http.
 	return nil
 }
 
-func (tdm *todoistDataManager) getAppData(info *userInfo, requestType string,
+func (tdm *todoistDataManager) GetAppData(info *common.UserInfo, requestType string,
 	requestParams map[string]interface{}) (interface{}, error) {
 	switch requestType {
-	case todoistProjectsRequest:
+	case TodoistProjectsRequest:
 		return tdm.getProjects(info)
 	default:
 		return nil, errors.New("Unknown request type")
 	}
 }
 
-func (tdm *todoistDataManager) addItem(info *userInfo, appItemDetails interface{},
+func (tdm *todoistDataManager) AddItem(info *common.UserInfo, appItemDetails interface{},
 	requestParams map[string]interface{}, appItemResponse interface{}) error {
 	path := tdm.baseURL + "/tasks"
-	client := newHTTPOauth2Client(tdm.config)
-	err := client.postResource(info.TodoistDetails.Token, path, appItemDetails, appItemResponse)
+	client := common.NewHTTPOauth2Client(tdm.config)
+	err := client.PostResource(info.TodoistDetails.Token, path, appItemDetails, appItemResponse)
 	return err
 }
 
-func (tdm *todoistDataManager) getProjects(info *userInfo) ([]todoistProject, error) {
+func (tdm *todoistDataManager) getProjects(info *common.UserInfo) ([]common.TodoistProject, error) {
 	path := tdm.baseURL + "/projects"
-	result := make([]todoistProject, 0)
-	client := newHTTPOauth2Client(tdm.config)
-	err := client.getMarshalledAPIResponse(path, info.TodoistDetails.Token, &result)
+	result := make([]common.TodoistProject, 0)
+	client := common.NewHTTPOauth2Client(tdm.config)
+	err := client.GetMarshalledAPIResponse(path, info.TodoistDetails.Token, &result)
 	if err != nil {
 		return nil, err
 	}

@@ -1,7 +1,8 @@
-package main
+package apps
 
 import (
 	"encoding/json"
+	"etsello/common"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -19,8 +20,8 @@ func TestGetTodoistAuthorizationURL(t *testing.T) {
 	gotenv.OverApply(strings.NewReader("HOST_URL=http://localhost:80/"))
 	gotenv.OverApply(strings.NewReader("TODOIST_AUTH_URL=http://localhost/oauth/authorize"))
 	gotenv.OverApply(strings.NewReader("TODOIST_TOKEN_URL=http://localhost/oauth/access_token"))
-	gtm := getAppManager(todoist)
-	authURL, _, err := gtm.getAuthorizationURL()
+	gtm := GetAppManager(Todoist)
+	authURL, _, err := gtm.GetAuthorizationURL()
 	assert.Nil(t, err, "Error while fetching authorization URL")
 	assert.Equal(t, "http://localhost/oauth/authorize?access_type=offline&"+
 		"client_id=abc&"+
@@ -45,8 +46,8 @@ func TestGetAndPopulateTodoistDetails(t *testing.T) {
 	gotenv.OverApply(strings.NewReader("TODOIST_AUTH_URL=" + server.URL + "/oauth/authorize"))
 	gotenv.OverApply(strings.NewReader("TODOIST_TOKEN_URL=" + server.URL + "/oauth/access_token"))
 	info := buildDummyUserInfo()
-	tdm := getAppManager(todoist)
-	err := tdm.getAndPopulateAppDetails(info, httptest.NewRequest("GET",
+	tdm := GetAppManager(Todoist)
+	err := tdm.GetAndPopulateAppDetails(info, httptest.NewRequest("GET",
 		"http://localhost/apps/todoist/callback?code=abcd", nil), "abcd")
 	assert.Nil(t, err)
 	assert.Equal(t, info.TodoistDetails.IsLinked, true)
@@ -71,8 +72,8 @@ func TestGetAndPopulateTodoistDetailsWithError(t *testing.T) {
 	// Wrong token URL to trigger an error
 	gotenv.OverApply(strings.NewReader("TODOIST_TOKEN_URL=http://localhost/oauth/access_token"))
 	info := buildDummyUserInfo()
-	tdm := getAppManager(todoist)
-	err := tdm.getAndPopulateAppDetails(info, httptest.NewRequest("GET",
+	tdm := GetAppManager(Todoist)
+	err := tdm.GetAndPopulateAppDetails(info, httptest.NewRequest("GET",
 		"http://localhost/apps/todoist/callback?code=abcd", nil), "abcd")
 	assert.NotEqual(t, nil, err)
 }
@@ -101,10 +102,10 @@ func TestGetProjects(t *testing.T) {
 	}
 	tokenBytes, err := json.Marshal(token)
 	info.TodoistDetails.Token = string(tokenBytes)
-	tdm := getAppManager(todoist)
-	projects, err := tdm.getAppData(info, todoistProjectsRequest, nil)
+	tdm := GetAppManager(Todoist)
+	projects, err := tdm.GetAppData(info, TodoistProjectsRequest, nil)
 	assert.Equal(t, nil, err)
-	assert.Equal(t, 1, len(projects.([]todoistProject)))
+	assert.Equal(t, 1, len(projects.([]common.TodoistProject)))
 }
 
 func TestAddTodoistTask(t *testing.T) {
@@ -140,12 +141,12 @@ func TestAddTodoistTask(t *testing.T) {
 	}
 	tokenBytes, _ := json.Marshal(token)
 	info.TodoistDetails.Token = string(tokenBytes)
-	tdm := getAppManager(todoist)
-	task := &todoistTask{
+	tdm := GetAppManager(Todoist)
+	task := &common.TodoistTask{
 		Content:   "Dress for Maria",
 		ProjectID: 1,
 	}
-	err := tdm.addItem(info, task, nil, task)
+	err := tdm.AddItem(info, task, nil, task)
 	assert.Nil(t, err)
 	assert.NotEqual(t, 0, task.ID)
 }
@@ -159,11 +160,11 @@ func TestAddTodoistTaskWithUnreachableURL(t *testing.T) {
 	}
 	tokenBytes, _ := json.Marshal(token)
 	info.TodoistDetails.Token = string(tokenBytes)
-	tdm := getAppManager(todoist)
-	task := &todoistTask{
+	tdm := GetAppManager(Todoist)
+	task := &common.TodoistTask{
 		Content:   "Dress for Maria",
 		ProjectID: 1,
 	}
-	err := tdm.addItem(info, task, nil, task)
+	err := tdm.AddItem(info, task, nil, task)
 	assert.NotNil(t, err)
 }

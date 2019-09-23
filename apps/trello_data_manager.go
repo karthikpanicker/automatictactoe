@@ -1,7 +1,8 @@
-package main
+package apps
 
 import (
 	"errors"
+	"etsello/common"
 	"net/http"
 	"os"
 
@@ -9,11 +10,15 @@ import (
 )
 
 const (
-	trelloShouldAttachImage = "trelloShouldAttachImage"
-	trelloBoardListRequest  = "trelloBoardListRequest"
+	// TrelloShouldAttachImage is a key to store value to specifiy whether an image should
+	// be attached
+	TrelloShouldAttachImage = "trelloShouldAttachImage"
+	// TrelloBoardListRequest is used to specify a request to get lists assiciated with a board
+	TrelloBoardListRequest  = "trelloBoardListRequest"
 	trelloUserBoardsRequest = "trelloUserBoardsRequest"
 	trelloBoardInfoRequest  = "trelloBoardInfoRequest"
-	trelloBoardIDKey        = "trelloBoardID"
+	// TrelloBoardIDKey is the key used to store trello board ID in maps
+	TrelloBoardIDKey = "trelloBoardID"
 )
 
 type trelloDataManager struct {
@@ -35,10 +40,10 @@ func (tm *trelloDataManager) initDataManager() {
 	}
 }
 
-func (tm *trelloDataManager) getAuthorizationURL() (string, string, error) {
+func (tm *trelloDataManager) GetAuthorizationURL() (string, string, error) {
 	requestToken, requestSecret, err := tm.config.RequestToken()
 	if err != nil {
-		Error(err)
+		common.Error(err)
 		return "", "", err
 	}
 	authorizationURL, err := tm.config.AuthorizationURL(requestToken)
@@ -47,13 +52,13 @@ func (tm *trelloDataManager) getAuthorizationURL() (string, string, error) {
 		requestSecret, nil
 }
 
-func (tm *trelloDataManager) getAndPopulateAppDetails(info *userInfo, r *http.Request, requestSecret string) error {
+func (tm *trelloDataManager) GetAndPopulateAppDetails(info *common.UserInfo, r *http.Request, requestSecret string) error {
 	requestToken, verifier, err := oauth1.ParseAuthorizationCallback(r)
 	accessToken, accessSecret, err := tm.config.AccessToken(requestToken, requestSecret, verifier)
 	if err != nil {
 		return err
 	}
-	info.TrelloDetails = trelloDetails{
+	info.TrelloDetails = common.TrelloDetails{
 		TrelloAccessToken:  accessToken,
 		TrelloAccessSecret: accessSecret,
 	}
@@ -67,56 +72,56 @@ func (tm *trelloDataManager) getAndPopulateAppDetails(info *userInfo, r *http.Re
 	return nil
 }
 
-func (tm *trelloDataManager) addItem(info *userInfo, appItemDetails interface{},
+func (tm *trelloDataManager) AddItem(info *common.UserInfo, appItemDetails interface{},
 	requestParams map[string]interface{}, appItemResponse interface{}) error {
 	path := tm.trelloBaseURL + "cards"
-	httpOAuthClient := newHTTPOAuth1Client(info.TrelloDetails.TrelloAccessToken,
+	httpOAuthClient := common.NewHTTPOAuth1Client(info.TrelloDetails.TrelloAccessToken,
 		info.TrelloDetails.TrelloAccessSecret, tm.config)
-	err := httpOAuthClient.postResource(path, appItemDetails, appItemResponse)
+	err := httpOAuthClient.PostResource(path, appItemDetails, appItemResponse)
 	if err != nil {
 		return err
 	}
-	if requestParams[trelloShouldAttachImage] != nil &&
-		requestParams[trelloShouldAttachImage].(bool) {
+	if requestParams[TrelloShouldAttachImage] != nil &&
+		requestParams[TrelloShouldAttachImage].(bool) {
 		// no need to bother if there is an error while attaching the image
-		tm.attachImage(info, appItemResponse.(*trelloCardDetailsResponse),
-			requestParams[etsyImageDetailsKey].(etsyImageDetails))
+		tm.attachImage(info, appItemResponse.(*common.TrelloCardDetailsResponse),
+			requestParams[EtsyImageDetailsKey].(common.EtsyImageDetails))
 	}
 	return nil
 }
 
-func (tm *trelloDataManager) getAppData(info *userInfo, requestType string,
+func (tm *trelloDataManager) GetAppData(info *common.UserInfo, requestType string,
 	requestParams map[string]interface{}) (interface{}, error) {
 	switch requestType {
-	case trelloBoardListRequest:
-		return tm.getBoardLists(info, requestParams[trelloBoardIDKey].(string))
+	case TrelloBoardListRequest:
+		return tm.getBoardLists(info, requestParams[TrelloBoardIDKey].(string))
 	case trelloUserBoardsRequest:
 		return tm.getUserBoards(info)
 	case trelloBoardInfoRequest:
-		return tm.getBoardInfo(info, requestParams[trelloBoardIDKey].(string))
+		return tm.getBoardInfo(info, requestParams[TrelloBoardIDKey].(string))
 	default:
 		return nil, errors.New("Unknown request type provided")
 	}
 }
 
-func (tm *trelloDataManager) attachImage(info *userInfo, resultCard *trelloCardDetailsResponse,
-	etsyImage etsyImageDetails) error {
+func (tm *trelloDataManager) attachImage(info *common.UserInfo, resultCard *common.TrelloCardDetailsResponse,
+	etsyImage common.EtsyImageDetails) error {
 	path := tm.trelloBaseURL + "cards/" + resultCard.ID + "/attachments"
-	httpOAuthClient := newHTTPOAuth1Client(info.TrelloDetails.TrelloAccessToken,
+	httpOAuthClient := common.NewHTTPOAuth1Client(info.TrelloDetails.TrelloAccessToken,
 		info.TrelloDetails.TrelloAccessSecret, tm.config)
-	err := httpOAuthClient.postResource(path, trelloImageAttachment{
+	err := httpOAuthClient.PostResource(path, common.TrelloImageAttachment{
 		Name: "Primary Image",
 		URL:  etsyImage.ImageURL,
 	}, nil)
 	return err
 }
 
-func (tm *trelloDataManager) getUserBoards(info *userInfo) ([]string, error) {
+func (tm *trelloDataManager) getUserBoards(info *common.UserInfo) ([]string, error) {
 	path := tm.trelloBaseURL + "members/me"
 	var result map[string]interface{}
-	httpOAuthClient := newHTTPOAuth1Client(info.TrelloDetails.TrelloAccessToken,
+	httpOAuthClient := common.NewHTTPOAuth1Client(info.TrelloDetails.TrelloAccessToken,
 		info.TrelloDetails.TrelloAccessSecret, tm.config)
-	err := httpOAuthClient.getMarshalledAPIResponse(path, &result)
+	err := httpOAuthClient.GetMarshalledAPIResponse(path, &result)
 	if err != nil {
 		return nil, err
 	}
@@ -127,21 +132,21 @@ func (tm *trelloDataManager) getUserBoards(info *userInfo) ([]string, error) {
 	return boardIds, nil
 }
 
-func (tm *trelloDataManager) getBoardInfo(info *userInfo, boardID string) (*boardDetails, error) {
+func (tm *trelloDataManager) getBoardInfo(info *common.UserInfo, boardID string) (*common.BoardDetails, error) {
 	path := tm.trelloBaseURL + "boards/" + boardID
-	var result boardDetails
-	httpOAuthClient := newHTTPOAuth1Client(info.TrelloDetails.TrelloAccessToken,
+	var result common.BoardDetails
+	httpOAuthClient := common.NewHTTPOAuth1Client(info.TrelloDetails.TrelloAccessToken,
 		info.TrelloDetails.TrelloAccessSecret, tm.config)
-	httpOAuthClient.getMarshalledAPIResponse(path, &result)
+	httpOAuthClient.GetMarshalledAPIResponse(path, &result)
 	return &result, nil
 }
 
-func (tm *trelloDataManager) getBoardLists(info *userInfo, boardID string) ([]boardList, error) {
+func (tm *trelloDataManager) getBoardLists(info *common.UserInfo, boardID string) ([]common.BoardList, error) {
 	path := tm.trelloBaseURL + "boards/" + boardID + "/lists"
-	var result []boardList
-	httpOAuthClient := newHTTPOAuth1Client(info.TrelloDetails.TrelloAccessToken,
+	var result []common.BoardList
+	httpOAuthClient := common.NewHTTPOAuth1Client(info.TrelloDetails.TrelloAccessToken,
 		info.TrelloDetails.TrelloAccessSecret, tm.config)
-	httpOAuthClient.getMarshalledAPIResponse(path, &result)
+	httpOAuthClient.GetMarshalledAPIResponse(path, &result)
 	for index, list := range result {
 		if list.ID == info.TrelloDetails.SelectedListID {
 			result[index].IsSelected = true

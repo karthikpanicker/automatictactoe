@@ -1,8 +1,9 @@
-package main
+package apps
 
 import (
 	"encoding/json"
 	"errors"
+	"etsello/common"
 	"net/http"
 	"os"
 
@@ -12,7 +13,9 @@ import (
 )
 
 const (
-	gTaskGetListsRequest   = "gTaskGetListsRequest"
+	// GTaskGetListsRequest is a key used to specifiy a request to get all lists associated with the
+	// gtask account.
+	GTaskGetListsRequest   = "gTaskGetListsRequest"
 	gTaskGetServiceRequest = "gTaskGetServiceRequest"
 	gTaskServiceKey        = "gTaskServiceKey"
 )
@@ -35,15 +38,15 @@ func (gtm *gTasksDataManager) initDataManager() {
 	}
 }
 
-func (gtm *gTasksDataManager) getAuthorizationURL() (string, string, error) {
+func (gtm *gTasksDataManager) GetAuthorizationURL() (string, string, error) {
 	return gtm.config.AuthCodeURL("state-token", oauth2.AccessTypeOffline), "", nil
 }
 
-func (gtm *gTasksDataManager) getAndPopulateAppDetails(info *userInfo, r *http.Request, requestSecret string) error {
+func (gtm *gTasksDataManager) GetAndPopulateAppDetails(info *common.UserInfo, r *http.Request, requestSecret string) error {
 	authCode := r.URL.Query().Get("code")
 	tok, err := gtm.config.Exchange(context.TODO(), authCode)
 	if err != nil {
-		Error("Unable to retrieve token from web", err)
+		common.Error("Unable to retrieve token from web", err)
 		return err
 	}
 	tokBytes, err := json.Marshal(tok)
@@ -55,7 +58,7 @@ func (gtm *gTasksDataManager) getAndPopulateAppDetails(info *userInfo, r *http.R
 	return nil
 }
 
-func (gtm *gTasksDataManager) addItem(info *userInfo, appItemDetails interface{},
+func (gtm *gTasksDataManager) AddItem(info *common.UserInfo, appItemDetails interface{},
 	requestParams map[string]interface{}, appItemResponse interface{}) error {
 	var srvValue = requestParams[gTaskServiceKey]
 	var err error
@@ -70,10 +73,10 @@ func (gtm *gTasksDataManager) addItem(info *userInfo, appItemDetails interface{}
 	appItemResponse = task
 	return err
 }
-func (gtm *gTasksDataManager) getAppData(info *userInfo, requestType string,
+func (gtm *gTasksDataManager) GetAppData(info *common.UserInfo, requestType string,
 	requestParams map[string]interface{}) (interface{}, error) {
 	switch requestType {
-	case gTaskGetListsRequest:
+	case GTaskGetListsRequest:
 		var svc *tasks.Service
 		param := requestParams[gTaskServiceKey]
 		if param != nil {
@@ -87,19 +90,19 @@ func (gtm *gTasksDataManager) getAppData(info *userInfo, requestType string,
 	}
 }
 
-func (gtm *gTasksDataManager) getGTasksService(info *userInfo) (*tasks.Service, error) {
+func (gtm *gTasksDataManager) getGTasksService(info *common.UserInfo) (*tasks.Service, error) {
 	res := oauth2.Token{}
 	json.Unmarshal([]byte(info.GTasksDetails.Token), &res)
 	client := gtm.config.Client(context.Background(), &res)
 	srv, err := tasks.New(client)
 	if err != nil {
-		Error("Unable to retrieve tasks Client", err)
+		common.Error("Unable to retrieve tasks Client", err)
 		return nil, err
 	}
 	return srv, nil
 }
 
-func (gtm *gTasksDataManager) getTaskLists(info *userInfo, service *tasks.Service) (*tasks.TaskLists, error) {
+func (gtm *gTasksDataManager) getTaskLists(info *common.UserInfo, service *tasks.Service) (*tasks.TaskLists, error) {
 	var srv *tasks.Service = service
 	var err error
 	if srv == nil {

@@ -1,23 +1,27 @@
-package main
+package common
 
 const (
-	userID          string = "userID"
-	activeReqSecret string = "activeRequestSecret"
+	// UserID is the key used to store userid information in session
+	UserID string = "userID"
+	// ActiveReqSecret is the key used to store requets secret in session
+	ActiveReqSecret string = "activeRequestSecret"
 )
 
-type userInfo struct {
+// UserInfo is the root document to store user details
+type UserInfo struct {
 	EmailID        string         `bson:"emailId"`
 	UserID         int            `bson:"_id"`
-	EtsyDetails    etsyDetails    `bson:"etsyDetails"`
-	TrelloDetails  trelloDetails  `bson:"trelloDetails"`
-	GTasksDetails  gTasksDetails  `bson:"gTaksksDetails"`
-	TodoistDetails todoistDetails `bson:"todoistDetails"`
+	EtsyDetails    EtsyDetails    `bson:"etsyDetails"`
+	TrelloDetails  TrelloDetails  `bson:"trelloDetails"`
+	GTasksDetails  GTasksDetails  `bson:"gTaksksDetails"`
+	TodoistDetails TodoistDetails `bson:"todoistDetails"`
 }
 
-type trelloDetails struct {
+// TrelloDetails is a struct used to store trello realted information.
+type TrelloDetails struct {
 	TrelloAccessToken  string
 	TrelloAccessSecret string
-	TrelloBoards       []boardDetails
+	TrelloBoards       []BoardDetails
 	SelectedBoardID    string   `json:"boardId"`
 	SelectedListID     string   `json:"listId"`
 	FieldsToUse        []string `json:"fieldsToUse"`
@@ -26,16 +30,18 @@ type trelloDetails struct {
 	FromDate           int
 }
 
-type etsyDetails struct {
+// EtsyDetails is a struct used to store etsy realted information.
+type EtsyDetails struct {
 	EtsyAccessToken           string
 	EtsyAccessSecret          string
-	UserShopDetails           shopDetails
+	UserShopDetails           ShopDetails
 	UserProfileURL            string
 	UserName                  string
 	LastProcessedTrasactionID int
 }
 
-type gTasksDetails struct {
+// GTasksDetails is a struct to store google tasks details
+type GTasksDetails struct {
 	Token              string
 	SelectedTaskListID string `json:"listId"`
 	IsLinked           bool
@@ -43,7 +49,8 @@ type gTasksDetails struct {
 	FromDate           int
 }
 
-type todoistDetails struct {
+// TodoistDetails is a struct to store todoist details
+type TodoistDetails struct {
 	Token             string
 	SelectedProjectID string `json:"projectId"`
 	IsLinked          bool
@@ -51,7 +58,8 @@ type todoistDetails struct {
 	FromDate          int
 }
 
-type shopDetails struct {
+// ShopDetails is a struct to store etsy shop details
+type ShopDetails struct {
 	ShopID         int    `json:"shop_id"`
 	ShopName       string `json:"shop_name"`
 	Title          string `json:"title"`
@@ -60,22 +68,25 @@ type shopDetails struct {
 	ShopFavorites  int    `json:"num_favorers"`
 }
 
-type boardDetails struct {
+// BoardDetails is a struct to store details of a single board in trello
+type BoardDetails struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"desc"`
 	URL         string `json:"url"`
-	boardLists  []boardList
+	boardLists  []BoardList
 	IsSelected  bool `json:"isSelected"`
 }
 
-type boardList struct {
+// BoardList is a struct to store the details of a list within a board.
+type BoardList struct {
 	ID         string `json:"id"`
 	Name       string `json:"name"`
 	IsSelected bool   `json:"isSelected"`
 }
 
-type trelloCardDetails struct {
+// TrelloCardDetails is a struct to store card details.
+type TrelloCardDetails struct {
 	Name       string `json:"name"`
 	Descripton string `json:"desc"`
 	ListID     string `json:"idList"`
@@ -83,7 +94,9 @@ type trelloCardDetails struct {
 	URL        string `json:"urlSource"`
 }
 
-type trelloCardDetailsResponse struct {
+// TrelloCardDetailsResponse struct is used to store request response from trello for card
+// details request
+type TrelloCardDetailsResponse struct {
 	ID         string   `json:"id"`
 	Name       string   `json:"name"`
 	Descripton string   `json:"desc"`
@@ -92,33 +105,40 @@ type trelloCardDetailsResponse struct {
 	URL        string   `json:"urlSource"`
 }
 
-type etsyProfileResponse struct {
+// EtsyProfileResponse is a struct to store the results of a request to
+// get etsy profile information.
+type EtsyProfileResponse struct {
 	Count   int               `json:"count"`
-	Results []etsyUserProfile `json:"results"`
+	Results []EtsyUserProfile `json:"results"`
 }
 
-type etsyShopResponse struct {
+// EtsyShopResponse is struct to store response from the api to get etsy shop details
+type EtsyShopResponse struct {
 	Count   int           `json:"count"`
-	Results []shopDetails `json:"results"`
+	Results []ShopDetails `json:"results"`
 }
 
-type etsyTransactionResponse struct {
+// EtsyTransactionResponse is struct to store response from the api to get etsy transaction list
+type EtsyTransactionResponse struct {
 	Count   int                      `json:"count"`
-	Results []etsyTransactionDetails `json:"results"`
+	Results []EtsyTransactionDetails `json:"results"`
 }
 
-type etsyImageResponse struct {
+// EtsyImageResponse is struct to store response from the api to get etsy image list
+type EtsyImageResponse struct {
 	Count   int                `json:"count"`
-	Results []etsyImageDetails `json:"results"`
+	Results []EtsyImageDetails `json:"results"`
 }
 
-type etsyImageDetails struct {
+// EtsyImageDetails is used to store the detailed information of an etsy image.
+type EtsyImageDetails struct {
 	ID           int    `json:"listing_image_id"`
 	ImageURL     string `json:"url_570xN"`
 	FullImageURL string `json:"url_fullxfull"`
 }
 
-type etsyTransactionDetails struct {
+// EtsyTransactionDetails is a struct to store a new transaction in  etsy.
+type EtsyTransactionDetails struct {
 	ID             int    `json:"transaction_id"`
 	Title          string `json:"title"`
 	Description    string `json:"description"`
@@ -134,7 +154,8 @@ type etsyTransactionDetails struct {
 	ListingID      int    `json:"listing_id"`
 }
 
-type etsyUserProfile struct {
+// EtsyUserProfile is struct to store etsy user profile details.
+type EtsyUserProfile struct {
 	EmailID        string `json:"primary_email"`
 	EtsyUserID     int    `json:"user_id"`
 	UserProfileURL string `json:"image_url_75x75"`
@@ -145,30 +166,35 @@ type etsyUserProfile struct {
 	City           string `json:"city"`
 }
 
-type trelloImageAttachment struct {
+// TrelloImageAttachment is a struct to store image details in trello
+type TrelloImageAttachment struct {
 	Name string `json:"name"`
 	URL  string `json:"url"`
 }
 
-type todoistProject struct {
+// TodoistProject is a struct to store todoist project details.
+type TodoistProject struct {
 	Name string `json:"name"`
 	ID   int    `json:"id"`
 }
 
-type todoistTask struct {
+// TodoistTask is struct to store tasks details in todoist.
+type TodoistTask struct {
 	Content   string `json:"content"`
 	ProjectID int    `json:"project_id"`
 	ID        int    `json:"id"`
 }
 
-func newDataStore() dataStore {
+// NewDataStore creates a new datastore with an encapsulated implemetation of data store.
+func NewDataStore() DataStore {
 	dc := newMongoDataCache()
 	return dc
 }
 
-type dataStore interface {
-	saveDetailsToCache(userID int, userInfo userInfo)
-	getUserInfo(userID int) (*userInfo, error)
-	getUserMap() map[int]userInfo
-	disconnectCache()
+// DataStore is an interface to abstract implementation of datastore
+type DataStore interface {
+	SaveDetailsToCache(userID int, userInfo UserInfo)
+	GetUserInfo(userID int) (*UserInfo, error)
+	GetUserMap() map[int]UserInfo
+	DisconnectCache()
 }

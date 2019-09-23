@@ -1,6 +1,7 @@
-package main
+package web
 
 import (
+	"etsello/common"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -19,10 +20,10 @@ type routeManager struct {
 	pageHandler   *pageHandler
 	apiHandler    *apiHandler
 	Router        *mux.Router
-	dCache        dataStore
+	dCache        common.DataStore
 }
 
-func newRouteManager(dCache dataStore) *routeManager {
+func newRouteManager(dCache common.DataStore) *routeManager {
 	rm := new(routeManager)
 	rm.pageHandler = newPageHandler(dCache)
 	rm.apiHandler = newAPIHandler(dCache)

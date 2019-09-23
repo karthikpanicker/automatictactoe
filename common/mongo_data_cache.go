@@ -1,4 +1,4 @@
-package main
+package common
 
 import (
 	"context"
@@ -32,7 +32,7 @@ func newMongoDataCache() *mongoDataCache {
 	return mdc
 }
 
-func (mdc mongoDataCache) saveDetailsToCache(userID int, info userInfo) {
+func (mdc mongoDataCache) SaveDetailsToCache(userID int, info UserInfo) {
 	filter := bson.D{primitive.E{Key: "_id", Value: userID}}
 	bsonDocument, _ := toDoc(info)
 	upsertValue := true
@@ -44,8 +44,8 @@ func (mdc mongoDataCache) saveDetailsToCache(userID int, info userInfo) {
 	}
 }
 
-func (mdc mongoDataCache) getUserInfo(userID int) (*userInfo, error) {
-	var result userInfo
+func (mdc mongoDataCache) GetUserInfo(userID int) (*UserInfo, error) {
+	var result UserInfo
 	filter := bson.D{primitive.E{Key: "_id", Value: userID}}
 	err := mdc.collection.FindOne(context.TODO(), filter).Decode(&result)
 	if err != nil {
@@ -55,15 +55,15 @@ func (mdc mongoDataCache) getUserInfo(userID int) (*userInfo, error) {
 	return &result, nil
 }
 
-func (mdc mongoDataCache) getUserMap() map[int]userInfo {
-	results := make(map[int]userInfo)
+func (mdc mongoDataCache) GetUserMap() map[int]UserInfo {
+	results := make(map[int]UserInfo)
 
 	cur, err := mdc.collection.Find(context.TODO(), bson.D{{}})
 	if err != nil {
 		Fatal(err)
 	}
 	for cur.Next(context.TODO()) {
-		var elem userInfo
+		var elem UserInfo
 		err := cur.Decode(&elem)
 		if err != nil {
 			Fatal(err)
@@ -73,7 +73,7 @@ func (mdc mongoDataCache) getUserMap() map[int]userInfo {
 	return results
 }
 
-func (mdc mongoDataCache) disconnectCache() {
+func (mdc mongoDataCache) DisconnectCache() {
 	err := mdc.client.Disconnect(context.TODO())
 	if err != nil {
 		Fatal(err)
