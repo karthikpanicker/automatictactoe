@@ -8,10 +8,12 @@ branches:
   - feature/*
 env:
   global:
+  - GO111MODULE=on
   - SERVER_IP_ADDRESS=207.246.89.240
   - SERVER_USERNAME=root
   - DOCKER_IMAGE=karthikraveendranoss/etsello:latest
   - DEPLOY_DIR=/root/etsello-deploy-scripts
+install: true
 before_install:
 - openssl aes-256-cbc -K $encrypted_48434d1b1ed5_key -iv $encrypted_48434d1b1ed5_iv
   -in deploy_key.enc -out ./deploy_key -d
