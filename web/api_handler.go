@@ -23,9 +23,9 @@ type trialInfo struct {
 	SelectedListID  string `json:"listId"`
 }
 
-func newAPIHandler(cache common.DataStore) *apiHandler {
+func newAPIHandler(cache common.DataStore, templatePattern string) *apiHandler {
 	ah := new(apiHandler)
-	ah.handlerCom = newHandlerCommon()
+	ah.handlerCom = newHandlerCommon(templatePattern)
 	ah.trelloManager = apps.GetAppManager(apps.Trello)
 	ah.gTManager = apps.GetAppManager(apps.Gtask)
 	ah.todoistManager = apps.GetAppManager(apps.Todoist)

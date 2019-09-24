@@ -15,9 +15,9 @@ type pageHandler struct {
 	dCache        common.DataStore
 }
 
-func newPageHandler(cache common.DataStore) *pageHandler {
+func newPageHandler(cache common.DataStore, templatePattern string) *pageHandler {
 	ph := new(pageHandler)
-	ph.handlerCom = newHandlerCommon()
+	ph.handlerCom = newHandlerCommon(templatePattern)
 	ph.dCache = cache
 	return ph
 }

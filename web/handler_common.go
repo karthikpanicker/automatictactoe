@@ -29,10 +29,13 @@ type Message struct {
 	ErrorMessage string `json:"message"`
 }
 
-func newHandlerCommon() *handlerCommon {
+func newHandlerCommon(templatePattern string) *handlerCommon {
 	h := &handlerCommon{}
+	if templatePattern == "" {
+		templatePattern = "./templates/*.html"
+	}
 	opts := renderer.Options{
-		ParseGlobPattern: "./templates/*.html",
+		ParseGlobPattern: templatePattern,
 	}
 	h.rnd = renderer.New(opts)
 	return h

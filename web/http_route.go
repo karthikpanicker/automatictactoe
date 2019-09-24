@@ -25,8 +25,8 @@ type routeManager struct {
 
 func newRouteManager(dCache common.DataStore) *routeManager {
 	rm := new(routeManager)
-	rm.pageHandler = newPageHandler(dCache)
-	rm.apiHandler = newAPIHandler(dCache)
+	rm.pageHandler = newPageHandler(dCache, "")
+	rm.apiHandler = newAPIHandler(dCache, "")
 	rm.Router = rm.registerRoutes()
 	return rm
 }
