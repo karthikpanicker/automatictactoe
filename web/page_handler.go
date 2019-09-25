@@ -69,17 +69,26 @@ func (ph *pageHandler) appAuthorizationCallback(w http.ResponseWriter, r *http.R
 	// Fetch userinfo from db and if not available create a new userinfo instance
 	userID := ph.handlerCom.GetValueForKeyFromSession(r, common.UserID)
 	var info *common.UserInfo
-	if userID == nil {
-		info = new(common.UserInfo)
-	} else {
+	if userID != nil {
 		info, err = ph.dCache.GetUserInfo(userID.(int))
+	} else {
+		info = &common.UserInfo{}
 	}
 	err = aDataMgr.GetAndPopulateAppDetails(info, r, requestSecret)
 	if err != nil {
 		common.Error("Error processing etsy authorization callback.", err)
 		ph.handlerCom.rnd.HTML(w, http.StatusOK, "details", nil)
 	} else {
-		ph.dCache.SaveDetailsToCache(info.UserID, *info)
+		if userID == nil {
+			storedInfo, _ := ph.dCache.GetUserInfo(info.UserID)
+			//This users information is already stored, set the etsy information
+			if storedInfo != nil {
+				storedInfo.EtsyDetails = info.EtsyDetails
+				ph.dCache.SaveDetailsToCache(info.UserID, *storedInfo)
+			}
+		} else {
+			ph.dCache.SaveDetailsToCache(info.UserID, *info)
+		}
 		ph.handlerCom.SaveKeyValueToSession(r, w, common.UserID, info.UserID)
 		ph.handlerCom.rnd.HTML(w, http.StatusOK, "callbacksuccess", nil)
 	}
