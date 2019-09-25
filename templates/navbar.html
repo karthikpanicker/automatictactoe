@@ -17,20 +17,18 @@
        </li>
       </ul>
     </div>
-    <div class="login-wraper">
+    <div>
       {{if not .}}
       {{else}}
-        <div class="login-image">
-          <img src="{{.EtsyDetails.UserProfileURL}}" alt="{{.EtsyDetails.UserName}}"/>
-        </div>
-        <div class="login-text">
-          <p>{{.EmailID}}</p>
-          <span>{{.EtsyDetails.UserShopDetails.ShopName}}</span>
+        <div class="dropdown">
+          <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"> 
+              <img class ="login-image" src="{{.EtsyDetails.UserProfileURL}}"/>{{.EmailID}}
+          </button>
+          <div class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="menu1">
+            <a class="dropdown-item" href="logout">Logout</a>
+          </div>
         </div>
       {{end}}
-      <div class="login-text">
-        <a href="#">Logout</a>
-      </div>
   </div>
 </nav>
 {{ end }}

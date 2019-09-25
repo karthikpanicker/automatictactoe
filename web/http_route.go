@@ -84,6 +84,12 @@ func (rm *routeManager) routeMapping() {
 			rm.pageHandler.showDetails,
 		},
 		{
+			"Logout from session",
+			[]string{"GET"},
+			"/logout",
+			rm.pageHandler.logout,
+		},
+		{
 			"Get a list of boards associated with trello",
 			[]string{"GET"},
 			"/api/users/{userId}/trello-boards/{boardId}/lists",

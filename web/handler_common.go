@@ -94,3 +94,15 @@ func (hc *handlerCommon) SaveKeyValueToSession(r *http.Request, w http.ResponseW
 	session.Values[key] = value
 	session.Save(r, w)
 }
+
+func (hc *handlerCommon) DestroySession(r *http.Request, w http.ResponseWriter) {
+	session, err := sessionStore.Get(r, "userSession")
+	if err != nil {
+		common.Error(err)
+	}
+	session.Options.MaxAge = -1
+	err = session.Save(r, w)
+	if err != nil {
+		common.Error(err)
+	}
+}

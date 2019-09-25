@@ -23,7 +23,13 @@ func newPageHandler(cache common.DataStore, templatePattern string) *pageHandler
 }
 
 func (ph *pageHandler) getLoginPage(w http.ResponseWriter, r *http.Request) {
-	ph.handlerCom.rnd.HTML(w, http.StatusOK, "home", nil)
+	userID := ph.handlerCom.GetValueForKeyFromSession(r, common.UserID)
+	if userID != nil {
+		info, _ := ph.dCache.GetUserInfo(userID.(int))
+		ph.handlerCom.rnd.HTML(w, http.StatusOK, "home", info)
+	} else {
+		ph.handlerCom.rnd.HTML(w, http.StatusOK, "home", nil)
+	}
 }
 
 func (ph *pageHandler) showPrivacyPolicy(w http.ResponseWriter, r *http.Request) {
@@ -61,10 +67,12 @@ func (ph *pageHandler) appAuthorizationCallback(w http.ResponseWriter, r *http.R
 	aDataMgr := apps.GetAppManager(aT)
 	requestSecret := ph.handlerCom.GetValueForKeyFromSession(r, common.ActiveReqSecret).(string)
 	// Fetch userinfo from db and if not available create a new userinfo instance
-	userID := ph.handlerCom.GetValueForKeyFromSession(r, common.UserID).(int)
-	info, err := ph.dCache.GetUserInfo(userID)
-	if info == nil {
+	userID := ph.handlerCom.GetValueForKeyFromSession(r, common.UserID)
+	var info *common.UserInfo
+	if userID == nil {
 		info = new(common.UserInfo)
+	} else {
+		info, err = ph.dCache.GetUserInfo(userID.(int))
 	}
 	err = aDataMgr.GetAndPopulateAppDetails(info, r, requestSecret)
 	if err != nil {
@@ -72,16 +80,22 @@ func (ph *pageHandler) appAuthorizationCallback(w http.ResponseWriter, r *http.R
 		ph.handlerCom.rnd.HTML(w, http.StatusOK, "details", nil)
 	} else {
 		ph.dCache.SaveDetailsToCache(info.UserID, *info)
-		ph.handlerCom.SaveKeyValueToSession(r, w, userID, info.UserID)
+		ph.handlerCom.SaveKeyValueToSession(r, w, common.UserID, info.UserID)
 		ph.handlerCom.rnd.HTML(w, http.StatusOK, "callbacksuccess", nil)
 	}
 }
 
 func (ph *pageHandler) showDetails(w http.ResponseWriter, r *http.Request) {
-	userID := ph.handlerCom.GetValueForKeyFromSession(r, common.UserID).(int)
-	info, err := ph.dCache.GetUserInfo(userID)
-	if err != nil {
-		ph.handlerCom.rnd.HTML(w, http.StatusOK, "home", common.UserInfo{})
+	userID := ph.handlerCom.GetValueForKeyFromSession(r, common.UserID)
+	if userID != nil {
+		info, _ := ph.dCache.GetUserInfo(userID.(int))
+		ph.handlerCom.rnd.HTML(w, http.StatusOK, "home", info)
+		return
 	}
-	ph.handlerCom.rnd.HTML(w, http.StatusOK, "home", info)
+	ph.handlerCom.rnd.HTML(w, http.StatusOK, "home", nil)
+}
+
+func (ph *pageHandler) logout(w http.ResponseWriter, r *http.Request) {
+	ph.handlerCom.DestroySession(r, w)
+	http.Redirect(w, r, "/", http.StatusFound)
 }

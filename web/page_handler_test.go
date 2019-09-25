@@ -67,6 +67,26 @@ func TestAppAuthorizationCallback(t *testing.T) {
 	}
 }
 
+func TestAppAuthorizationLogout(t *testing.T) {
+	req, err := http.NewRequest("GET", "/apps/etsy/callback", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	requestParams := make(map[string]string)
+	requestParams["appType"] = "etsy"
+	req = mux.SetURLVars(req, requestParams)
+	rr := httptest.NewRecorder()
+	dStore := NewTestDataStore()
+	ph := newPageHandler(dStore, "../templates/*.html")
+	handler := http.HandlerFunc(ph.logout)
+	handler.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+}
+
 // A dummy implementation of datastore be be used for testing
 type TestDataCache struct {
 }
