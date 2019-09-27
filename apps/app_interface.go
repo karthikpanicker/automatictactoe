@@ -1,7 +1,6 @@
 package apps
 
 import (
-	"errors"
 	"etsello/common"
 	"net/http"
 )
@@ -18,6 +17,8 @@ const (
 	Todoist AppType = 3
 	// Etsy is a constant to represent etsy app
 	Etsy AppType = 4
+	// DefaultAppType that would be used for unsupported app types
+	DefaultAppType AppType = 5
 )
 
 // AppDataManager is the interface that abstracts app implementations.
@@ -29,6 +30,9 @@ type AppDataManager interface {
 		requestParams map[string]interface{}, appItemResponse interface{}) error
 	GetAppData(info *common.UserInfo, requestType string,
 		requestParams map[string]interface{}) (interface{}, error)
+}
+
+type defaultAppManager struct {
 }
 
 // GetAppManager is a function to get the app manger implementation for a given AppType value.
@@ -44,7 +48,7 @@ func GetAppManager(aT AppType) AppDataManager {
 	case Todoist:
 		adm = new(todoistDataManager)
 	default:
-		common.Fatal("Unknown app type")
+		adm = new(defaultAppManager)
 	}
 	adm.initDataManager()
 	return adm
@@ -62,6 +66,25 @@ func GetAppTypeForString(aT string) (AppType, error) {
 	case "todoist":
 		return Todoist, nil
 	default:
-		return 0, errors.New("Unknown app type")
+		return DefaultAppType, nil
 	}
+}
+
+func (dam *defaultAppManager) initDataManager() {
+
+}
+func (dam *defaultAppManager) GetAuthorizationURL() (string, string, error) {
+	return "", "", nil
+}
+
+func (dam *defaultAppManager) GetAndPopulateAppDetails(info *common.UserInfo, r *http.Request, requestSecret string) error {
+	return nil
+}
+func (dam *defaultAppManager) AddItem(info *common.UserInfo, appItemDetails interface{},
+	requestParams map[string]interface{}, appItemResponse interface{}) error {
+	return nil
+}
+func (dam *defaultAppManager) GetAppData(info *common.UserInfo, requestType string,
+	requestParams map[string]interface{}) (interface{}, error) {
+	return info, nil
 }

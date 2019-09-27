@@ -32,7 +32,7 @@ func TestRedirectToAppLogin(t *testing.T) {
 		t.Fatal(err)
 	}
 	requestParams := make(map[string]string)
-	requestParams["appType"] = "etsy"
+	requestParams["appType"] = "default"
 	req = mux.SetURLVars(req, requestParams)
 	rr := httptest.NewRecorder()
 	dStore := NewTestDataStore()
@@ -51,7 +51,7 @@ func TestAppAuthorizationCallback(t *testing.T) {
 		t.Fatal(err)
 	}
 	requestParams := make(map[string]string)
-	requestParams["appType"] = "etsy"
+	requestParams["appType"] = "default"
 	req = mux.SetURLVars(req, requestParams)
 	rr := httptest.NewRecorder()
 	dStore := NewTestDataStore()
@@ -81,7 +81,7 @@ func TestAppAuthorizationLogout(t *testing.T) {
 	handler := http.HandlerFunc(ph.logout)
 	handler.ServeHTTP(rr, req)
 
-	if status := rr.Code; status != http.StatusOK {
+	if status := rr.Code; status != http.StatusFound {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusOK)
 	}

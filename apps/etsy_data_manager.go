@@ -11,7 +11,6 @@ import (
 )
 
 const (
-	etsyBaseURL = "https://openapi.etsy.com/v2/"
 	// EtsyTransactionListRequest is to specify a request to get all transactions associated with the
 	// linked etsy account
 	EtsyTransactionListRequest = "etsyTransactionList"
@@ -30,17 +29,19 @@ const (
 type etsyDataManager struct {
 	config        oauth1.Config
 	requestSecret string
+	etsyBaseURL   string
 }
 
 func (edm *etsyDataManager) initDataManager() {
+	edm.etsyBaseURL = os.Getenv("ETSY_TOKEN_BASE_URL")
 	edm.config = oauth1.Config{
 		ConsumerKey:    os.Getenv("ETSY_CONSUMER_KEY"),
 		ConsumerSecret: os.Getenv("ETSY_CONSUMER_SECRET"),
 		CallbackURL:    os.Getenv("HOST_URL") + "apps/etsy/callback",
 		Endpoint: oauth1.Endpoint{
-			AccessTokenURL:  etsyBaseURL + "oauth/access_token",
+			AccessTokenURL:  edm.etsyBaseURL + "oauth/access_token",
 			AuthorizeURL:    "https://www.etsy.com/oauth/signin?oauth_consumer_key=" + os.Getenv("ETSY_CONSUMER_KEY") + "&service=v2_prod",
-			RequestTokenURL: etsyBaseURL + "oauth/request_token?scope=email_r%20listings_r%20transactions_r%20address_r",
+			RequestTokenURL: edm.etsyBaseURL + "oauth/request_token?scope=email_r%20listings_r%20transactions_r%20address_r",
 		},
 	}
 }
@@ -85,7 +86,7 @@ func (edm *etsyDataManager) GetAppData(info *common.UserInfo, requestType string
 }
 
 func (edm *etsyDataManager) getUserProfileInfo(info *common.UserInfo, accessToken string, accessSecret string) error {
-	path := etsyBaseURL + "users/__SELF__"
+	path := edm.etsyBaseURL + "users/__SELF__"
 	result := common.EtsyProfileResponse{}
 	httpOAuthClient := common.NewHTTPOAuth1Client(accessToken, accessSecret, edm.config)
 	httpOAuthClient.GetMarshalledAPIResponse(path, &result)
@@ -109,7 +110,7 @@ func (edm *etsyDataManager) getUserProfileInfo(info *common.UserInfo, accessToke
 }
 
 func (edm *etsyDataManager) getShops(info *common.UserInfo) (common.ShopDetails, error) {
-	path := etsyBaseURL + "/users/" + strconv.Itoa(info.UserID) + "/shops"
+	path := edm.etsyBaseURL + "users/" + strconv.Itoa(info.UserID) + "/shops"
 	var result common.EtsyShopResponse
 	httpOAuthClient := common.NewHTTPOAuth1Client(info.EtsyDetails.EtsyAccessToken,
 		info.EtsyDetails.EtsyAccessSecret, edm.config)
@@ -118,7 +119,7 @@ func (edm *etsyDataManager) getShops(info *common.UserInfo) (common.ShopDetails,
 }
 
 func (edm *etsyDataManager) getTransactionList(info *common.UserInfo) (*common.EtsyTransactionResponse, error) {
-	path := etsyBaseURL + "shops/" + strconv.Itoa(info.EtsyDetails.UserShopDetails.ShopID) + "/transactions"
+	path := edm.etsyBaseURL + "shops/" + strconv.Itoa(info.EtsyDetails.UserShopDetails.ShopID) + "/transactions"
 	var result common.EtsyTransactionResponse
 	httpOAuthClient := common.NewHTTPOAuth1Client(info.EtsyDetails.EtsyAccessToken,
 		info.EtsyDetails.EtsyAccessSecret, edm.config)
@@ -130,7 +131,7 @@ func (edm *etsyDataManager) getTransactionList(info *common.UserInfo) (*common.E
 }
 
 func (edm *etsyDataManager) getProfileDetails(userid int, info *common.UserInfo) (*common.EtsyUserProfile, error) {
-	path := etsyBaseURL + "users/" + strconv.Itoa(userid) + "/profile"
+	path := edm.etsyBaseURL + "users/" + strconv.Itoa(userid) + "/profile"
 	var result common.EtsyProfileResponse
 	httpOAuthClient := common.NewHTTPOAuth1Client(info.EtsyDetails.EtsyAccessToken,
 		info.EtsyDetails.EtsyAccessSecret, edm.config)
@@ -143,7 +144,7 @@ func (edm *etsyDataManager) getProfileDetails(userid int, info *common.UserInfo)
 
 func (edm *etsyDataManager) getImageDetails(info *common.UserInfo,
 	tranDetails common.EtsyTransactionDetails) (common.EtsyImageDetails, error) {
-	path := etsyBaseURL + "listings/" + strconv.Itoa(tranDetails.ListingID) +
+	path := edm.etsyBaseURL + "listings/" + strconv.Itoa(tranDetails.ListingID) +
 		"/images/" + strconv.Itoa(tranDetails.ImageListingID)
 	var result common.EtsyImageResponse
 	httpOAuthClient := common.NewHTTPOAuth1Client(info.EtsyDetails.EtsyAccessToken,
