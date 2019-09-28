@@ -12,5 +12,5 @@ WORKDIR /root/
 COPY --from=builder /etsello/main .
 COPY --from=builder /etsello/.env .
 COPY --from=builder /etsello/templates ./templates
-EXPOSE 80
+EXPOSE 8000
 CMD ["./main"]

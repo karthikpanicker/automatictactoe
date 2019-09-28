@@ -13,7 +13,7 @@ func main() {
 	dCache := common.NewDataStore()
 	defer dCache.DisconnectCache()
 	httpManager := web.NewHTTPManager()
-	go httpManager.StartServer(dCache, "", 80)
+	go httpManager.StartServer(dCache, "", 8000)
 
 	es := newEtsySynchronizer(dCache)
 	go es.processOrdersForUsers()

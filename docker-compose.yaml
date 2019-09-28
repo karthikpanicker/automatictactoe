@@ -1,6 +1,13 @@
 version: '3.1'
 
 services:
+  proxy:
+    image: jwilder/nginx-proxy:alpine
+    restart: always
+    ports:
+      - 80:80
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
   mongo:
     image: mongo
     restart: always
@@ -12,8 +19,9 @@ services:
     image: karthikraveendranoss/etsello:latest
     restart: always
     ports:
-      - 80:80
+      - 8000:8000
     environment:
+      VIRTUAL_HOST: automatictactoe.com
       MONGO_URL: mongodb://mongo:27017
       ETSY_CONSUMER_KEY:
       ETSY_CONSUMER_SECRET:
@@ -24,4 +32,3 @@ services:
       GTASKS_CLIENT_SECRET:
       TODOIST_CLIENT_ID:
       TODOIST_CLIENT_SECRET:
-
