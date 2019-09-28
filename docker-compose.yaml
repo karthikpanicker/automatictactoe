@@ -6,8 +6,10 @@ services:
     restart: always
     ports:
       - 80:80
+      - 443:443
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
+      - /root/certs:/etc/nginx/certs
   mongo:
     image: mongo
     restart: always
