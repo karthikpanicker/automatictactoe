@@ -25,7 +25,9 @@ func (es *etsySynchronizer) processOrdersForUsers() {
 		userList := es.dCache.GetUserMap()
 		for _, userDetails := range userList {
 			//Need to fetch transactions for the user only if he has linked any of the apps
-			if !userDetails.TrelloDetails.IsLinked || !userDetails.GTasksDetails.IsLinked {
+			if userDetails.TrelloDetails.IsLinked == false &&
+				userDetails.GTasksDetails.IsLinked == false &&
+				userDetails.TodoistDetails.IsLinked == false {
 				continue
 			}
 			response, err := edm.GetAppData(&userDetails, apps.EtsyTransactionListRequest, nil)
@@ -48,13 +50,16 @@ func (es *etsySynchronizer) processOrdersForUsers() {
 					if userDetails.GTasksDetails.IsLinked {
 						es.postTransactionToGTasks(etsyTransaction, &userDetails, buyerProfile)
 					}
+					if userDetails.TodoistDetails.IsLinked {
+						es.postTransactionToTodoist(etsyTransaction, &userDetails, buyerProfile)
+					}
 					lptID = etsyTransaction.ID
 				}
 			}
 			userDetails.EtsyDetails.LastProcessedTrasactionID = lptID
 			es.dCache.SaveDetailsToCache(userDetails.UserID, userDetails)
 		}
-		time.Sleep(time.Minute * 30)
+		time.Sleep(time.Minute * 2)
 	}
 }
 
@@ -100,6 +105,22 @@ func (es *etsySynchronizer) postTransactionToGTasks(tranDetails common.EtsyTrans
 	}
 	gtm := apps.GetAppManager(apps.Gtask)
 	err := gtm.AddItem(info, todoItem, nil, nil)
+	if err != nil {
+		common.Error(err)
+	}
+}
+
+func (es *etsySynchronizer) postTransactionToTodoist(tranDetails common.EtsyTransactionDetails,
+	info *common.UserInfo, buyerProfile *common.EtsyUserProfile) {
+	if tranDetails.PaidTime < info.GTasksDetails.FromDate {
+		return
+	}
+	tdm := apps.GetAppManager(apps.Todoist)
+	task := common.TodoistTask{
+		Content:   tranDetails.Title + " " + tranDetails.EtsyURL,
+		ProjectID: info.TodoistDetails.SelectedProjectID,
+	}
+	err := tdm.AddItem(info, task, nil, task)
 	if err != nil {
 		common.Error(err)
 	}

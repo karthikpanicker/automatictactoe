@@ -103,9 +103,11 @@ func (ph *pageHandler) appAuthorizationCallback(w http.ResponseWriter, r *http.R
 func (ph *pageHandler) showDetails(w http.ResponseWriter, r *http.Request) {
 	userID := ph.handlerCom.GetValueForKeyFromSession(r, common.UserID)
 	if userID != nil {
-		info, _ := ph.dCache.GetUserInfo(userID.(int))
-		ph.handlerCom.rnd.HTML(w, http.StatusOK, "home", info)
-		return
+		info, err := ph.dCache.GetUserInfo(userID.(int))
+		if err == nil {
+			ph.handlerCom.rnd.HTML(w, http.StatusOK, "home", info)
+			return
+		}
 	}
 	ph.handlerCom.rnd.HTML(w, http.StatusOK, "home", nil)
 }
