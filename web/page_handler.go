@@ -25,11 +25,14 @@ func newPageHandler(cache common.DataStore, templatePattern string) *pageHandler
 func (ph *pageHandler) getLoginPage(w http.ResponseWriter, r *http.Request) {
 	userID := ph.handlerCom.GetValueForKeyFromSession(r, common.UserID)
 	if userID != nil {
-		info, _ := ph.dCache.GetUserInfo(userID.(int))
-		ph.handlerCom.rnd.HTML(w, http.StatusOK, "home", info)
-	} else {
-		ph.handlerCom.rnd.HTML(w, http.StatusOK, "home", nil)
+		info, err := ph.dCache.GetUserInfo(userID.(int))
+		if err == nil {
+			ph.handlerCom.rnd.HTML(w, http.StatusOK, "home", info)
+			return
+		}
 	}
+	ph.handlerCom.rnd.HTML(w, http.StatusOK, "home", nil)
+
 }
 
 func (ph *pageHandler) showPrivacyPolicy(w http.ResponseWriter, r *http.Request) {
@@ -71,6 +74,9 @@ func (ph *pageHandler) appAuthorizationCallback(w http.ResponseWriter, r *http.R
 	var info *common.UserInfo
 	if userID != nil {
 		info, err = ph.dCache.GetUserInfo(userID.(int))
+		if err != nil {
+			info = &common.UserInfo{}
+		}
 	} else {
 		info = &common.UserInfo{}
 	}

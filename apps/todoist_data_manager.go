@@ -81,6 +81,11 @@ func (tdm *todoistDataManager) getProjects(info *common.UserInfo) ([]common.Todo
 	result := make([]common.TodoistProject, 0)
 	client := common.NewHTTPOauth2Client(tdm.config)
 	err := client.GetMarshalledAPIResponse(path, info.TodoistDetails.Token, &result)
+	for index, project := range result {
+		if project.ID == info.TodoistDetails.SelectedProjectID {
+			result[index].IsSelected = true
+		}
+	}
 	if err != nil {
 		return nil, err
 	}

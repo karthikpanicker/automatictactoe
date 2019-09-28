@@ -49,10 +49,17 @@ type GTasksDetails struct {
 	FromDate           int
 }
 
+// GTasksListDetails is a struct to store gtask list details
+type GTasksListDetails struct {
+	ID         string `json:"id"`
+	Title      string `json:"title"`
+	IsSelected bool   `json:"isSelected"`
+}
+
 // TodoistDetails is a struct to store todoist details
 type TodoistDetails struct {
 	Token             string
-	SelectedProjectID string `json:"projectId"`
+	SelectedProjectID int `json:"projectId"`
 	IsLinked          bool
 	TransactionFilter int `json:"transactionFilter"`
 	FromDate          int
@@ -174,8 +181,9 @@ type TrelloImageAttachment struct {
 
 // TodoistProject is a struct to store todoist project details.
 type TodoistProject struct {
-	Name string `json:"name"`
-	ID   int    `json:"id"`
+	Name       string `json:"name"`
+	ID         int    `json:"id"`
+	IsSelected bool   `json:"isSelected"`
 }
 
 // TodoistTask is struct to store tasks details in todoist.
@@ -197,4 +205,18 @@ type DataStore interface {
 	GetUserInfo(userID int) (*UserInfo, error)
 	GetUserMap() map[int]UserInfo
 	DisconnectCache()
+}
+
+// IsFieldSelected is used to check current selections
+func (td *TrelloDetails) IsFieldSelected(fieldValue string) bool {
+	return contains(td.FieldsToUse, fieldValue)
+}
+
+func contains(valueArray []string, value string) bool {
+	for _, field := range valueArray {
+		if field == value {
+			return true
+		}
+	}
+	return false
 }

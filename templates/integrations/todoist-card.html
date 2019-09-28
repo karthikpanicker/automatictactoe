@@ -21,6 +21,7 @@
         </div>
     </span>
 </div>
+{{ if .TodoistDetails.IsLinked }}
 <div class="modal fade" id="todoistConfigModal" tabindex="-1" 
     role="dialog" aria-labelledby="todoistModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -50,25 +51,25 @@
                     <div class="col-md-12">
                         <fieldset id="todoist-radio-set" class="border-set">
                             <legend class="border-set regular">Sync transactions</legend>
-                            <div class="form-check-inline">
-                            <label class="form-check-label radio-label">
-                                <input type="radio" class="form-check-input" name="optradio" value="1" checked>In the future
-                            </label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="todoist-optradio" 
+                                    id="future-radio" value="1" {{if eq .TodoistDetails.TransactionFilter 1 }} checked="checked" {{end}}>
+                                <label class="form-check-label" for="future-radio">In the future</label>
                             </div>
-                            <div class="form-check-inline">
-                            <label class="form-check-label radio-label">
-                                <input type="radio" class="form-check-input" name="optradio" value="2">From past month
-                            </label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="todoist-optradio" 
+                                    id="past-month-radio" value="2" {{if eq .TodoistDetails.TransactionFilter 2 }} checked="checked" {{end}}>
+                                <label class="form-check-label" for="past-month-radio">From past month</label>
                             </div>
-                            <div class="form-check-inline">
-                            <label class="form-check-label radio-label">
-                                <input type="radio" class="form-check-input" name="optradio" value="3">From past week
-                            </label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="todoist-optradio" 
+                                    id="past-week-radio" value="3" {{if eq .TodoistDetails.TransactionFilter 3 }} checked="checked" {{end}}>
+                                <label class="form-check-label" for="past-week-radio">From past week</label>
                             </div>
-                            <div class="form-check-inline">
-                            <label class="form-check-label radio-label">
-                                <input type="radio" class="form-check-input" name="optradio" value="4">That are not shipped yet
-                            </label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="todoist-optradio" 
+                                id="not-shipped-radio" value="4" {{if eq .TodoistDetails.TransactionFilter 4 }} checked="checked" {{end}}>
+                                <label class="form-check-label" for="not-shipped-radio">That are not shipped yet</label>
                             </div>
                         </fieldset>
                     </div>
@@ -81,4 +82,5 @@
         </div>
     </div>
 </div>
+{{end}}
 {{end}}

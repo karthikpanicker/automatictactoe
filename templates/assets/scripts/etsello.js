@@ -63,7 +63,7 @@
     $("#saveTodoistConfig").on("click",function(){
         var $this = $(this);
         buttonLoading($this);
-        var todoistProjectId = $('#todoistProjects button').filter('.active').attr('id');
+        var todoistProjectId = parseInt($('#todoistProjects button').filter('.active').attr('id'),10);
         var transactionFilter = parseInt($('#todoist-radio-set input:radio:checked').val(),10);
         $.ajax({
             type: "POST",
@@ -102,7 +102,7 @@
         $('#googleLists button').remove();
         $('#spinner').show();
         $.get( "api/users/1/gtask-lists", function( gTasksLists ) {
-            $.each(gTasksLists.items, function( index, list ) {
+            $.each(gTasksLists, function( index, list ) {
                 var activeClass = (list.isSelected) ? ' active' : '' 
                 $('#googleLists').append('<button id="' + list.id 
                 + '" type="button" class="list-group-item' + activeClass +'">' + list.title + '</button>');

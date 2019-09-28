@@ -23,6 +23,7 @@
             </div>
         </span>
     </div>
+    {{ if .TrelloDetails.IsLinked }}
     <div class="modal fade" id="configurationModal" tabindex="-1" 
         role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -58,28 +59,48 @@
                             <fieldset class="border-set">
                                 <legend class="border-set regular">Etsy fields to be used in trello card</legend>
                                 <div class="checkbox checkbox-success">
-                                    <input id="listing_desc" type="checkbox">
+                                    {{$isChecked := .TrelloDetails.IsFieldSelected "listing_desc"}}
+                                    {{if $isChecked}}
+                                        <input id="listing_desc" type="checkbox" checked="checked">
+                                    {{else}}
+                                        <input id="listing_desc" type="checkbox">
+                                    {{end}}
                                     <label for="listing_desc">
                                             Listing Description
-                                                </label>
+                                    </label>
                                 </div>
                                 <div class="checkbox checkbox-success">
-                                    <input id="listing_image" type="checkbox">
+                                    {{$isChecked := .TrelloDetails.IsFieldSelected "listing_image"}}
+                                    {{if $isChecked}}
+                                        <input id="listing_image" type="checkbox" checked="checked">
+                                    {{else}}
+                                        <input id="listing_image" type="checkbox">
+                                    {{end}}
                                     <label for="listing_image">
                                             Listing Image
-                                                </label>
+                                    </label>
                                 </div>
                                 <div class="checkbox checkbox-success">
+                                    {{$isChecked := .TrelloDetails.IsFieldSelected "listing_buy_profile"}}
+                                    {{if $isChecked}}
+                                        <input id="listing_buy_profile" type="checkbox" checked="checked">
+                                    {{else}}
                                         <input id="listing_buy_profile" type="checkbox">
+                                    {{end}}
                                         <label for="listing_buy_profile">
-                                                Buyer public profile
-                                                    </label>
-                                    </div>
+                                            Buyer public profile
+                                        </label>
+                                </div>
                                 <div class="checkbox checkbox-success">
-                                    <input id="listing_link" type="checkbox">
+                                    {{$isChecked := .TrelloDetails.IsFieldSelected "listing_link"}}
+                                    {{if $isChecked}}
+                                        <input id="listing_link" type="checkbox" checked="checked">
+                                    {{else}}
+                                        <input id="listing_link" type="checkbox">
+                                    {{end}}
                                     <label for="listing_link">
                                             Link to etsy transaction
-                                                </label>
+                                    </label>
                                 </div>
                             </fieldset>
                         </div>
@@ -88,25 +109,25 @@
                         <div class="col-md-12">
                             <fieldset id="trello-radio-set" class="border-set">
                                 <legend class="border-set regular">Sync transactions</legend>
-                                <div class="form-check-inline">
-                                <label class="form-check-label radio-label">
-                                    <input type="radio" class="form-check-input" name="optradio" value="1" checked>In the future
-                                </label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="trello-optradio" 
+                                        id="future-radio" value="1" {{if eq .TrelloDetails.TransactionFilter 1 }} checked="checked" {{end}}>
+                                    <label class="form-check-label" for="future-radio">In the future</label>
                                 </div>
-                                <div class="form-check-inline">
-                                <label class="form-check-label radio-label">
-                                    <input type="radio" class="form-check-input" name="optradio" value="2">From past month
-                                </label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="trello-optradio" 
+                                        id="past-month-radio" value="2" {{if eq .TrelloDetails.TransactionFilter 2 }} checked="checked" {{end}}>
+                                    <label class="form-check-label" for="past-month-radio">From past month</label>
                                 </div>
-                                <div class="form-check-inline">
-                                <label class="form-check-label radio-label">
-                                    <input type="radio" class="form-check-input" name="optradio" value="3">From past week
-                                </label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="trello-optradio" 
+                                        id="past-week-radio" value="3" {{if eq .TrelloDetails.TransactionFilter 3 }} checked="checked" {{end}}>
+                                    <label class="form-check-label" for="past-week-radio">From past week</label>
                                 </div>
-                                <div class="form-check-inline">
-                                <label class="form-check-label radio-label">
-                                    <input type="radio" class="form-check-input" name="optradio" value="4">That are not shipped yet
-                                </label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="trello-optradio" 
+                                    id="not-shipped-radio" value="4" {{if eq .TrelloDetails.TransactionFilter 4 }} checked="checked" {{end}}>
+                                    <label class="form-check-label" for="not-shipped-radio">That are not shipped yet</label>
                                 </div>
                             </fieldset>
                         </div>
@@ -119,5 +140,6 @@
             </div>
         </div>
     </div>
+    {{end}}
 {{end}}
 

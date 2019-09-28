@@ -102,7 +102,7 @@ func (gtm *gTasksDataManager) getGTasksService(info *common.UserInfo) (*tasks.Se
 	return srv, nil
 }
 
-func (gtm *gTasksDataManager) getTaskLists(info *common.UserInfo, service *tasks.Service) (*tasks.TaskLists, error) {
+func (gtm *gTasksDataManager) getTaskLists(info *common.UserInfo, service *tasks.Service) ([]*common.GTasksListDetails, error) {
 	var srv *tasks.Service = service
 	var err error
 	if srv == nil {
@@ -115,5 +115,17 @@ func (gtm *gTasksDataManager) getTaskLists(info *common.UserInfo, service *tasks
 	if err != nil {
 		return nil, err
 	}
-	return lists, nil
+	resultArray := make([]*common.GTasksListDetails, 0)
+	for _, list := range lists.Items {
+		isSelected := false
+		if list.Id == info.GTasksDetails.SelectedTaskListID {
+			isSelected = true
+		}
+		resultArray = append(resultArray, &common.GTasksListDetails{
+			ID:         list.Id,
+			Title:      list.Title,
+			IsSelected: isSelected,
+		})
+	}
+	return resultArray, nil
 }
