@@ -19,34 +19,35 @@ type UserInfo struct {
 
 // TrelloDetails is a struct used to store trello realted information.
 type TrelloDetails struct {
-	TrelloAccessToken  string
-	TrelloAccessSecret string
-	TrelloBoards       []BoardDetails
-	SelectedBoardID    string   `json:"boardId"`
-	SelectedListID     string   `json:"listId"`
-	FieldsToUse        []string `json:"fieldsToUse"`
-	IsLinked           bool     `json:"isLinked"`
-	TransactionFilter  int      `json:"transactionFilter"`
-	FromDate           int
+	TrelloAccessToken         string
+	TrelloAccessSecret        string
+	TrelloBoards              []BoardDetails
+	SelectedBoardID           string   `json:"boardId"`
+	SelectedListID            string   `json:"listId"`
+	FieldsToUse               []string `json:"fieldsToUse"`
+	IsLinked                  bool     `json:"isLinked"`
+	TransactionFilter         int      `json:"transactionFilter"`
+	FromDate                  int
+	LastProcessedTrasactionID int
 }
 
 // EtsyDetails is a struct used to store etsy realted information.
 type EtsyDetails struct {
-	EtsyAccessToken           string
-	EtsyAccessSecret          string
-	UserShopDetails           ShopDetails
-	UserProfileURL            string
-	UserName                  string
-	LastProcessedTrasactionID int
+	EtsyAccessToken  string
+	EtsyAccessSecret string
+	UserShopDetails  ShopDetails
+	UserProfileURL   string
+	UserName         string
 }
 
 // GTasksDetails is a struct to store google tasks details
 type GTasksDetails struct {
-	Token              string
-	SelectedTaskListID string `json:"listId"`
-	IsLinked           bool
-	TransactionFilter  int `json:"transactionFilter"`
-	FromDate           int
+	Token                     string
+	SelectedTaskListID        string `json:"listId"`
+	IsLinked                  bool
+	TransactionFilter         int `json:"transactionFilter"`
+	FromDate                  int
+	LastProcessedTrasactionID int
 }
 
 // GTasksListDetails is a struct to store gtask list details
@@ -58,11 +59,12 @@ type GTasksListDetails struct {
 
 // TodoistDetails is a struct to store todoist details
 type TodoistDetails struct {
-	Token             string
-	SelectedProjectID int `json:"projectId"`
-	IsLinked          bool
-	TransactionFilter int `json:"transactionFilter"`
-	FromDate          int
+	Token                     string
+	SelectedProjectID         int `json:"projectId"`
+	IsLinked                  bool
+	TransactionFilter         int `json:"transactionFilter"`
+	FromDate                  int
+	LastProcessedTrasactionID int
 }
 
 // ShopDetails is a struct to store etsy shop details
