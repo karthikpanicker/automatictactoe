@@ -48,7 +48,7 @@ func (tm *trelloDataManager) GetAuthorizationURL() (string, string, error) {
 	}
 	authorizationURL, err := tm.config.AuthorizationURL(requestToken)
 	return authorizationURL.String() +
-			"&name=" + "Etsello - an etsy order capture for trello" + "&expiration=never&scope=read,write",
+			"&name=" + "Automatictactoe - an etsy sales capture for trello" + "&expiration=never&scope=read,write",
 		requestSecret, nil
 }
 
