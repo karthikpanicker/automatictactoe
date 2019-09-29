@@ -68,6 +68,10 @@ func (es *etsySynchronizer) postTransactionToTrello(edm apps.AppDataManager, tra
 		tranDetails.ID <= info.TrelloDetails.LastProcessedTrasactionID {
 		return
 	}
+	// If details are not configured skip the transaction
+	if info.TrelloDetails.SelectedBoardID == "" || info.TrelloDetails.SelectedListID == "" {
+		return
+	}
 	tdm := apps.GetAppManager(apps.Trello)
 	card := common.TrelloCardDetails{
 		Name:   tranDetails.Title,
@@ -101,6 +105,9 @@ func (es *etsySynchronizer) postTransactionToGTasks(tranDetails common.EtsyTrans
 		tranDetails.ID <= info.GTasksDetails.LastProcessedTrasactionID {
 		return
 	}
+	if info.GTasksDetails.SelectedTaskListID == "" {
+		return
+	}
 	todoItem := &tasks.Task{
 		Title: tranDetails.Title,
 		Notes: tranDetails.Description,
@@ -117,6 +124,9 @@ func (es *etsySynchronizer) postTransactionToTodoist(tranDetails common.EtsyTran
 	info *common.UserInfo, buyerProfile *common.EtsyUserProfile) {
 	if tranDetails.PaidTime < info.GTasksDetails.FromDate ||
 		tranDetails.ID <= info.TodoistDetails.LastProcessedTrasactionID {
+		return
+	}
+	if info.TodoistDetails.SelectedProjectID == 0 {
 		return
 	}
 	tdm := apps.GetAppManager(apps.Todoist)
