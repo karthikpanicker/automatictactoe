@@ -56,7 +56,7 @@ func (es *etsySynchronizer) processOrdersForUsers() {
 			}
 			es.dCache.SaveDetailsToCache(userDetails.UserID, userDetails)
 		}
-		time.Sleep(time.Second * 15)
+		time.Sleep(time.Minute * 15)
 	}
 }
 

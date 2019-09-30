@@ -13,6 +13,11 @@ body
     font-weight: 500;
 }
 
+.etsy-disclaimer{
+  font-weight: regular;
+  font-size: 10px;
+}
+
 input:focus {
     outline: none;
 }
