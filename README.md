@@ -1,14 +1,19 @@
-# Etsello
+# Automatictactoe
 
-Etsello integrates etsy with task management applications. The application can be used by etsy sellers to link their etsy account with todo apps or other task management applications. Once linked new purchases in your shop will automatically create an entry in your linked applications.
+Automatictactoe integrates etsy with task management applications. The application can be used by etsy sellers to link their etsy account with todo apps or other task management applications. Once linked a new sale in your shop will automatically create an entry in your linked applications.
+
+This integration is available for free at http://automatictactoe.com
+
+If you are looking at setting it up on your own follow rest of this README.
 
 ## Integrations
 Following integrations are currently supported
 
  1. Trello boards 
  2. Google Tasks
+ 3. Todoist
 
-We are actively working on new integrations. If you are looking at integrating your etsy workflow with other applications, please raise an issue in the issues section.
+We are actively working on other integrations. If you are looking at integrating your etsy workflow with other applications, please raise an issue in the issues section.
 
 ## Running the project
 1. .env file contains all the application parameters. Most of them works with the default values except for the following:
