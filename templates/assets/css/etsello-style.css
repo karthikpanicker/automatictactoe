@@ -16,6 +16,7 @@ body
 .etsy-disclaimer{
   font-weight: regular;
   font-size: 10px;
+  text-align:center;
 }
 
 input:focus {
@@ -475,7 +476,7 @@ margin-right: auto;
    width: 24%;
    /* border-radius: 1.25rem; */
    min-width: 250px;
-   margin: 5px;
+   margin: 5px auto;
    border-bottom: 5px solid transparent;
  }
 
