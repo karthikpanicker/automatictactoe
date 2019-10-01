@@ -51,17 +51,6 @@ func (hc *handlerCommon) ProcessErrorMessage(message string, w http.ResponseWrit
 	w.Write(payload)
 }
 
-func (hc *handlerCommon) processAuthorizationError(message string,
-	w http.ResponseWriter, values ...interface{}) {
-	if len(values) > 0 {
-		message = fmt.Sprintf(message, values...)
-	}
-	payload, _ := json.Marshal(&Message{ErrorMessage: message})
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusUnauthorized)
-	w.Write(payload)
-}
-
 func (hc *handlerCommon) ProcessSuccessMessage(message string, w http.ResponseWriter) {
 	payload, _ := json.Marshal(&Message{ErrorMessage: message})
 	w.Header().Set("Content-Type", "application/json")

@@ -23,10 +23,10 @@ type routeManager struct {
 	dCache        common.DataStore
 }
 
-func newRouteManager(dCache common.DataStore) *routeManager {
+func newRouteManager(dCache common.DataStore, templatePath string) *routeManager {
 	rm := new(routeManager)
-	rm.pageHandler = newPageHandler(dCache, "")
-	rm.apiHandler = newAPIHandler(dCache, "")
+	rm.pageHandler = newPageHandler(dCache, templatePath)
+	rm.apiHandler = newAPIHandler(dCache, templatePath)
 	rm.Router = rm.registerRoutes()
 	return rm
 }
@@ -90,10 +90,10 @@ func (rm *routeManager) routeMapping() {
 			rm.pageHandler.logout,
 		},
 		{
-			"Get a list of boards associated with trello",
+			"Get a list associated with a trello board",
 			[]string{"GET"},
 			"/api/users/{userId}/trello-boards/{boardId}/lists",
-			rm.apiHandler.getBordLists,
+			rm.apiHandler.getBoardLists,
 		},
 		{
 			"Save trello configuration details",

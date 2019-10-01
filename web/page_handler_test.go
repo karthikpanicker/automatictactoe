@@ -87,6 +87,33 @@ func TestAppAuthorizationLogout(t *testing.T) {
 	}
 }
 
+func TestShowDetailsWithoutUserID(t *testing.T) {
+	req, _ := http.NewRequest("GET", "/details", nil)
+	rr := httptest.NewRecorder()
+	dStore := NewTestDataStore()
+	ph := newPageHandler(dStore, "../templates/*.html")
+	handler := http.HandlerFunc(ph.showDetails)
+	handler.ServeHTTP(rr, req)
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+}
+
+func TestShowDetailsWithUserID(t *testing.T) {
+	req, _ := http.NewRequest("GET", "/details", nil)
+	rr := httptest.NewRecorder()
+	dStore := NewTestDataStore()
+	ph := newPageHandler(dStore, "../templates/*.html")
+	ph.handlerCom.SaveKeyValueToSession(req, rr, common.UserID, 12345)
+	handler := http.HandlerFunc(ph.showDetails)
+	handler.ServeHTTP(rr, req)
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+}
+
 // A dummy implementation of datastore be be used for testing
 type TestDataCache struct {
 }

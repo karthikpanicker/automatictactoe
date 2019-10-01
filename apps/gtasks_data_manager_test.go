@@ -124,8 +124,8 @@ func TestGetTaskLists(t *testing.T) {
 	requestParams[gTaskServiceKey] = svc
 	lists, err := gtm.GetAppData(info, GTaskGetListsRequest, requestParams)
 	assert.Nil(t, err)
-	taskLists := lists.(*tasks.TaskLists)
-	assert.Equal(t, 3, len(taskLists.Items))
+	taskLists := lists.([]*common.GTasksListDetails)
+	assert.Equal(t, 3, len(taskLists))
 }
 
 func TestAddItem(t *testing.T) {

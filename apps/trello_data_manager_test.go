@@ -28,7 +28,7 @@ func TestGetAuthorizationURL(t *testing.T) {
 	authURL, _, err := tdm.GetAuthorizationURL()
 	assert.Nil(t, err)
 	assert.Equal(t, server.URL+"/1/OAuthAuthorizeToken?oauth_token=915132350c7d73b3daae0deea59e21d1"+
-		"&name=Etsello - an etsy order capture for trello&expiration=never&scope=read,write",
+		"&name=Automatictactoe - an etsy sales capture for trello&expiration=never&scope=read,write",
 		authURL)
 }
 func TestAddCard(t *testing.T) {

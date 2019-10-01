@@ -146,7 +146,10 @@ func (tm *trelloDataManager) getBoardLists(info *common.UserInfo, boardID string
 	var result []common.BoardList
 	httpOAuthClient := common.NewHTTPOAuth1Client(info.TrelloDetails.TrelloAccessToken,
 		info.TrelloDetails.TrelloAccessSecret, tm.config)
-	httpOAuthClient.GetMarshalledAPIResponse(path, &result)
+	err := httpOAuthClient.GetMarshalledAPIResponse(path, &result)
+	if err != nil {
+		return nil, err
+	}
 	for index, list := range result {
 		if list.ID == info.TrelloDetails.SelectedListID {
 			result[index].IsSelected = true

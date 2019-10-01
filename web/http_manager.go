@@ -20,7 +20,7 @@ func NewHTTPManager() *HTTPManager {
 
 // StartServer starts a server on the host ip and port specified
 func (wam *HTTPManager) StartServer(dCache common.DataStore, hostIP string, hostPort int) {
-	rm := newRouteManager(dCache)
+	rm := newRouteManager(dCache, "")
 	address := fmt.Sprintf("%s:%d", hostIP, hostPort)
 	common.Info("Starting http service at: ", address)
 	corsOpts := cors.New(cors.Options{

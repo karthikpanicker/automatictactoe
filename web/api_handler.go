@@ -18,11 +18,6 @@ type apiHandler struct {
 	dCache         common.DataStore
 }
 
-type trialInfo struct {
-	SelectedBoardID string `json:"boardId"`
-	SelectedListID  string `json:"listId"`
-}
-
 func newAPIHandler(cache common.DataStore, templatePattern string) *apiHandler {
 	ah := new(apiHandler)
 	ah.handlerCom = newHandlerCommon(templatePattern)
@@ -33,7 +28,7 @@ func newAPIHandler(cache common.DataStore, templatePattern string) *apiHandler {
 	return ah
 }
 
-func (ah *apiHandler) getBordLists(w http.ResponseWriter, r *http.Request) {
+func (ah *apiHandler) getBoardLists(w http.ResponseWriter, r *http.Request) {
 	userID := ah.handlerCom.GetValueForKeyFromSession(r, common.UserID).(int)
 	info, _ := ah.dCache.GetUserInfo(userID)
 	params := mux.Vars(r)
@@ -44,7 +39,11 @@ func (ah *apiHandler) getBordLists(w http.ResponseWriter, r *http.Request) {
 	}
 	requestParams := make(map[string]interface{})
 	requestParams[apps.TrelloBoardIDKey] = boardID
-	boardLists, _ := ah.trelloManager.GetAppData(info, apps.TrelloBoardListRequest, requestParams)
+	boardLists, err := ah.trelloManager.GetAppData(info, apps.TrelloBoardListRequest, requestParams)
+	if err != nil {
+		ah.handlerCom.ProcessErrorMessage(err.Error(), w)
+		return
+	}
 	ah.handlerCom.ProcessResponse(boardLists, w)
 }
 
