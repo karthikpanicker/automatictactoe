@@ -69,6 +69,11 @@ nav .navbar-brand{
     font-weight: 600;
 }
 
+.dropdown-menu {
+    min-width: 100%;
+    text-align: center;
+}
+
 .login-wraper{
   display: flex;
   text-align: left;

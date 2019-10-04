@@ -100,7 +100,7 @@ func (tm *trelloDataManager) GetAppData(info *common.UserInfo, requestType strin
 	case trelloBoardInfoRequest:
 		return tm.getBoardInfo(info, requestParams[TrelloBoardIDKey].(string))
 	default:
-		return nil, errors.New("Unknown request type provided")
+		return nil, errors.New("unknown request type provided")
 	}
 }
 

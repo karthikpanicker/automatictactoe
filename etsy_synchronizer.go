@@ -43,6 +43,7 @@ func (es *etsySynchronizer) processOrdersForUsers() {
 					reqParamsMap[apps.EtsyUserIDKey] = etsyTransaction.BuyerUserID
 					response, _ := edm.GetAppData(&userDetails, apps.ProfileDetailsForUserRequest, reqParamsMap)
 					buyerProfile := response.(*common.EtsyUserProfile)
+					time.Sleep(time.Second * 2)
 					if userDetails.TrelloDetails.IsLinked {
 						es.postTransactionToTrello(edm, etsyTransaction, &userDetails, buyerProfile)
 					}
