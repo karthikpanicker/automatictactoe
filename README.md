@@ -23,3 +23,5 @@ We are actively working on other integrations. If you are looking at integrating
 *`docker build -t etsello -f Dockerfile .`*
 4. Use docker compose to run the project.
 *`docker run --name etsello-mongo-standalone -d -p 27017:27017 -v data:/data/db  mongo:4.2.0-bionic`*
+
+## Contributing to the project
