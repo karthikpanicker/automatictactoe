@@ -3,6 +3,7 @@ package main
 import (
 	"etsello/apps"
 	"etsello/common"
+	"strconv"
 	"strings"
 	"time"
 
@@ -89,7 +90,10 @@ func (es *etsySynchronizer) postTransactionToTrello(edm apps.AppDataManager, tra
 	if contains(info.TrelloDetails.FieldsToUse, "listing_image") {
 		reqParamsMap := make(map[string]interface{})
 		reqParamsMap[apps.EtsyTranDetailsKey] = tranDetails
-		response, _ := edm.GetAppData(info, apps.EtsyImageDetailsRequest, reqParamsMap)
+		response, err := edm.GetAppData(info, apps.EtsyImageDetailsRequest, reqParamsMap)
+		if err != nil {
+			common.Error("Error getting image details.",err)
+		}
 		trelloReqParamsMap[apps.TrelloShouldAttachImage] = true
 		trelloReqParamsMap[apps.EtsyImageDetailsKey] = response
 		tdm.AddItem(info, card, trelloReqParamsMap, &resultCard)
@@ -97,6 +101,7 @@ func (es *etsySynchronizer) postTransactionToTrello(edm apps.AppDataManager, tra
 		trelloReqParamsMap[apps.TrelloShouldAttachImage] = false
 		tdm.AddItem(info, card, trelloReqParamsMap, &resultCard)
 	}
+	common.Info("Last processed transaction id: "+strconv.Itoa(tranDetails.ID))
 	info.TrelloDetails.LastProcessedTrasactionID = tranDetails.ID
 }
 
