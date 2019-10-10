@@ -19,16 +19,16 @@ type UserInfo struct {
 
 // TrelloDetails is a struct used to store trello realted information.
 type TrelloDetails struct {
-	TrelloAccessToken         string
-	TrelloAccessSecret        string
-	TrelloBoards              []BoardDetails
-	SelectedBoardID           string   `json:"boardId"`
-	SelectedListID            string   `json:"listId"`
-	FieldsToUse               []string `json:"fieldsToUse"`
-	IsLinked                  bool     `json:"isLinked"`
-	TransactionFilter         int      `json:"transactionFilter"`
-	FromDate                  int
-	LastProcessedTrasactionID int
+	TrelloAccessToken                string
+	TrelloAccessSecret               string
+	TrelloBoards                     []BoardDetails
+	SelectedBoardID                  string   `json:"boardId"`
+	SelectedListID                   string   `json:"listId"`
+	FieldsToUse                      []string `json:"fieldsToUse"`
+	IsLinked                         bool     `json:"isLinked"`
+	TransactionFilter                int      `json:"transactionFilter"`
+	FromDate                         int
+	LastProcessedTransactionPaidTime int
 }
 
 // EtsyDetails is a struct used to store etsy realted information.

@@ -67,7 +67,7 @@ func (es *etsySynchronizer) postTransactionToTrello(edm apps.AppDataManager, tra
 	// checking the criteria for selecting a transaction based on user preference
 	// Second condition prevents a transaction from processed twice
 	if tranDetails.PaidTime < info.TrelloDetails.FromDate ||
-		tranDetails.ID <= info.TrelloDetails.LastProcessedTrasactionID {
+		tranDetails.PaidTime <= info.TrelloDetails.LastProcessedTransactionPaidTime {
 		return
 	}
 	// If details are not configured skip the transaction
@@ -102,7 +102,7 @@ func (es *etsySynchronizer) postTransactionToTrello(edm apps.AppDataManager, tra
 		tdm.AddItem(info, card, trelloReqParamsMap, &resultCard)
 	}
 	common.Info("Last processed transaction id: "+strconv.Itoa(tranDetails.ID))
-	info.TrelloDetails.LastProcessedTrasactionID = tranDetails.ID
+	info.TrelloDetails.LastProcessedTransactionPaidTime = tranDetails.PaidTime
 }
 
 func (es *etsySynchronizer) postTransactionToGTasks(tranDetails common.EtsyTransactionDetails,
