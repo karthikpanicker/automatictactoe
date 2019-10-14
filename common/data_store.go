@@ -42,12 +42,12 @@ type EtsyDetails struct {
 
 // GTasksDetails is a struct to store google tasks details
 type GTasksDetails struct {
-	Token                     string
-	SelectedTaskListID        string `json:"listId"`
-	IsLinked                  bool
-	TransactionFilter         int `json:"transactionFilter"`
-	FromDate                  int
-	LastProcessedTrasactionID int
+	Token                            string
+	SelectedTaskListID               string `json:"listId"`
+	IsLinked                         bool
+	TransactionFilter                int `json:"transactionFilter"`
+	FromDate                         int
+	LastProcessedTransactionPaidTime int
 }
 
 // GTasksListDetails is a struct to store gtask list details
@@ -59,12 +59,12 @@ type GTasksListDetails struct {
 
 // TodoistDetails is a struct to store todoist details
 type TodoistDetails struct {
-	Token                     string
-	SelectedProjectID         int `json:"projectId"`
-	IsLinked                  bool
-	TransactionFilter         int `json:"transactionFilter"`
-	FromDate                  int
-	LastProcessedTrasactionID int
+	Token                            string
+	SelectedProjectID                int `json:"projectId"`
+	IsLinked                         bool
+	TransactionFilter                int `json:"transactionFilter"`
+	FromDate                         int
+	LastProcessedTransactionPaidTime int
 }
 
 // ShopDetails is a struct to store etsy shop details

@@ -108,7 +108,7 @@ func (es *etsySynchronizer) postTransactionToTrello(edm apps.AppDataManager, tra
 func (es *etsySynchronizer) postTransactionToGTasks(tranDetails common.EtsyTransactionDetails,
 	info *common.UserInfo, buyerProfile *common.EtsyUserProfile) {
 	if tranDetails.PaidTime < info.GTasksDetails.FromDate ||
-		tranDetails.ID <= info.GTasksDetails.LastProcessedTrasactionID {
+		tranDetails.PaidTime <= info.GTasksDetails.LastProcessedTransactionPaidTime {
 		return
 	}
 	if info.GTasksDetails.SelectedTaskListID == "" {
@@ -123,13 +123,13 @@ func (es *etsySynchronizer) postTransactionToGTasks(tranDetails common.EtsyTrans
 	if err != nil {
 		common.Error(err)
 	}
-	info.GTasksDetails.LastProcessedTrasactionID = tranDetails.ID
+	info.GTasksDetails.LastProcessedTransactionPaidTime = tranDetails.PaidTime
 }
 
 func (es *etsySynchronizer) postTransactionToTodoist(tranDetails common.EtsyTransactionDetails,
 	info *common.UserInfo, buyerProfile *common.EtsyUserProfile) {
 	if tranDetails.PaidTime < info.GTasksDetails.FromDate ||
-		tranDetails.ID <= info.TodoistDetails.LastProcessedTrasactionID {
+		tranDetails.PaidTime <= info.TodoistDetails.LastProcessedTransactionPaidTime {
 		return
 	}
 	if info.TodoistDetails.SelectedProjectID == 0 {
@@ -144,7 +144,7 @@ func (es *etsySynchronizer) postTransactionToTodoist(tranDetails common.EtsyTran
 	if err != nil {
 		common.Error(err)
 	}
-	info.TodoistDetails.LastProcessedTrasactionID = tranDetails.ID
+	info.TodoistDetails.LastProcessedTransactionPaidTime = tranDetails.PaidTime
 }
 
 func (es *etsySynchronizer) formattedDescriptionWithMarkDown(tranDetails common.EtsyTransactionDetails,
