@@ -102,6 +102,17 @@
                                             Link to etsy transaction
                                     </label>
                                 </div>
+                                <div class="checkbox checkbox-success">
+                                    {{$isChecked := .TrelloDetails.IsFieldSelected "listing_buyer_variations"}}
+                                    {{if $isChecked}}
+                                        <input id="listing_buyer_variations" type="checkbox" checked="checked">
+                                    {{else}}
+                                        <input id="listing_buyer_variations" type="checkbox">
+                                    {{end}}
+                                    <label for="listing_buyer_variations">
+                                        Buyer variations in order
+                                    </label>
+                                </div>
                             </fieldset>
                         </div>
                     </div>

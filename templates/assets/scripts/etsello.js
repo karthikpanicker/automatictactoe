@@ -47,6 +47,10 @@
         if ($('#listing_link').prop("checked")){
             fields.push("listing_link");
         }
+        if ($('#listing_buyer_variations').prop("checked")){
+            fields.push("listing_buyer_variations");
+        }
+
         var transactionFilter = parseInt($('#trello-radio-set input:radio:checked').val(),10);
         $.ajax({
             type: "POST",

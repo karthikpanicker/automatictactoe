@@ -165,6 +165,16 @@ func (es *etsySynchronizer) formattedDescriptionWithMarkDown(tranDetails common.
 			sb.WriteString(buyerProfile.City)
 		}
 	}
+	if contains(info.TrelloDetails.FieldsToUse, "listing_buyer_variations") && len(tranDetails.Variations) > 0{
+		sb.WriteString("Variations\n")
+		sb.WriteString("--------------\n")
+		for _,variation := range tranDetails.Variations {
+			sb.WriteString(variation.Name)
+			sb.WriteString(": ")
+			sb.WriteString(variation.Value)
+			sb.WriteString("\n")
+		}
+	}
 	return sb.String()
 }
 

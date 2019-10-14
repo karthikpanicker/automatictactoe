@@ -148,19 +148,26 @@ type EtsyImageDetails struct {
 
 // EtsyTransactionDetails is a struct to store a new transaction in  etsy.
 type EtsyTransactionDetails struct {
-	ID             int    `json:"transaction_id"`
-	Title          string `json:"title"`
-	Description    string `json:"description"`
-	BuyerUserID    int    `json:"buyer_user_id"`
-	CreationTime   int    `json:"creation_tsz"`
-	PaidTime       int    `json:"paid_tsz"`
-	Price          string `json:"price"`
-	Currency       string `json:"currency_code"`
-	ShippingPrice  string `json:"shipping_cost"`
-	ImageListingID int    `json:"image_listing_id"`
-	EtsyURL        string `json:"url"`
-	ShippedTime    int    `json:"shipped_tsz"`
-	ListingID      int    `json:"listing_id"`
+	ID             int         `json:"transaction_id"`
+	Title          string      `json:"title"`
+	Description    string      `json:"description"`
+	BuyerUserID    int         `json:"buyer_user_id"`
+	CreationTime   int         `json:"creation_tsz"`
+	PaidTime       int         `json:"paid_tsz"`
+	Price          string      `json:"price"`
+	Currency       string      `json:"currency_code"`
+	ShippingPrice  string      `json:"shipping_cost"`
+	ImageListingID int         `json:"image_listing_id"`
+	EtsyURL        string      `json:"url"`
+	ShippedTime    int         `json:"shipped_tsz"`
+	ListingID      int         `json:"listing_id"`
+	Variations     []Variation `json:"variations"`
+}
+
+// Variation is a struct to store variations from original Etsy listing as requested by the buyer
+type Variation struct {
+	Name  string `json:"formatted_name"`
+	Value string `json:"formatted_value"`
 }
 
 // EtsyUserProfile is struct to store etsy user profile details.
