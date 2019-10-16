@@ -156,9 +156,8 @@ func (es *etsySynchronizer) formattedDescriptionWithMarkDown(tranDetails common.
 	if contains(info.TrelloDetails.FieldsToUse, "listing_buy_profile") && receiptDetails != nil {
 		sb.WriteString("Buyer Details\n")
 		sb.WriteString("--------------\n")
-		sb.WriteString(receiptDetails.BuyerName)
-		sb.WriteString("\n")
 		sb.WriteString(receiptDetails.FormattedAddress)
+		sb.WriteString("\n\n")
 	}
 	if contains(info.TrelloDetails.FieldsToUse, "listing_buyer_variations") && len(tranDetails.Variations) > 0 {
 		sb.WriteString("Variations\n")
