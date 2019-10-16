@@ -91,9 +91,12 @@ func (ph *pageHandler) appAuthorizationCallback(w http.ResponseWriter, r *http.R
 			if storedInfo != nil {
 				storedInfo.EtsyDetails = info.EtsyDetails
 				ph.dCache.SaveDetailsToCache(info.UserID, *storedInfo)
+			} else {
+				ph.dCache.SaveDetailsToCache(info.UserID, *info)
 			}
+		} else {
+			ph.dCache.SaveDetailsToCache(info.UserID, *info)
 		}
-		ph.dCache.SaveDetailsToCache(info.UserID, *info)
 		ph.handlerCom.SaveKeyValueToSession(r, w, common.UserID, info.UserID)
 		ph.handlerCom.rnd.HTML(w, http.StatusOK, "callbacksuccess", nil)
 	}

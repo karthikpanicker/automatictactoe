@@ -41,18 +41,18 @@ func (es *etsySynchronizer) processOrdersForUsers() {
 				etsyTransaction := orderList.Results[i]
 				if etsyTransaction.ShippedTime == 0 {
 					reqParamsMap := make(map[string]interface{})
-					reqParamsMap[apps.EtsyUserIDKey] = etsyTransaction.BuyerUserID
-					response, _ := edm.GetAppData(&userDetails, apps.ProfileDetailsForUserRequest, reqParamsMap)
-					buyerProfile := response.(*common.EtsyUserProfile)
+					reqParamsMap[apps.EtsyReceiptIdKey] = strconv.Itoa(etsyTransaction.ReceiptID)
+					response, _ := edm.GetAppData(&userDetails, apps.EtsyReceiptDetailsRequest, reqParamsMap)
+					receiptDetails := response.(*common.EtsyReceiptDetails)
 					time.Sleep(time.Second * 2)
 					if userDetails.TrelloDetails.IsLinked {
-						es.postTransactionToTrello(edm, etsyTransaction, &userDetails, buyerProfile)
+						es.postTransactionToTrello(edm, etsyTransaction, &userDetails, receiptDetails)
 					}
 					if userDetails.GTasksDetails.IsLinked {
-						es.postTransactionToGTasks(etsyTransaction, &userDetails, buyerProfile)
+						es.postTransactionToGTasks(etsyTransaction, &userDetails, receiptDetails)
 					}
 					if userDetails.TodoistDetails.IsLinked {
-						es.postTransactionToTodoist(etsyTransaction, &userDetails, buyerProfile)
+						es.postTransactionToTodoist(etsyTransaction, &userDetails, receiptDetails)
 					}
 				}
 			}
@@ -63,7 +63,7 @@ func (es *etsySynchronizer) processOrdersForUsers() {
 }
 
 func (es *etsySynchronizer) postTransactionToTrello(edm apps.AppDataManager, tranDetails common.EtsyTransactionDetails,
-	info *common.UserInfo, buyerProfile *common.EtsyUserProfile) {
+	info *common.UserInfo, receiptDetails *common.EtsyReceiptDetails) {
 	// checking the criteria for selecting a transaction based on user preference
 	// Second condition prevents a transaction from processed twice
 	if tranDetails.PaidTime < info.TrelloDetails.FromDate ||
@@ -79,9 +79,8 @@ func (es *etsySynchronizer) postTransactionToTrello(edm apps.AppDataManager, tra
 		Name:   tranDetails.Title,
 		ListID: info.TrelloDetails.SelectedListID,
 	}
-	if contains(info.TrelloDetails.FieldsToUse, "listing_desc") {
-		card.Descripton = es.formattedDescriptionWithMarkDown(tranDetails, buyerProfile, info)
-	}
+
+	card.Descripton = es.formattedDescriptionWithMarkDown(tranDetails, receiptDetails, info)
 	if contains(info.TrelloDetails.FieldsToUse, "listing_link") {
 		card.URL = tranDetails.EtsyURL
 	}
@@ -92,7 +91,7 @@ func (es *etsySynchronizer) postTransactionToTrello(edm apps.AppDataManager, tra
 		reqParamsMap[apps.EtsyTranDetailsKey] = tranDetails
 		response, err := edm.GetAppData(info, apps.EtsyImageDetailsRequest, reqParamsMap)
 		if err != nil {
-			common.Error("Error getting image details.",err)
+			common.Error("Error getting image details.", err)
 		}
 		trelloReqParamsMap[apps.TrelloShouldAttachImage] = true
 		trelloReqParamsMap[apps.EtsyImageDetailsKey] = response
@@ -101,12 +100,12 @@ func (es *etsySynchronizer) postTransactionToTrello(edm apps.AppDataManager, tra
 		trelloReqParamsMap[apps.TrelloShouldAttachImage] = false
 		tdm.AddItem(info, card, trelloReqParamsMap, &resultCard)
 	}
-	common.Info("Last processed transaction id: "+strconv.Itoa(tranDetails.ID))
+	common.Info("Last processed transaction id: " + strconv.Itoa(tranDetails.ID))
 	info.TrelloDetails.LastProcessedTransactionPaidTime = tranDetails.PaidTime
 }
 
 func (es *etsySynchronizer) postTransactionToGTasks(tranDetails common.EtsyTransactionDetails,
-	info *common.UserInfo, buyerProfile *common.EtsyUserProfile) {
+	info *common.UserInfo, receiptDetails *common.EtsyReceiptDetails) {
 	if tranDetails.PaidTime < info.GTasksDetails.FromDate ||
 		tranDetails.PaidTime <= info.GTasksDetails.LastProcessedTransactionPaidTime {
 		return
@@ -127,7 +126,7 @@ func (es *etsySynchronizer) postTransactionToGTasks(tranDetails common.EtsyTrans
 }
 
 func (es *etsySynchronizer) postTransactionToTodoist(tranDetails common.EtsyTransactionDetails,
-	info *common.UserInfo, buyerProfile *common.EtsyUserProfile) {
+	info *common.UserInfo, receiptDetails *common.EtsyReceiptDetails) {
 	if tranDetails.PaidTime < info.GTasksDetails.FromDate ||
 		tranDetails.PaidTime <= info.TodoistDetails.LastProcessedTransactionPaidTime {
 		return
@@ -148,27 +147,23 @@ func (es *etsySynchronizer) postTransactionToTodoist(tranDetails common.EtsyTran
 }
 
 func (es *etsySynchronizer) formattedDescriptionWithMarkDown(tranDetails common.EtsyTransactionDetails,
-	buyerProfile *common.EtsyUserProfile, info *common.UserInfo) string {
+	receiptDetails *common.EtsyReceiptDetails, info *common.UserInfo) string {
 	var sb strings.Builder
-	sb.WriteString(tranDetails.Description)
-	sb.WriteString("\n\n")
-	if contains(info.TrelloDetails.FieldsToUse, "listing_buy_profile") && buyerProfile != nil {
+	if contains(info.TrelloDetails.FieldsToUse, "listing_desc") {
+		sb.WriteString(tranDetails.Description)
+		sb.WriteString("\n\n")
+	}
+	if contains(info.TrelloDetails.FieldsToUse, "listing_buy_profile") && receiptDetails != nil {
 		sb.WriteString("Buyer Details\n")
 		sb.WriteString("--------------\n")
-		sb.WriteString(buyerProfile.FirstName)
-		sb.WriteString(" ")
-		sb.WriteString(buyerProfile.LastName)
+		sb.WriteString(receiptDetails.BuyerName)
 		sb.WriteString("\n")
-		if buyerProfile.Region == "" || buyerProfile.City == "" {
-			sb.WriteString(buyerProfile.Region)
-			sb.WriteString(" ")
-			sb.WriteString(buyerProfile.City)
-		}
+		sb.WriteString(receiptDetails.FormattedAddress)
 	}
-	if contains(info.TrelloDetails.FieldsToUse, "listing_buyer_variations") && len(tranDetails.Variations) > 0{
+	if contains(info.TrelloDetails.FieldsToUse, "listing_buyer_variations") && len(tranDetails.Variations) > 0 {
 		sb.WriteString("Variations\n")
 		sb.WriteString("--------------\n")
-		for _,variation := range tranDetails.Variations {
+		for _, variation := range tranDetails.Variations {
 			sb.WriteString(variation.Name)
 			sb.WriteString(": ")
 			sb.WriteString(variation.Value)

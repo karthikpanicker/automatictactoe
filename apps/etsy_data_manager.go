@@ -18,12 +18,16 @@ const (
 	ProfileDetailsForUserRequest = "profileDetailsForUser"
 	//EtsyImageDetailsRequest is to specify a request to get image details from etsy
 	EtsyImageDetailsRequest = "etsyImageDetails"
+	// EtsyReceiptDetailsRequest is to specify a request to get receipt details
+	EtsyReceiptDetailsRequest = "etsyReceiptDetails"
 	// EtsyUserIDKey is a key used to store etsy user id
 	EtsyUserIDKey = "etsyUserId"
 	// EtsyTranDetailsKey is a key to store etsy transaction details
 	EtsyTranDetailsKey = "etsyTranDetails"
 	// EtsyImageDetailsKey is a key to store etsy image details
 	EtsyImageDetailsKey = "etsyImageDetails"
+	// EtsyReceiptIdKey is a key to store etsy receipt id in request parameters map
+	EtsyReceiptIdKey = "etsyReceiptId"
 )
 
 type etsyDataManager struct {
@@ -80,6 +84,8 @@ func (edm *etsyDataManager) GetAppData(info *common.UserInfo, requestType string
 		return edm.getProfileDetails(requestParams[EtsyUserIDKey].(int), info)
 	case EtsyImageDetailsRequest:
 		return edm.getImageDetails(info, requestParams[EtsyTranDetailsKey].(common.EtsyTransactionDetails))
+	case EtsyReceiptDetailsRequest:
+		return edm.getReceiptDetails(requestParams[EtsyReceiptIdKey].(string), info)
 	default:
 		return nil, errors.New("Unknown request type provided")
 	}
@@ -133,6 +139,18 @@ func (edm *etsyDataManager) getTransactionList(info *common.UserInfo) (*common.E
 func (edm *etsyDataManager) getProfileDetails(userid int, info *common.UserInfo) (*common.EtsyUserProfile, error) {
 	path := edm.etsyBaseURL + "users/" + strconv.Itoa(userid) + "/profile"
 	var result common.EtsyProfileResponse
+	httpOAuthClient := common.NewHTTPOAuth1Client(info.EtsyDetails.EtsyAccessToken,
+		info.EtsyDetails.EtsyAccessSecret, edm.config)
+	err := httpOAuthClient.GetMarshalledAPIResponse(path, &result)
+	if err != nil {
+		return nil, err
+	}
+	return &result.Results[0], nil
+}
+
+func (edm *etsyDataManager) getReceiptDetails(receiptId string, info *common.UserInfo) (*common.EtsyReceiptDetails, error) {
+	path := edm.etsyBaseURL + "receipts/" + receiptId
+	var result common.EtsyReceiptResponse
 	httpOAuthClient := common.NewHTTPOAuth1Client(info.EtsyDetails.EtsyAccessToken,
 		info.EtsyDetails.EtsyAccessSecret, edm.config)
 	err := httpOAuthClient.GetMarshalledAPIResponse(path, &result)

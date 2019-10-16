@@ -162,6 +162,18 @@ type EtsyTransactionDetails struct {
 	ShippedTime    int         `json:"shipped_tsz"`
 	ListingID      int         `json:"listing_id"`
 	Variations     []Variation `json:"variations"`
+	ReceiptID      int         `json:"receipt_id"`
+}
+
+type EtsyReceiptResponse struct {
+	Count   int                  `json:"count"`
+	Results []EtsyReceiptDetails `json:"results"`
+}
+
+type EtsyReceiptDetails struct {
+	ID               int    `json:"receipt_id"`
+	BuyerName        string `json:"name"`
+	FormattedAddress string `json:"formatted_address"`
 }
 
 // Variation is a struct to store variations from original Etsy listing as requested by the buyer
