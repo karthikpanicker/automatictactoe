@@ -3,6 +3,7 @@ package main
 import (
 	"etsello/apps"
 	"etsello/common"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -36,17 +37,25 @@ func (es *etsySynchronizer) processOrdersForUsers() {
 				common.Error(err)
 				continue
 			}
+			//
 			orderList := response.(*common.EtsyTransactionResponse)
-			for i := len(orderList.Results) - 1; i >= 0; i-- {
+			sort.Slice(orderList.Results[:], func(i, j int) bool {
+				return orderList.Results[i].PaidTime < orderList.Results[j].PaidTime
+			})
+			for i := 0; i < len(orderList.Results); i++ {
 				etsyTransaction := orderList.Results[i]
 				if etsyTransaction.ShippedTime == 0 {
 					reqParamsMap := make(map[string]interface{})
 					reqParamsMap[apps.EtsyReceiptIdKey] = strconv.Itoa(etsyTransaction.ReceiptID)
 					response, _ := edm.GetAppData(&userDetails, apps.EtsyReceiptDetailsRequest, reqParamsMap)
 					receiptDetails := response.(*common.EtsyReceiptDetails)
-					time.Sleep(time.Second * 2)
+					time.Sleep(time.Second * 1)
+					var lastTransactionIndex = 0
+					if i > 0 {
+						lastTransactionIndex = i - 1
+					}
 					if userDetails.TrelloDetails.IsLinked {
-						es.postTransactionToTrello(edm, etsyTransaction, &userDetails, receiptDetails)
+						es.postTransactionToTrello(edm, etsyTransaction, &userDetails, receiptDetails, orderList.Results[lastTransactionIndex])
 					}
 					if userDetails.GTasksDetails.IsLinked {
 						es.postTransactionToGTasks(etsyTransaction, &userDetails, receiptDetails)
@@ -63,11 +72,22 @@ func (es *etsySynchronizer) processOrdersForUsers() {
 }
 
 func (es *etsySynchronizer) postTransactionToTrello(edm apps.AppDataManager, tranDetails common.EtsyTransactionDetails,
-	info *common.UserInfo, receiptDetails *common.EtsyReceiptDetails) {
+	info *common.UserInfo, receiptDetails *common.EtsyReceiptDetails, lastTransaction common.EtsyTransactionDetails) {
 	// checking the criteria for selecting a transaction based on user preference
-	// Second condition prevents a transaction from processed twice
+	// if the transaction was paid before the user selected date or if the transaction was paid the paid time for
+	// last processed transaction ignore the transaction
 	if tranDetails.PaidTime < info.TrelloDetails.FromDate ||
-		tranDetails.PaidTime <= info.TrelloDetails.LastProcessedTransactionPaidTime {
+		tranDetails.PaidTime < info.TrelloDetails.LastProcessedTransactionPaidTime {
+		return
+		// Condition to process orders if two orders have the same paid time (happens when there are multiple
+		//transactions in an order) Paid time would be the same but transaction id would vary.
+	} else if tranDetails.PaidTime == lastTransaction.PaidTime {
+		if tranDetails.ID != lastTransaction.ID {
+		}else {
+			return
+		}
+		// Ignore if the paid time and last processed transaction paid time are the same.
+	} else if tranDetails.PaidTime == info.TrelloDetails.LastProcessedTransactionPaidTime {
 		return
 	}
 	// If details are not configured skip the transaction
