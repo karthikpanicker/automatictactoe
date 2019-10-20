@@ -91,7 +91,7 @@
 
     $('.github-link').on("click",function(e){
         e.preventDefault(); 
-        window.open('https://github.com/karthikpanicker/etsello','_blank');
+        window.open('https://github.com/karthikpanicker/automatictactoe','_blank');
     });
 
     $("#gtask-authorize").on("click",function(){

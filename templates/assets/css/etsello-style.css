@@ -16,7 +16,31 @@ body
 .etsy-disclaimer{
   font-weight: regular;
   font-size: 10px;
-  text-align:center;
+  text-align: center;
+    padding-top: 5px;
+}
+
+.footer-copyright {
+    font-weight: regular;
+    font-size: 12px;
+    text-align:center;
+    padding-top:5px;
+}
+
+.footer-list-item {
+    font-weight: regular;
+    font-size: 12px;
+    text-align:center;
+    display: inline;
+    padding-right: 8px;
+    padding-top:0px;
+}
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #FFFBFC;
 }
 
 input:focus {
