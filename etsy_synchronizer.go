@@ -82,7 +82,7 @@ func (es *etsySynchronizer) postTransactionToTrello(edm apps.AppDataManager, tra
 		// Condition to process orders if two orders have the same paid time (happens when there are multiple
 		//transactions in an order) Paid time would be the same but transaction id would vary.
 	} else if tranDetails.PaidTime == lastTransaction.PaidTime {
-		if tranDetails.ID != lastTransaction.ID {
+		if tranDetails.ID != lastTransaction.ID && tranDetails.ID != info.TrelloDetails.LastProcessedTransactionID{
 		}else {
 			return
 		}
@@ -122,6 +122,7 @@ func (es *etsySynchronizer) postTransactionToTrello(edm apps.AppDataManager, tra
 	}
 	common.Info("Last processed transaction id: " + strconv.Itoa(tranDetails.ID))
 	info.TrelloDetails.LastProcessedTransactionPaidTime = tranDetails.PaidTime
+	info.TrelloDetails.LastProcessedTransactionID = tranDetails.ID
 }
 
 func (es *etsySynchronizer) postTransactionToGTasks(tranDetails common.EtsyTransactionDetails,

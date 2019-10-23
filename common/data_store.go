@@ -29,6 +29,7 @@ type TrelloDetails struct {
 	TransactionFilter                int      `json:"transactionFilter"`
 	FromDate                         int
 	LastProcessedTransactionPaidTime int
+	LastProcessedTransactionID       int
 }
 
 // EtsyDetails is a struct used to store etsy realted information.
